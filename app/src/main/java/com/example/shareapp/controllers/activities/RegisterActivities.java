@@ -44,10 +44,10 @@ public class RegisterActivities extends AppCompatActivity {
         anhxa();
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
-        SharedPreferences editor= Register.this.getSharedPreferences("data",MODE_PRIVATE);
+        SharedPreferences editor= RegisterActivities.this.getSharedPreferences("data",MODE_PRIVATE);
         editor.edit().clear().commit();
 
-        SharedPreferences editor1= Register.this.getSharedPreferences("dataPass",MODE_PRIVATE);
+        SharedPreferences editor1= RegisterActivities.this.getSharedPreferences("dataPass",MODE_PRIVATE);
         editor1.edit().clear().commit();
 
         passWord.setOnTouchListener(new View.OnTouchListener() {
@@ -75,11 +75,6 @@ public class RegisterActivities extends AppCompatActivity {
             }
         });
 
-        SharedPreferences editor= Register.this.getSharedPreferences("data",MODE_PRIVATE);
-        editor.edit().clear().commit();
-
-        SharedPreferences editor1= Register.this.getSharedPreferences("dataPass",MODE_PRIVATE);
-        editor1.edit().clear().commit();
 
 //        if(mAuth.getCurrentUser() != null){
 //            startActivity(new Intent(getApplicationContext(), SecondActivity.class));

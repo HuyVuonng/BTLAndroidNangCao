@@ -25,10 +25,18 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.shareapp.R;
+import com.example.shareapp.models.User;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -243,10 +251,10 @@ public class LoginActivities extends AppCompatActivity {
             public void onAuthenticationError(int errorCode,
                                               @NonNull CharSequence errString) {
                 super.onAuthenticationError(errorCode, errString);
-                SharedPreferences editor= Login.this.getSharedPreferences("data",MODE_PRIVATE);
+                SharedPreferences editor= LoginActivities.this.getSharedPreferences("data",MODE_PRIVATE);
                 editor.edit().clear().commit();
 
-                SharedPreferences editor1= Login.this.getSharedPreferences("dataPass",MODE_PRIVATE);
+                SharedPreferences editor1= LoginActivities.this.getSharedPreferences("dataPass",MODE_PRIVATE);
                 editor1.edit().clear().commit();
 //                Toast.makeText(getApplicationContext(), "Authentication error: " + errString, Toast.LENGTH_SHORT).show();
             }
@@ -375,13 +383,13 @@ public class LoginActivities extends AppCompatActivity {
                                     if(task.isSuccessful()){
                                         String fullname=FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
                                         String uid=FirebaseAuth.getInstance().getCurrentUser().getUid();
-                                        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(Login.this);
+                                        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(LoginActivities.this);
                                         String email=acct.getEmail();;
 
                                         chechUserLoginGGExists(uid,fullname,"","",email);
 
                                     }else{
-                                        Toast.makeText(Login.this, task.getException().getMessage(),Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(LoginActivities.this, task.getException().getMessage(),Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
