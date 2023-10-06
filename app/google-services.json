@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "188902579045",
+    "firebase_url": "https://shareapp-c9966-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "shareapp-c9966",
+    "storage_bucket": "shareapp-c9966.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:188902579045:android:c98dc26b5985433b069f8c",
+        "android_client_info": {
+          "package_name": "com.example.shareapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5I3mu4bKUDncG5g_jziAx5Lt8-K6s-bo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
