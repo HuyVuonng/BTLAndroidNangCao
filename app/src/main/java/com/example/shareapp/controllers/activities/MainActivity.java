@@ -1,6 +1,4 @@
-package com.example.shareapp;
-
-import static android.content.ContentValues.TAG;
+package com.example.shareapp.controllers.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,25 +7,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shareapp.Class.User;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -118,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
                 SharedPreferences editor1= MainActivity.this.getSharedPreferences("dataPass",MODE_PRIVATE);
                 editor1.edit().clear().commit();
 
-                Intent i = new Intent(MainActivity.this,Login.class);
+                Intent i = new Intent(MainActivity.this, LoginActivities.class);
                 startActivity(i);
                 FirebaseAuth.getInstance().signOut();
                 finish();

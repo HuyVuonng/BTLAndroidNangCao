@@ -1,4 +1,4 @@
-package com.example.shareapp.Class;
+package com.example.shareapp.models;
 
 public class User {
     public String fullName;

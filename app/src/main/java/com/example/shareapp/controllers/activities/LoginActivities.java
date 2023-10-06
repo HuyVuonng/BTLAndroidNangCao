@@ -1,4 +1,4 @@
-package com.example.shareapp;
+package com.example.shareapp.controllers.activities;
 
 import static androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG;
 import static androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL;
@@ -10,6 +10,7 @@ import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricPrompt;
 import androidx.core.content.ContextCompat;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -24,17 +25,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.shareapp.Class.User;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -49,7 +43,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.concurrent.Executor;
 
-public class Login extends AppCompatActivity {
+public class LoginActivities extends AppCompatActivity {
 
     private static final int REQUEST_CODE = 101010;
 
@@ -68,6 +62,7 @@ public class Login extends AppCompatActivity {
     boolean passWordVisible;
     private DatabaseReference mDatabase;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,7 +118,7 @@ public class Login extends AppCompatActivity {
         regesterBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(Login.this,Register.class);
+                Intent i = new Intent(LoginActivities.this, RegisterActivities.class);
                 startActivity(i);
             }
         });
@@ -139,7 +134,7 @@ public class Login extends AppCompatActivity {
                 String email= Email.getText().toString().trim();
                 String Pass= Password.getText().toString().trim();
 
-                SharedPreferences editor= Login.this.getSharedPreferences("dataPass",MODE_PRIVATE);
+                SharedPreferences editor= LoginActivities.this.getSharedPreferences("dataPass",MODE_PRIVATE);
                 editor.edit().clear().commit();
                 if(TextUtils.isEmpty(email)){
                     Email.setError("Nhập Email");
@@ -163,14 +158,14 @@ public class Login extends AppCompatActivity {
                                 progressBar.setVisibility(View.INVISIBLE);
                                 sharedPreferences= getSharedPreferences("dataPass",MODE_PRIVATE);
                                 sharedPreferences.edit().putString("password",Password.getText().toString().trim()).apply();
-                                Toast.makeText(Login.this,"Đăng nhập thành công", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivities.this,"Đăng nhập thành công", Toast.LENGTH_SHORT).show();
                                 startActivity(new Intent(getApplicationContext(),MainActivity.class));
                             }
 
                         }
                         else{
                             progressBar.setVisibility(View.INVISIBLE);
-                            Toast.makeText(Login.this,task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivities.this,task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -197,7 +192,7 @@ public class Login extends AppCompatActivity {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         progressBar.setVisibility(View.INVISIBLE);
-                        Toast.makeText(Login.this,"Không gửi được email xác thực "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivities.this,"Không gửi được email xác thực "+e.getMessage(), Toast.LENGTH_SHORT).show();
 
                     }
                 });
@@ -226,11 +221,11 @@ public class Login extends AppCompatActivity {
                 Log.d("MY_APP_TAG", "App can authenticate using biometrics.");
                 break;
             case BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE:
-                Toast.makeText(Login.this,"Không có cảm biến vân tay", Toast.LENGTH_LONG);
+                Toast.makeText(LoginActivities.this,"Không có cảm biến vân tay", Toast.LENGTH_LONG);
                 break;
             case BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE:
                 Log.e("MY_APP_TAG", "Biometric features are currently unavailable.");
-                Toast.makeText(Login.this,"Cảm biến vân tay không dùng được hoặc đang bận", Toast.LENGTH_LONG);
+                Toast.makeText(LoginActivities.this,"Cảm biến vân tay không dùng được hoặc đang bận", Toast.LENGTH_LONG);
                 break;
             case BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED:
                 // Prompts the user to create credentials that your app accepts.
@@ -242,7 +237,7 @@ public class Login extends AppCompatActivity {
         }
 
         executor = ContextCompat.getMainExecutor(this);
-        biometricPrompt = new BiometricPrompt(Login.this,
+        biometricPrompt = new BiometricPrompt(LoginActivities.this,
                 executor, new BiometricPrompt.AuthenticationCallback() {
             @Override
             public void onAuthenticationError(int errorCode,
@@ -265,7 +260,7 @@ public class Login extends AppCompatActivity {
                 if(type.equals("google")){
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     if(user!= null){
-                        Intent intent = new Intent(Login.this,MainActivity.class);
+                        Intent intent = new Intent(LoginActivities.this,MainActivity.class);
                         startActivity(intent);
                         Log.d("here","1");
                     }
@@ -279,11 +274,11 @@ public class Login extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if(task.isSuccessful()){
-                                Toast.makeText(Login.this,"Đăng nhập thành công", Toast.LENGTH_SHORT);
+                                Toast.makeText(LoginActivities.this,"Đăng nhập thành công", Toast.LENGTH_SHORT);
                                 startActivity(new Intent(getApplicationContext(),MainActivity.class));
                             }
                             else{
-                                Toast.makeText(Login.this,task.getException().getMessage(), Toast.LENGTH_SHORT);
+                                Toast.makeText(LoginActivities.this,task.getException().getMessage(), Toast.LENGTH_SHORT);
                             }
                         }
                     });
@@ -321,7 +316,7 @@ public class Login extends AppCompatActivity {
     }
 
     public void showDialog(){
-        AlertDialog.Builder builder= new AlertDialog.Builder(Login.this);
+        AlertDialog.Builder builder= new AlertDialog.Builder(LoginActivities.this);
         builder.setTitle("Thông báo");
         builder.setMessage("Vui lòng vào địa chỉ email để xác thực tài khoản.Bạn sẽ không đăng nhập được nếu không xác thực tài khoản.");
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -337,12 +332,12 @@ public class Login extends AppCompatActivity {
                 user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(Login.this,"Đã gửi email xác nhận", Toast.LENGTH_LONG).show();
+                        Toast.makeText(LoginActivities.this,"Đã gửi email xác nhận", Toast.LENGTH_LONG).show();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(Login.this,"Không gửi được email xác thực "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivities.this,"Không gửi được email xác thực "+e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -352,7 +347,7 @@ public class Login extends AppCompatActivity {
     };
 
     public void showDialogForgotPass(){
-        AlertDialog.Builder builder= new AlertDialog.Builder(Login.this);
+        AlertDialog.Builder builder= new AlertDialog.Builder(LoginActivities.this);
         builder.setTitle("Thông báo");
         builder.setMessage("Đã gửi mail đổi mật khẩu. Vui lòng vào mail để đổi lại mật khẩu của bạn");
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {

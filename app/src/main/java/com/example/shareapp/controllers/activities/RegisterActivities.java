@@ -1,4 +1,4 @@
-package com.example.shareapp;
+package com.example.shareapp.controllers.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -19,7 +18,8 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.example.shareapp.Class.User;
+import com.example.shareapp.R;
+import com.example.shareapp.models.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -29,7 +29,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class Register extends AppCompatActivity {
+public class RegisterActivities extends AppCompatActivity {
     FirebaseAuth mAuth;
     EditText fullName,phoneNumber,address, email,passWord;
     Button registerbtn;
@@ -75,6 +75,20 @@ public class Register extends AppCompatActivity {
             }
         });
 
+        SharedPreferences editor= Register.this.getSharedPreferences("data",MODE_PRIVATE);
+        editor.edit().clear().commit();
+
+        SharedPreferences editor1= Register.this.getSharedPreferences("dataPass",MODE_PRIVATE);
+        editor1.edit().clear().commit();
+
+//        if(mAuth.getCurrentUser() != null){
+//            startActivity(new Intent(getApplicationContext(), SecondActivity.class));
+//
+//        }
+
+
+
+        mDatabase = FirebaseDatabase.getInstance().getReference();
         registerbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -128,14 +142,14 @@ public class Register extends AppCompatActivity {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
                                     progressBar.setVisibility(View.INVISIBLE);
-                                    Toast.makeText(Register.this,"Không gửi được email xác thực "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(RegisterActivities.this,"Không gửi được email xác thực "+e.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             });
 
                         }
                         else{
                             progressBar.setVisibility(View.INVISIBLE);
-                            Toast.makeText(Register.this,"Lỗi "+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterActivities.this,"Lỗi "+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -156,13 +170,13 @@ public class Register extends AppCompatActivity {
     }
 
     public void showDialog(){
-        AlertDialog.Builder builder= new AlertDialog.Builder(Register.this);
+        AlertDialog.Builder builder= new AlertDialog.Builder(RegisterActivities.this);
         builder.setTitle("Đăng ký thành công");
         builder.setMessage("Đã gửi email xác thực. Vui lòng vào địa chỉ email để xác thực tài khoản.Bạn sẽ không đăng nhập được nếu không xác thực tài khoản.");
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                startActivity(new Intent(getApplicationContext(),Login.class));
+                startActivity(new Intent(getApplicationContext(), LoginActivities.class));
             }
         });
         AlertDialog alert = builder.create();
