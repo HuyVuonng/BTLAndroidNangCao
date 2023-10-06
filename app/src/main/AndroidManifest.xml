@@ -31,6 +31,9 @@
             android:name=".controllers.activities.MainActivity"
             android:exported="false" />
 
+        <meta-data
+            android:name="com.google.android.gms.wallet.api.enabled"
+            android:value="true" />
     </application>
 
 </manifest>

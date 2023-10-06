@@ -12,7 +12,12 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.shareapp.Class.User;
 import com.example.shareapp.R;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,45 +30,34 @@ public class MainActivity extends AppCompatActivity {
     TextView name,email, address;
     Button signOutBtn;
     private DatabaseReference mDatabase;
+    GoogleSignInOptions gso;
+    GoogleSignInClient gsc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-        name = findViewById(R.id.name);
-        email = findViewById(R.id.email);
-        address=findViewById(R.id.addressGet);
-        signOutBtn = findViewById(R.id.signout);
+        anhxa();
 
         mDatabase = FirebaseDatabase.getInstance().getReference("Users");
 
-        reađataUser(FirebaseAuth.getInstance().getCurrentUser().getUid().toString());
-//        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
-//        gsc = GoogleSignIn.getClient(this,gso);
+        readDataUser(FirebaseAuth.getInstance().getCurrentUser().getUid().toString());
+        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+        gsc = GoogleSignIn.getClient(this,gso);
 
         SharedPreferences editor1= MainActivity.this.getSharedPreferences("data",MODE_PRIVATE);
         editor1.edit().clear().commit();
 
-//        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
-//        if(acct!=null){
-//            String personName = acct.getDisplayName();
-//            String personEmail = acct.getEmail();
-//            name.setText(personName);
-//            email.setText(personEmail);
-//
-//            SharedPreferences.Editor editor= getSharedPreferences("data",MODE_PRIVATE).edit();
-//            editor.putString("email",personEmail);
-//            editor.putString("pass",personName);
-//            editor.putBoolean("isLogin",true);
-//            editor.putString("type","google");
-//
-//            editor.apply();
-//        }
-        if(FirebaseAuth.getInstance().getCurrentUser() != null){
-//            name.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
-            email.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
+        if(acct!=null){
+            SharedPreferences.Editor editor= getSharedPreferences("data",MODE_PRIVATE).edit();
+            editor.putString("email",FirebaseAuth.getInstance().getCurrentUser().getEmail());
+            editor.putBoolean("isLogin",true);
+            editor.putString("type","google");
+            editor.apply();
+        }
+        else if(FirebaseAuth.getInstance().getCurrentUser() != null){
             SharedPreferences.Editor editor= getSharedPreferences("data", Context.MODE_PRIVATE).edit();
             editor.putString("email",FirebaseAuth.getInstance().getCurrentUser().getEmail());
             editor.putBoolean("isLogin",true);
@@ -79,8 +73,13 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
-    public void reađataUser(String uid){
+    private void anhxa(){
+    name = findViewById(R.id.name);
+    email = findViewById(R.id.email);
+    address=findViewById(R.id.addressGet);
+    signOutBtn = findViewById(R.id.signout);
+    }
+    public void readDataUser(String uid){
         mDatabase.child(uid).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
@@ -89,9 +88,11 @@ public class MainActivity extends AppCompatActivity {
                             DataSnapshot dataSnapshot = task.getResult();
                             String fullName= String.valueOf(dataSnapshot.child("fullName").getValue());
                             String addressGet= String.valueOf(dataSnapshot.child("address").getValue());
+                            String emailGet= String.valueOf(dataSnapshot.child("email").getValue());
 
                             name.setText(fullName);
                             address.setText(addressGet);
+                            email.setText(emailGet);
                         }
                         else{
                             Toast.makeText(getApplicationContext(),"Không có người dùng này", Toast.LENGTH_SHORT).show();
@@ -103,7 +104,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     void signOut(){
-                FirebaseAuth.getInstance().signOut();
+        gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+
                 SharedPreferences editor= MainActivity.this.getSharedPreferences("data",MODE_PRIVATE);
                 editor.edit().clear().commit();
 
@@ -112,6 +116,9 @@ public class MainActivity extends AppCompatActivity {
 
                 Intent i = new Intent(MainActivity.this, LoginActivities.class);
                 startActivity(i);
+                FirebaseAuth.getInstance().signOut();
                 finish();
+            }
+        });
     }
 }

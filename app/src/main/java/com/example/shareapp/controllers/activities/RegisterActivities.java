@@ -41,15 +41,14 @@ public class RegisterActivities extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        fullName=findViewById(R.id.fullName);
-        phoneNumber= findViewById(R.id.phoneNumber);
-        address= findViewById(R.id.Address);
-        email=findViewById(R.id.registerEmail);
-        passWord=findViewById(R.id.password);
-        registerbtn=findViewById(R.id.registerbtn);
-        progressBar=findViewById(R.id.progressBar);
-
+        anhxa();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
+        SharedPreferences editor= RegisterActivities.this.getSharedPreferences("data",MODE_PRIVATE);
+        editor.edit().clear().commit();
+
+        SharedPreferences editor1= RegisterActivities.this.getSharedPreferences("dataPass",MODE_PRIVATE);
+        editor1.edit().clear().commit();
 
         passWord.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -76,11 +75,6 @@ public class RegisterActivities extends AppCompatActivity {
             }
         });
 
-        SharedPreferences editor= RegisterActivities.this.getSharedPreferences("data",MODE_PRIVATE);
-        editor.edit().clear().commit();
-
-        SharedPreferences editor1= RegisterActivities.this.getSharedPreferences("dataPass",MODE_PRIVATE);
-        editor1.edit().clear().commit();
 
 //        if(mAuth.getCurrentUser() != null){
 //            startActivity(new Intent(getApplicationContext(), SecondActivity.class));
@@ -158,6 +152,16 @@ public class RegisterActivities extends AppCompatActivity {
 
         });
 
+    }
+
+    private void anhxa(){
+        fullName=findViewById(R.id.fullName);
+        phoneNumber= findViewById(R.id.phoneNumber);
+        address= findViewById(R.id.Address);
+        email=findViewById(R.id.registerEmail);
+        passWord=findViewById(R.id.password);
+        registerbtn=findViewById(R.id.registerbtn);
+        progressBar=findViewById(R.id.progressBar);
     }
 
     public void showDialog(){
