@@ -1,4 +1,4 @@
-package com.example.shareapp.controllers.activities;
+package com.example.shareapp.controllers.activities.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.shareapp.Class.User;
 import com.example.shareapp.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;

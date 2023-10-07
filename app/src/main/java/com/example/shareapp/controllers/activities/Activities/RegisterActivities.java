@@ -1,4 +1,4 @@
-package com.example.shareapp.controllers.activities;
+package com.example.shareapp.controllers.activities.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;

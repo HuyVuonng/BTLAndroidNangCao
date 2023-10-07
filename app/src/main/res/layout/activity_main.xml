@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".controllers.activities.MainActivity" android:background="@color/cardview_light_background">
+    tools:context=".controllers.activities.Activities.MainActivity" android:background="@color/cardview_light_background">
 
 
     <TextView
@@ -45,6 +45,15 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@id/addressGet"
         android:textSize="24sp"/>
+
+    <Button
+        android:id="@+id/userInfor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/signout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="105dp"
+        android:text="User Infor" />
 
     <Button
         android:layout_width="wrap_content"
