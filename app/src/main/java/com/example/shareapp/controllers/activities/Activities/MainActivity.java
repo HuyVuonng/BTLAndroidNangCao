@@ -26,8 +26,8 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextView name,email, address;
-    Button signOutBtn,userInfor;
+    TextView name, email, address;
+    Button signOutBtn, userInfor;
     private DatabaseReference mDatabase;
     GoogleSignInOptions gso;
     GoogleSignInClient gsc;
@@ -43,24 +43,23 @@ public class MainActivity extends AppCompatActivity {
 
         readDataUser(FirebaseAuth.getInstance().getCurrentUser().getUid().toString());
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
-        gsc = GoogleSignIn.getClient(this,gso);
+        gsc = GoogleSignIn.getClient(this, gso);
 
-        SharedPreferences editor1= MainActivity.this.getSharedPreferences("data",MODE_PRIVATE);
+        SharedPreferences editor1 = MainActivity.this.getSharedPreferences("data", MODE_PRIVATE);
         editor1.edit().clear().commit();
 
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
-        if(acct!=null){
-            SharedPreferences.Editor editor= getSharedPreferences("data",MODE_PRIVATE).edit();
-            editor.putString("email",FirebaseAuth.getInstance().getCurrentUser().getEmail());
-            editor.putBoolean("isLogin",true);
-            editor.putString("type","google");
+        if (acct != null) {
+            SharedPreferences.Editor editor = getSharedPreferences("data", MODE_PRIVATE).edit();
+            editor.putString("email", FirebaseAuth.getInstance().getCurrentUser().getEmail());
+            editor.putBoolean("isLogin", true);
+            editor.putString("type", "google");
             editor.apply();
-        }
-        else if(FirebaseAuth.getInstance().getCurrentUser() != null){
-            SharedPreferences.Editor editor= getSharedPreferences("data", Context.MODE_PRIVATE).edit();
-            editor.putString("email",FirebaseAuth.getInstance().getCurrentUser().getEmail());
-            editor.putBoolean("isLogin",true);
-            editor.putString("type","EmailPassWord");
+        } else if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            SharedPreferences.Editor editor = getSharedPreferences("data", Context.MODE_PRIVATE).edit();
+            editor.putString("email", FirebaseAuth.getInstance().getCurrentUser().getEmail());
+            editor.putBoolean("isLogin", true);
+            editor.putString("type", "EmailPassWord");
             editor.apply();
         }
 
@@ -75,50 +74,52 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(), UserInfor.class));
+                finish();
             }
         });
     }
 
-    private void anhxa(){
-    name = findViewById(R.id.name);
-    email = findViewById(R.id.email);
-    address=findViewById(R.id.addressGet);
-    signOutBtn = findViewById(R.id.signout);
-    userInfor= findViewById(R.id.userInfor);
+    private void anhxa() {
+        name = findViewById(R.id.name);
+        email = findViewById(R.id.email);
+        address = findViewById(R.id.addressGet);
+        signOutBtn = findViewById(R.id.signout);
+        userInfor = findViewById(R.id.userInfor);
     }
-    public void readDataUser(String uid){
+
+    public void readDataUser(String uid) {
         mDatabase.child(uid).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
-                    if(task.isSuccessful()){
-                        if(task.getResult().exists()){
-                            DataSnapshot dataSnapshot = task.getResult();
-                            String fullName= String.valueOf(dataSnapshot.child("fullName").getValue());
-                            String addressGet= String.valueOf(dataSnapshot.child("address").getValue());
-                            String emailGet= String.valueOf(dataSnapshot.child("email").getValue());
+                if (task.isSuccessful()) {
+                    if (task.getResult().exists()) {
+                        DataSnapshot dataSnapshot = task.getResult();
+                        String fullName = String.valueOf(dataSnapshot.child("fullName").getValue());
+                        String addressGet = String.valueOf(dataSnapshot.child("address").getValue());
+                        String emailGet = String.valueOf(dataSnapshot.child("email").getValue());
 
-                            name.setText(fullName);
-                            address.setText(addressGet);
-                            email.setText(emailGet);
-                        }
-                        else{
-                            Toast.makeText(getApplicationContext(),"Không có người dùng này", Toast.LENGTH_SHORT).show();
-                        }
-                    }else {
-                        Toast.makeText(getApplicationContext(),"Không đọc được", Toast.LENGTH_SHORT).show();
+                        name.setText(fullName);
+                        address.setText(addressGet);
+                        email.setText(emailGet);
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Không có người dùng này", Toast.LENGTH_SHORT).show();
                     }
+                } else {
+                    Toast.makeText(getApplicationContext(), "Không đọc được", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
-    void signOut(){
+
+    void signOut() {
         gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
 
-                SharedPreferences editor= MainActivity.this.getSharedPreferences("data",MODE_PRIVATE);
+                SharedPreferences editor = MainActivity.this.getSharedPreferences("data", MODE_PRIVATE);
                 editor.edit().clear().commit();
 
-                SharedPreferences editor1= MainActivity.this.getSharedPreferences("dataPass",MODE_PRIVATE);
+                SharedPreferences editor1 = MainActivity.this.getSharedPreferences("dataPass", MODE_PRIVATE);
                 editor1.edit().clear().commit();
 
                 Intent i = new Intent(MainActivity.this, LoginActivities.class);

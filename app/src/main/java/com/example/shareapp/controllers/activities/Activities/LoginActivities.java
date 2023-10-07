@@ -3,6 +3,11 @@ package com.example.shareapp.controllers.activities.Activities;
 import static androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG;
 import static androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.IntentSenderRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,9 +16,11 @@ import androidx.biometric.BiometricPrompt;
 import androidx.core.content.ContextCompat;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -32,6 +39,10 @@ import android.widget.Toast;
 
 import com.example.shareapp.R;
 import com.example.shareapp.models.User;
+import com.google.android.gms.auth.api.identity.BeginSignInRequest;
+import com.google.android.gms.auth.api.identity.BeginSignInResult;
+import com.google.android.gms.auth.api.identity.Identity;
+import com.google.android.gms.auth.api.identity.SignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -39,6 +50,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -70,6 +82,7 @@ public class LoginActivities extends AppCompatActivity {
     boolean passWordVisible;
     private DatabaseReference mDatabase;
 
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,41 +92,41 @@ public class LoginActivities extends AppCompatActivity {
         anhxa();
         mAuth = FirebaseAuth.getInstance();
 
-        sharedPreferences= getSharedPreferences("data",MODE_PRIVATE);
-        String email= sharedPreferences.getString("email","");
+        sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
+        String email = sharedPreferences.getString("email", "");
         Email.setText(email);
         Password.setText("");
 
-        GoogleSignInOptions options= new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
 
-        client= GoogleSignIn.getClient(this,options);
+        client = GoogleSignIn.getClient(this, options);
 
         googlebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = client.getSignInIntent();
-                startActivityForResult(i,1234);
+                startActivityForResult(i, 1234);
             }
         });
 
         Password.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                final int right=2;
-                if(event.getAction()==MotionEvent.ACTION_UP){
-                    if(event.getRawX() >= Password.getRight()-Password.getCompoundDrawables()[right].getBounds().width()-40){
-                        int selection= Password.getSelectionEnd();
-                        if(passWordVisible){
-                            Password.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_baseline_info_24,0,R.drawable.baseline_visibility_off_24,0);
+                final int right = 2;
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    if (event.getRawX() >= Password.getRight() - Password.getCompoundDrawables()[right].getBounds().width() - 40) {
+                        int selection = Password.getSelectionEnd();
+                        if (passWordVisible) {
+                            Password.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_baseline_info_24, 0, R.drawable.baseline_visibility_off_24, 0);
                             Password.setTransformationMethod(PasswordTransformationMethod.getInstance());
-                            passWordVisible=false;
-                        }else{
-                            Password.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_baseline_info_24,0,R.drawable.baseline_visibility_24,0);
+                            passWordVisible = false;
+                        } else {
+                            Password.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_baseline_info_24, 0, R.drawable.baseline_visibility_24, 0);
                             Password.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-                            passWordVisible=true;
+                            passWordVisible = true;
                         }
                         Password.setSelection(selection);
                         return true;
@@ -139,41 +152,39 @@ public class LoginActivities extends AppCompatActivity {
             }
 
             private void LoginWithEmailAndPassWord() {
-                String email= Email.getText().toString().trim();
-                String Pass= Password.getText().toString().trim();
+                String email = Email.getText().toString().trim();
+                String Pass = Password.getText().toString().trim();
 
-                SharedPreferences editor= LoginActivities.this.getSharedPreferences("dataPass",MODE_PRIVATE);
+                SharedPreferences editor = LoginActivities.this.getSharedPreferences("dataPass", MODE_PRIVATE);
                 editor.edit().clear().commit();
-                if(TextUtils.isEmpty(email)){
+                if (TextUtils.isEmpty(email)) {
                     Email.setError("Nhập Email");
                     return;
                 }
-                if(TextUtils.isEmpty(Pass)){
+                if (TextUtils.isEmpty(Pass)) {
                     Password.setError("Nhập mật khẩu");
                     return;
                 }
                 progressBar.setVisibility(View.VISIBLE);
-                mAuth.signInWithEmailAndPassword(email,Pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                mAuth.signInWithEmailAndPassword(email, Pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()){
-                            boolean Verified= FirebaseAuth.getInstance().getCurrentUser().isEmailVerified();
-                            if(!Verified){
+                        if (task.isSuccessful()) {
+                            boolean Verified = FirebaseAuth.getInstance().getCurrentUser().isEmailVerified();
+                            if (!Verified) {
                                 progressBar.setVisibility(View.INVISIBLE);
                                 showDialog();
-                            }
-                            else{
+                            } else {
                                 progressBar.setVisibility(View.INVISIBLE);
-                                sharedPreferences= getSharedPreferences("dataPass",MODE_PRIVATE);
-                                sharedPreferences.edit().putString("password",Password.getText().toString().trim()).apply();
-                                Toast.makeText(LoginActivities.this,"Đăng nhập thành công", Toast.LENGTH_SHORT).show();
-                                startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                                sharedPreferences = getSharedPreferences("dataPass", MODE_PRIVATE);
+                                sharedPreferences.edit().putString("password", Password.getText().toString().trim()).apply();
+                                Toast.makeText(LoginActivities.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
+                                startActivity(new Intent(getApplicationContext(), MainActivity.class));
                             }
 
-                        }
-                        else{
+                        } else {
                             progressBar.setVisibility(View.INVISIBLE);
-                            Toast.makeText(LoginActivities.this,task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivities.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -183,8 +194,8 @@ public class LoginActivities extends AppCompatActivity {
         forgotPasswordBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email= Email.getText().toString().trim();
-                if(TextUtils.isEmpty(email)){
+                String email = Email.getText().toString().trim();
+                if (TextUtils.isEmpty(email)) {
                     Email.setError("Nhập Email");
                     return;
                 }
@@ -200,7 +211,7 @@ public class LoginActivities extends AppCompatActivity {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         progressBar.setVisibility(View.INVISIBLE);
-                        Toast.makeText(LoginActivities.this,"Không gửi được email xác thực "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivities.this, "Không gửi được email xác thực " + e.getMessage(), Toast.LENGTH_SHORT).show();
 
                     }
                 });
@@ -211,17 +222,17 @@ public class LoginActivities extends AppCompatActivity {
 
     }
 
-    private void anhxa(){
-        regesterBtn= findViewById(R.id.register);
-        forgotPasswordBtn= findViewById(R.id.forgotpass);
-        loginbtn=findViewById(R.id.loginbtn);
-        Email=findViewById(R.id.Email);
-        Password=findViewById(R.id.password);
-        progressBar= findViewById(R.id.progressBar2);
-        googlebtn=findViewById(R.id.google_btn);
+    private void anhxa() {
+        regesterBtn = findViewById(R.id.register);
+        forgotPasswordBtn = findViewById(R.id.forgotpass);
+        loginbtn = findViewById(R.id.loginbtn);
+        Email = findViewById(R.id.Email);
+        Password = findViewById(R.id.password);
+        progressBar = findViewById(R.id.progressBar2);
+        googlebtn = findViewById(R.id.google_btn);
     }
 
-    public void loginWithBiometric(){
+    public void loginWithBiometric() {
         //Đn vân tay
         BiometricManager biometricManager = BiometricManager.from(this);
         switch (biometricManager.canAuthenticate(BIOMETRIC_STRONG | DEVICE_CREDENTIAL)) {
@@ -229,11 +240,11 @@ public class LoginActivities extends AppCompatActivity {
                 Log.d("MY_APP_TAG", "App can authenticate using biometrics.");
                 break;
             case BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE:
-                Toast.makeText(LoginActivities.this,"Không có cảm biến vân tay", Toast.LENGTH_LONG);
+                Toast.makeText(LoginActivities.this, "Không có cảm biến vân tay", Toast.LENGTH_LONG);
                 break;
             case BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE:
                 Log.e("MY_APP_TAG", "Biometric features are currently unavailable.");
-                Toast.makeText(LoginActivities.this,"Cảm biến vân tay không dùng được hoặc đang bận", Toast.LENGTH_LONG);
+                Toast.makeText(LoginActivities.this, "Cảm biến vân tay không dùng được hoặc đang bận", Toast.LENGTH_LONG);
                 break;
             case BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED:
                 // Prompts the user to create credentials that your app accepts.
@@ -251,10 +262,10 @@ public class LoginActivities extends AppCompatActivity {
             public void onAuthenticationError(int errorCode,
                                               @NonNull CharSequence errString) {
                 super.onAuthenticationError(errorCode, errString);
-                SharedPreferences editor= LoginActivities.this.getSharedPreferences("data",MODE_PRIVATE);
+                SharedPreferences editor = LoginActivities.this.getSharedPreferences("data", MODE_PRIVATE);
                 editor.edit().clear().commit();
 
-                SharedPreferences editor1= LoginActivities.this.getSharedPreferences("dataPass",MODE_PRIVATE);
+                SharedPreferences editor1 = LoginActivities.this.getSharedPreferences("dataPass", MODE_PRIVATE);
                 editor1.edit().clear().commit();
 //                Toast.makeText(getApplicationContext(), "Authentication error: " + errString, Toast.LENGTH_SHORT).show();
             }
@@ -263,30 +274,29 @@ public class LoginActivities extends AppCompatActivity {
             public void onAuthenticationSucceeded(
                     @NonNull BiometricPrompt.AuthenticationResult result) {
                 super.onAuthenticationSucceeded(result);
-                sharedPreferences= getSharedPreferences("data",MODE_PRIVATE);
-                String type= sharedPreferences.getString("type","");
-                if(type.equals("google")){
+                sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
+                String type = sharedPreferences.getString("type", "");
+                if (type.equals("google")) {
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                    if(user!= null){
-                        Intent intent = new Intent(LoginActivities.this,MainActivity.class);
+                    if (user != null) {
+                        Intent intent = new Intent(LoginActivities.this, MainActivity.class);
                         startActivity(intent);
-                        Log.d("here","1");
+                        Log.d("here", "1");
                     }
-                }else{
-                    sharedPreferences= getSharedPreferences("data",MODE_PRIVATE);
-                    String email= sharedPreferences.getString("email","");
-                    sharedPreferences= getSharedPreferences("dataPass",MODE_PRIVATE);
-                    String Pass= sharedPreferences.getString("password","");
+                } else {
+                    sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
+                    String email = sharedPreferences.getString("email", "");
+                    sharedPreferences = getSharedPreferences("dataPass", MODE_PRIVATE);
+                    String Pass = sharedPreferences.getString("password", "");
 
-                    mAuth.signInWithEmailAndPassword(email,Pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    mAuth.signInWithEmailAndPassword(email, Pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
-                            if(task.isSuccessful()){
-                                Toast.makeText(LoginActivities.this,"Đăng nhập thành công", Toast.LENGTH_SHORT);
-                                startActivity(new Intent(getApplicationContext(),MainActivity.class));
-                            }
-                            else{
-                                Toast.makeText(LoginActivities.this,task.getException().getMessage(), Toast.LENGTH_SHORT);
+                            if (task.isSuccessful()) {
+                                Toast.makeText(LoginActivities.this, "Đăng nhập thành công", Toast.LENGTH_SHORT);
+                                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                            } else {
+                                Toast.makeText(LoginActivities.this, task.getException().getMessage(), Toast.LENGTH_SHORT);
                             }
                         }
                     });
@@ -314,17 +324,18 @@ public class LoginActivities extends AppCompatActivity {
 
 //    hetDn van Tay
     }
+
     protected void onStart() {
         super.onStart();
-        sharedPreferences= getSharedPreferences("data",MODE_PRIVATE);
-        boolean isLogin= sharedPreferences.getBoolean("isLogin",false);
-        if(isLogin==true){
+        sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
+        boolean isLogin = sharedPreferences.getBoolean("isLogin", false);
+        if (isLogin == true) {
             biometricPrompt.authenticate(promptInfo);
         }
     }
 
-    public void showDialog(){
-        AlertDialog.Builder builder= new AlertDialog.Builder(LoginActivities.this);
+    public void showDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivities.this);
         builder.setTitle("Thông báo");
         builder.setMessage("Vui lòng vào địa chỉ email để xác thực tài khoản.Bạn sẽ không đăng nhập được nếu không xác thực tài khoản.");
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -336,26 +347,28 @@ public class LoginActivities extends AppCompatActivity {
         builder.setNegativeButton("Gửi lại mail", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                FirebaseUser user= mAuth.getCurrentUser();
+                FirebaseUser user = mAuth.getCurrentUser();
                 user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(LoginActivities.this,"Đã gửi email xác nhận", Toast.LENGTH_LONG).show();
+                        Toast.makeText(LoginActivities.this, "Đã gửi email xác nhận", Toast.LENGTH_LONG).show();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(LoginActivities.this,"Không gửi được email xác thực "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivities.this, "Không gửi được email xác thực " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
         });
         AlertDialog alert = builder.create();
         alert.show();
-    };
+    }
 
-    public void showDialogForgotPass(){
-        AlertDialog.Builder builder= new AlertDialog.Builder(LoginActivities.this);
+    ;
+
+    public void showDialogForgotPass() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivities.this);
         builder.setTitle("Thông báo");
         builder.setMessage("Đã gửi mail đổi mật khẩu. Vui lòng vào mail để đổi lại mật khẩu của bạn");
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -366,61 +379,63 @@ public class LoginActivities extends AppCompatActivity {
         });
         AlertDialog alert = builder.create();
         alert.show();
-    };
+    }
+
+    ;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==1234){
-            Task<GoogleSignInAccount> task= GoogleSignIn.getSignedInAccountFromIntent(data);
-                try {
-                    GoogleSignInAccount account = task.getResult(ApiException.class);
-                    AuthCredential credential= GoogleAuthProvider.getCredential(account.getIdToken(),null);
-                    FirebaseAuth.getInstance().signInWithCredential(credential)
-                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if(task.isSuccessful()){
-                                        String fullname=FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
-                                        String uid=FirebaseAuth.getInstance().getCurrentUser().getUid();
-                                        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(LoginActivities.this);
-                                        String email=acct.getEmail();;
+        if (requestCode == 1234) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+                FirebaseAuth.getInstance().signInWithCredential(credential)
+                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    String fullname = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+                                    String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                                    GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(LoginActivities.this);
+                                    String email = acct.getEmail();
+                                    ;
 
-                                        chechUserLoginGGExists(uid,fullname,"","",email);
+                                    chechUserLoginGGExists(uid, fullname, "", "", email);
 
-                                    }else{
-                                        Toast.makeText(LoginActivities.this, task.getException().getMessage(),Toast.LENGTH_SHORT).show();
-                                    }
+                                } else {
+                                    Toast.makeText(LoginActivities.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                 }
-                            });
-                } catch (ApiException e) {
-                    e.printStackTrace();
-                }
+                            }
+                        });
+            } catch (ApiException e) {
+                e.printStackTrace();
+            }
 
         }
     }
 
 
-
-    public void chechUserLoginGGExists(String uid,String fullName, String phoneNumber,String address,String email){
+    public void chechUserLoginGGExists(String uid, String fullName, String phoneNumber, String address, String email) {
         mDatabase = FirebaseDatabase.getInstance().getReference("Users");
 
         mDatabase.child(uid).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if(task.isSuccessful()){
-                    if(task.getResult().exists()){
-                        Intent intent= new Intent(getApplicationContext(), MainActivity.class);
+                if (task.isSuccessful()) {
+                    if (task.getResult().exists()) {
+                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(intent);
-                    }
-                    else{
-                        User user = new User(fullName, phoneNumber,address,email,uid);
+                    } else {
+                        User user = new User(fullName, phoneNumber, address, email, uid);
                         mDatabase.child(uid).setValue(user);
-                        Intent intent= new Intent(getApplicationContext(), MainActivity.class);
+                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(intent);
+                        finish();
                     }
-                }else {
-                    Toast.makeText(getApplicationContext(),"Không đọc được", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Không đọc được", Toast.LENGTH_SHORT).show();
                 }
             }
         });
