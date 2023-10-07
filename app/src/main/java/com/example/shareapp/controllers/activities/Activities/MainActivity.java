@@ -28,7 +28,7 @@ import com.google.firebase.database.FirebaseDatabase;
 public class MainActivity extends AppCompatActivity {
 
     TextView name,email, address;
-    Button signOutBtn;
+    Button signOutBtn,userInfor;
     private DatabaseReference mDatabase;
     GoogleSignInOptions gso;
     GoogleSignInClient gsc;
@@ -71,6 +71,13 @@ public class MainActivity extends AppCompatActivity {
                 signOut();
             }
         });
+
+        userInfor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), UserInfor.class));
+            }
+        });
     }
 
     private void anhxa(){
@@ -78,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
     email = findViewById(R.id.email);
     address=findViewById(R.id.addressGet);
     signOutBtn = findViewById(R.id.signout);
+    userInfor= findViewById(R.id.userInfor);
     }
     public void readDataUser(String uid){
         mDatabase.child(uid).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
