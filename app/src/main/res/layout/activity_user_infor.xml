@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".controllers.activities.Activities.UserInfor">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="Thông tin"
+        android:layout_marginTop="30dp"
+        android:textSize="34sp" />
+
+    <EditText
+        android:id="@+id/fullNameEdit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="147dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:drawableLeft="@drawable/baseline_person_24_black"
+        android:drawablePadding="20dp"
+        android:text="Full Name"
+        android:textSize="24sp" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/addressEdit"
+        android:text="Address"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:textColor="@color/black"
+        android:drawableLeft="@drawable/baseline_home_24_black"
+        android:drawablePadding="20dp"
+        android:layout_below="@+id/fullNameEdit"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:textSize="24sp"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/emailEdit"
+        android:text="Email"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:textColor="@color/black"
+        android:drawableLeft="@drawable/baseline_email_24_black"
+        android:drawablePadding="20dp"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/addressEdit"
+        android:textSize="24sp"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/phoneNumberEdit"
+        android:text="Phone Number"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:textColor="@color/black"
+        android:drawableLeft="@drawable/baseline_email_24_black"
+        android:drawablePadding="20dp"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/emailEdit"
+        android:textSize="24sp"/>
+
+    <Button
+        android:id="@+id/UpdateInforbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/phoneNumberEdit"
+        android:layout_marginStart="99dp"
+        android:layout_marginTop="35dp"
+        android:layout_marginEnd="84dp"
+        android:text="Update Infor" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/signout"
+        android:text="Sign out"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"/>
+
+    <ProgressBar
+        android:id="@+id/progressBar4"
+        android:visibility="invisible"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/signout"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="181dp"
+        android:layout_marginEnd="183dp"
+        android:layout_marginBottom="108dp" />
+
+
+</RelativeLayout>
