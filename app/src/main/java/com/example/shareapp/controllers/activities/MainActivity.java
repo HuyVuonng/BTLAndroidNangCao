@@ -1,4 +1,4 @@
-package com.example.shareapp.controllers.activities.Activities;
+package com.example.shareapp.controllers.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         userInfor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), UserInfor.class));
+                startActivity(new Intent(getApplicationContext(), UserInforActivity.class));
                 finish();
             }
         });
@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
                 SharedPreferences editor1 = MainActivity.this.getSharedPreferences("dataPass", MODE_PRIVATE);
                 editor1.edit().clear().commit();
 
-                Intent i = new Intent(MainActivity.this, LoginActivities.class);
+                Intent i = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(i);
                 FirebaseAuth.getInstance().signOut();
                 finish();

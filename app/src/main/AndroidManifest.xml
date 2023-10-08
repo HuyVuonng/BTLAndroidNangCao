@@ -16,13 +16,13 @@
         android:theme="@style/Theme.ShareApp"
         tools:targetApi="31">
         <activity
-            android:name=".controllers.activities.Activities.UserInfor"
+            android:name=".controllers.activities.UserInforActivity"
             android:exported="false" />
         <activity
-            android:name=".controllers.activities.Activities.RegisterActivities"
+            android:name=".controllers.activities.RegisterActivity"
             android:exported="false" />
         <activity
-            android:name=".controllers.activities.Activities.LoginActivities"
+            android:name=".controllers.activities.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,7 +31,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".controllers.activities.Activities.MainActivity"
+            android:name=".controllers.activities.MainActivity"
             android:exported="false" />
 
         <meta-data

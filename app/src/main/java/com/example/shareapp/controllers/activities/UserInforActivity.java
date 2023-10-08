@@ -1,4 +1,4 @@
-package com.example.shareapp.controllers.activities.Activities;
+package com.example.shareapp.controllers.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,7 +20,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class UserInfor extends AppCompatActivity {
+public class UserInforActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
     EditText fullNameEdit, emailEdit, phoneNumberEdit, addressEdit;
     Button updateInforBTN;

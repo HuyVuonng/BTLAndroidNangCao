@@ -1,13 +1,8 @@
-package com.example.shareapp.controllers.activities.Activities;
+package com.example.shareapp.controllers.activities;
 
 import static androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG;
 import static androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.IntentSenderRequest;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,11 +11,9 @@ import androidx.biometric.BiometricPrompt;
 import androidx.core.content.ContextCompat;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -39,10 +32,6 @@ import android.widget.Toast;
 
 import com.example.shareapp.R;
 import com.example.shareapp.models.User;
-import com.google.android.gms.auth.api.identity.BeginSignInRequest;
-import com.google.android.gms.auth.api.identity.BeginSignInResult;
-import com.google.android.gms.auth.api.identity.Identity;
-import com.google.android.gms.auth.api.identity.SignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -50,7 +39,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -63,7 +51,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.concurrent.Executor;
 
-public class LoginActivities extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE = 101010;
 
@@ -139,7 +127,7 @@ public class LoginActivities extends AppCompatActivity {
         regesterBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(LoginActivities.this, RegisterActivities.class);
+                Intent i = new Intent(LoginActivity.this, RegisterActivity.class);
                 startActivity(i);
             }
         });
@@ -155,7 +143,7 @@ public class LoginActivities extends AppCompatActivity {
                 String email = Email.getText().toString().trim();
                 String Pass = Password.getText().toString().trim();
 
-                SharedPreferences editor = LoginActivities.this.getSharedPreferences("dataPass", MODE_PRIVATE);
+                SharedPreferences editor = LoginActivity.this.getSharedPreferences("dataPass", MODE_PRIVATE);
                 editor.edit().clear().commit();
                 if (TextUtils.isEmpty(email)) {
                     Email.setError("Nhập Email");
@@ -178,13 +166,13 @@ public class LoginActivities extends AppCompatActivity {
                                 progressBar.setVisibility(View.INVISIBLE);
                                 sharedPreferences = getSharedPreferences("dataPass", MODE_PRIVATE);
                                 sharedPreferences.edit().putString("password", Password.getText().toString().trim()).apply();
-                                Toast.makeText(LoginActivities.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
                                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
                             }
 
                         } else {
                             progressBar.setVisibility(View.INVISIBLE);
-                            Toast.makeText(LoginActivities.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -211,7 +199,7 @@ public class LoginActivities extends AppCompatActivity {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         progressBar.setVisibility(View.INVISIBLE);
-                        Toast.makeText(LoginActivities.this, "Không gửi được email xác thực " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, "Không gửi được email xác thực " + e.getMessage(), Toast.LENGTH_SHORT).show();
 
                     }
                 });
@@ -240,11 +228,11 @@ public class LoginActivities extends AppCompatActivity {
                 Log.d("MY_APP_TAG", "App can authenticate using biometrics.");
                 break;
             case BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE:
-                Toast.makeText(LoginActivities.this, "Không có cảm biến vân tay", Toast.LENGTH_LONG);
+                Toast.makeText(LoginActivity.this, "Không có cảm biến vân tay", Toast.LENGTH_LONG);
                 break;
             case BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE:
                 Log.e("MY_APP_TAG", "Biometric features are currently unavailable.");
-                Toast.makeText(LoginActivities.this, "Cảm biến vân tay không dùng được hoặc đang bận", Toast.LENGTH_LONG);
+                Toast.makeText(LoginActivity.this, "Cảm biến vân tay không dùng được hoặc đang bận", Toast.LENGTH_LONG);
                 break;
             case BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED:
                 // Prompts the user to create credentials that your app accepts.
@@ -256,16 +244,16 @@ public class LoginActivities extends AppCompatActivity {
         }
 
         executor = ContextCompat.getMainExecutor(this);
-        biometricPrompt = new BiometricPrompt(LoginActivities.this,
+        biometricPrompt = new BiometricPrompt(LoginActivity.this,
                 executor, new BiometricPrompt.AuthenticationCallback() {
             @Override
             public void onAuthenticationError(int errorCode,
                                               @NonNull CharSequence errString) {
                 super.onAuthenticationError(errorCode, errString);
-                SharedPreferences editor = LoginActivities.this.getSharedPreferences("data", MODE_PRIVATE);
+                SharedPreferences editor = LoginActivity.this.getSharedPreferences("data", MODE_PRIVATE);
                 editor.edit().clear().commit();
 
-                SharedPreferences editor1 = LoginActivities.this.getSharedPreferences("dataPass", MODE_PRIVATE);
+                SharedPreferences editor1 = LoginActivity.this.getSharedPreferences("dataPass", MODE_PRIVATE);
                 editor1.edit().clear().commit();
 //                Toast.makeText(getApplicationContext(), "Authentication error: " + errString, Toast.LENGTH_SHORT).show();
             }
@@ -279,7 +267,7 @@ public class LoginActivities extends AppCompatActivity {
                 if (type.equals("google")) {
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     if (user != null) {
-                        Intent intent = new Intent(LoginActivities.this, MainActivity.class);
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
                         Log.d("here", "1");
                     }
@@ -293,10 +281,10 @@ public class LoginActivities extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-                                Toast.makeText(LoginActivities.this, "Đăng nhập thành công", Toast.LENGTH_SHORT);
+                                Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT);
                                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
                             } else {
-                                Toast.makeText(LoginActivities.this, task.getException().getMessage(), Toast.LENGTH_SHORT);
+                                Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT);
                             }
                         }
                     });
@@ -335,7 +323,7 @@ public class LoginActivities extends AppCompatActivity {
     }
 
     public void showDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivities.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
         builder.setTitle("Thông báo");
         builder.setMessage("Vui lòng vào địa chỉ email để xác thực tài khoản.Bạn sẽ không đăng nhập được nếu không xác thực tài khoản.");
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -351,12 +339,12 @@ public class LoginActivities extends AppCompatActivity {
                 user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(LoginActivities.this, "Đã gửi email xác nhận", Toast.LENGTH_LONG).show();
+                        Toast.makeText(LoginActivity.this, "Đã gửi email xác nhận", Toast.LENGTH_LONG).show();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(LoginActivities.this, "Không gửi được email xác thực " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, "Không gửi được email xác thực " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -368,7 +356,7 @@ public class LoginActivities extends AppCompatActivity {
     ;
 
     public void showDialogForgotPass() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivities.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
         builder.setTitle("Thông báo");
         builder.setMessage("Đã gửi mail đổi mật khẩu. Vui lòng vào mail để đổi lại mật khẩu của bạn");
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -398,14 +386,14 @@ public class LoginActivities extends AppCompatActivity {
                                 if (task.isSuccessful()) {
                                     String fullname = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
                                     String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                                    GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(LoginActivities.this);
+                                    GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(LoginActivity.this);
                                     String email = acct.getEmail();
                                     ;
 
                                     chechUserLoginGGExists(uid, fullname, "", "", email);
 
                                 } else {
-                                    Toast.makeText(LoginActivities.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });

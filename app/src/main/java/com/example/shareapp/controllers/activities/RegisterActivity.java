@@ -1,4 +1,4 @@
-package com.example.shareapp.controllers.activities.Activities;
+package com.example.shareapp.controllers.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,7 +29,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class RegisterActivities extends AppCompatActivity {
+public class RegisterActivity extends AppCompatActivity {
     FirebaseAuth mAuth;
     EditText fullName, phoneNumber, address, email, passWord;
     Button registerbtn;
@@ -45,10 +45,10 @@ public class RegisterActivities extends AppCompatActivity {
         anhxa();
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
-        SharedPreferences editor = RegisterActivities.this.getSharedPreferences("data", MODE_PRIVATE);
+        SharedPreferences editor = RegisterActivity.this.getSharedPreferences("data", MODE_PRIVATE);
         editor.edit().clear().commit();
 
-        SharedPreferences editor1 = RegisterActivities.this.getSharedPreferences("dataPass", MODE_PRIVATE);
+        SharedPreferences editor1 = RegisterActivity.this.getSharedPreferences("dataPass", MODE_PRIVATE);
         editor1.edit().clear().commit();
 
         passWord.setOnTouchListener(new View.OnTouchListener() {
@@ -137,13 +137,13 @@ public class RegisterActivities extends AppCompatActivity {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
                                     progressBar.setVisibility(View.INVISIBLE);
-                                    Toast.makeText(RegisterActivities.this, "Không gửi được email xác thực " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(RegisterActivity.this, "Không gửi được email xác thực " + e.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             });
 
                         } else {
                             progressBar.setVisibility(View.INVISIBLE);
-                            Toast.makeText(RegisterActivities.this, "Lỗi " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterActivity.this, "Lỗi " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -164,13 +164,13 @@ public class RegisterActivities extends AppCompatActivity {
     }
 
     public void showDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivities.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
         builder.setTitle("Đăng ký thành công");
         builder.setMessage("Đã gửi email xác thực. Vui lòng vào địa chỉ email để xác thực tài khoản.Bạn sẽ không đăng nhập được nếu không xác thực tài khoản.");
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                startActivity(new Intent(getApplicationContext(), LoginActivities.class));
+                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
                 finish();
             }
         });
