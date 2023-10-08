@@ -1,6 +1,6 @@
 # Meta
 
-**Group**: G07
+**Group**: [G07](https://docs.google.com/spreadsheets/d/141R7inhdekbncDFOVBZad4m2oDUPQS0wDTcB51FFDsY/edit#gid=0&range=A23)
 
 **Member**:
 * Tạ Đức Hoàn - 2110A05 - Leader
@@ -8,6 +8,8 @@
 * Vương Quang Huy - 2010A01
 
 **Subject**: Chia sẻ nhu yếu phẩm trong 1 cộng đồng 
+
+**Report**: [Google Doc](https://docs.google.com/document/d/1AMO02eHurXga0PAgt6CiPUNLQFlXu7OF/edit)
 
 ## Rules
 
