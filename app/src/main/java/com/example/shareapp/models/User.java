@@ -83,8 +83,6 @@ public class User {
         String address = sharedPreferences.getString("address", "");
         String uid = sharedPreferences.getString("uid", "");
 
-        User user = new User(fullName, phoneNumber, address, email, uid);
-
-        return user;
+        return new User(fullName, phoneNumber, address, email, uid);
     }
 }
