@@ -73,6 +73,7 @@ public class LoginActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
 
 
+    @RequiresApi(api = Build.VERSION_CODES.R)
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -208,9 +209,11 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            this.loginWithBiometric();
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+//            this.loginWithBiometric();
+//        }
+
+            loginWithBiometric();
 
     }
 

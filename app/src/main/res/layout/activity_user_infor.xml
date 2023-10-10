@@ -36,13 +36,31 @@
         android:orientation="vertical"
         android:padding="20px">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="30dp"
-            android:text="Your Profile"
-            android:textSize="34sp" />
+             >
+
+            <TextView
+                android:id="@+id/activity_userInfor_tv_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="30dp"
+                android:text="Your Profile"
+                android:textSize="34sp" />
+
+            <TextView
+                android:id="@+id/activity_userInfor_tv_logout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="35dp"
+                android:layout_marginTop="30dp"
+                android:layout_toRightOf="@+id/activity_userInfor_tv_header"
+                android:text="Logout"
+                android:textSize="15sp"/>
+        </RelativeLayout>
+
 
         <EditText
             android:id="@+id/fullNameEdit"
@@ -103,19 +121,19 @@
             android:id="@+id/UpdateInforbtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Update"
-            android:backgroundTint="@color/purple_main"/>
+            android:backgroundTint="@color/purple_main"
+            android:text="Update" />
 
         <ProgressBar
             android:id="@+id/progressBar4"
             style="?android:attr/progressBarStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="44dp"
+            android:layout_height="34dp"
             android:layout_below="@+id/UpdateInforbtn"
             android:layout_marginStart="181dp"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="30dp"
             android:layout_marginEnd="183dp"
-            android:layout_marginBottom="108dp"
+            android:layout_marginBottom="10dp"
             android:visibility="invisible" />
     </LinearLayout>
 

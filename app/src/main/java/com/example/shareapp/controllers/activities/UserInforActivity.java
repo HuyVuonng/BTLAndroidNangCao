@@ -4,16 +4,21 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shareapp.R;
 import com.example.shareapp.controllers.methods.NavigationMethod;
 import com.example.shareapp.models.User;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -28,7 +33,10 @@ public class UserInforActivity extends AppCompatActivity {
 
     EditText fullNameEdit, emailEdit, phoneNumberEdit, addressEdit;
     Button updateInforBTN;
+    TextView logoutBTN;
     ProgressBar progressBar;
+    GoogleSignInClient gsc;
+    GoogleSignInOptions gso;
 
     private void getViews() {
         fullNameEdit = findViewById(R.id.fullNameEdit);
@@ -38,6 +46,7 @@ public class UserInforActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar4);
         updateInforBTN = findViewById(R.id.UpdateInforbtn);
         bnv_menu = findViewById(R.id.main_bnv_menu);
+        logoutBTN=findViewById(R.id.activity_userInfor_tv_logout);
     }
 
     private void setEventListener() {
@@ -67,6 +76,22 @@ public class UserInforActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.INVISIBLE);
                 Toast.makeText(getApplicationContext(), "Cập nhật thành công", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                finish();
+            }
+        });
+
+        logoutBTN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences editor = UserInforActivity.this.getSharedPreferences("data", MODE_PRIVATE);
+                editor.edit().clear().apply();
+
+                SharedPreferences editor1 = UserInforActivity.this.getSharedPreferences("dataPass", MODE_PRIVATE);
+                editor1.edit().clear().apply();
+
+                Intent i = new Intent(UserInforActivity.this, LoginActivity.class);
+                startActivity(i);
+                FirebaseAuth.getInstance().signOut();
                 finish();
             }
         });
@@ -115,6 +140,27 @@ public class UserInforActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(getApplicationContext(), "Không đọc được", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+    }
+
+    private void signOut() {
+        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+        gsc = GoogleSignIn.getClient(this, gso);
+        gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+
+                SharedPreferences editor = UserInforActivity.this.getSharedPreferences("data", MODE_PRIVATE);
+                editor.edit().clear().apply();
+
+                SharedPreferences editor1 = UserInforActivity.this.getSharedPreferences("dataPass", MODE_PRIVATE);
+                editor1.edit().clear().apply();
+
+                Intent i = new Intent(UserInforActivity.this, LoginActivity.class);
+                startActivity(i);
+                FirebaseAuth.getInstance().signOut();
+                finish();
             }
         });
     }
