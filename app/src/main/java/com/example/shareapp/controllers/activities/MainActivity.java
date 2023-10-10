@@ -1,15 +1,22 @@
 package com.example.shareapp.controllers.activities;
 
+import com.example.shareapp.controllers.fragments.PostAddSelectTypeBottomSheetDialog;
 import com.example.shareapp.controllers.methods.NavigationMethod;
 import com.example.shareapp.models.User;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,6 +29,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
@@ -30,6 +38,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
     BottomNavigationView bnv_menu;
+    FloatingActionButton btn_add_post;
 
     private DatabaseReference mDatabase;
     GoogleSignInOptions gso;
@@ -37,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void getViews() {
         this.bnv_menu = findViewById(R.id.main_bnv_menu);
-
+        this.btn_add_post = findViewById(R.id.post_fab_add_post);
     }
 
     private void setEventListener() {
@@ -59,6 +68,10 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             }
             return true;
+        });
+        btn_add_post.setOnClickListener(v -> {
+            PostAddSelectTypeBottomSheetDialog postAddSelectTypeBottomSheetDialog = new PostAddSelectTypeBottomSheetDialog();
+            postAddSelectTypeBottomSheetDialog.show(getSupportFragmentManager(), "postAddSelectTypeBottomSheetDialog");
         });
     }
 
