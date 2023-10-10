@@ -12,9 +12,11 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.shareapp.R;
+import com.example.shareapp.controllers.methods.NavigationMethod;
 import com.example.shareapp.models.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
@@ -22,19 +24,37 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class UserInforActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
+    BottomNavigationView bnv_menu;
+
     EditText fullNameEdit, emailEdit, phoneNumberEdit, addressEdit;
     Button updateInforBTN;
     ProgressBar progressBar;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_infor);
+    private void getViews() {
+        fullNameEdit = findViewById(R.id.fullNameEdit);
+        emailEdit = findViewById(R.id.emailEdit);
+        phoneNumberEdit = findViewById(R.id.phoneNumberEdit);
+        addressEdit = findViewById(R.id.addressEdit);
+        progressBar = findViewById(R.id.progressBar4);
+        updateInforBTN = findViewById(R.id.UpdateInforbtn);
+        bnv_menu = findViewById(R.id.main_bnv_menu);
+    }
 
-        anhxa();
-        mDatabase = FirebaseDatabase.getInstance().getReference("Users");
-        readDataUser(FirebaseAuth.getInstance().getCurrentUser().getUid().toString());
-
+    private void setEventListener() {
+        bnv_menu.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.item_home) {
+                Intent i = new Intent(UserInforActivity.this, MainActivity.class);
+                startActivity(i);
+                finish();
+            }
+            if (id == R.id.item_search) {
+                Intent i = new Intent(UserInforActivity.this, SearchActivity.class);
+                startActivity(i);
+                finish();
+            }
+            return true;
+        });
         updateInforBTN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -52,21 +72,28 @@ public class UserInforActivity extends AppCompatActivity {
         });
     }
 
-    private void anhxa() {
-        fullNameEdit = findViewById(R.id.fullNameEdit);
-        emailEdit = findViewById(R.id.emailEdit);
-        phoneNumberEdit = findViewById(R.id.phoneNumberEdit);
-        addressEdit = findViewById(R.id.addressEdit);
-        progressBar = findViewById(R.id.progressBar4);
-        updateInforBTN = findViewById(R.id.UpdateInforbtn);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_user_infor);
+
+        this.getViews();
+        this.setEventListener();
+        this.mDatabase = FirebaseDatabase.getInstance().getReference("Users");
+        this.readDataUser();
+        NavigationMethod.setNavigationMenu(this.bnv_menu, R.id.item_account);
+
+
     }
+
 
     public void UpdateData(String fullName, String phoneNumber, String address, String email, String uid) {
         User user = new User(fullName, phoneNumber, address, email, uid);
         mDatabase.child(uid).setValue(user);
     }
 
-    public void readDataUser(String uid) {
+    public void readDataUser() {
+        String uid = User.getUserInfor(this.getApplicationContext()).uid;
         mDatabase.child(uid).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {

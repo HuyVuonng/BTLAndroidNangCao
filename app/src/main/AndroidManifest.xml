@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
 
     <application
         android:allowBackup="true"
@@ -15,9 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ShareApp"
         tools:targetApi="31">
-        <activity
-            android:name=".controllers.activities.UserInforActivity"
-            android:exported="false" />
+
         <activity
             android:name=".controllers.activities.RegisterActivity"
             android:exported="false" />
@@ -33,7 +31,12 @@
         <activity
             android:name=".controllers.activities.MainActivity"
             android:exported="false" />
-
+        <activity
+            android:name=".controllers.activities.UserInforActivity"
+            android:exported="false" />
+        <activity
+            android:name=".controllers.activities.SearchActivity"
+            android:exported="false" />
         <meta-data
             android:name="com.google.android.gms.wallet.api.enabled"
             android:value="true" />

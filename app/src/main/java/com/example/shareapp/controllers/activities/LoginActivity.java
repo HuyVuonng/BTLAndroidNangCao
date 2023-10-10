@@ -5,6 +5,7 @@ import static androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTI
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricPrompt;
@@ -15,6 +16,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.TextUtils;
@@ -206,7 +208,9 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        loginWithBiometric();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            this.loginWithBiometric();
+        }
 
     }
 
@@ -220,6 +224,7 @@ public class LoginActivity extends AppCompatActivity {
         googlebtn = findViewById(R.id.google_btn);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.R)
     public void loginWithBiometric() {
         //Đn vân tay
         BiometricManager biometricManager = BiometricManager.from(this);
@@ -317,7 +322,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onStart();
         sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
         boolean isLogin = sharedPreferences.getBoolean("isLogin", false);
-        if (isLogin == true) {
+        if (isLogin) {
             biometricPrompt.authenticate(promptInfo);
         }
     }

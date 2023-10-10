@@ -12,7 +12,7 @@ import com.example.shareapp.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
-public class NavigationMethod extends AppCompatActivity {
+public class NavigationMethod {
     public static void setNavigationMenu(BottomNavigationView bnv_menu, int selectedItemId){
         //Bỏ màu nền
         bnv_menu.setBackground(null);
@@ -22,5 +22,4 @@ public class NavigationMethod extends AppCompatActivity {
         MenuItem item = bnv_menu.getMenu().findItem(selectedItemId);
 
     }
-
 }
