@@ -12,9 +12,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class SearchActivity extends AppCompatActivity {
 
     BottomNavigationView bnv_menu;
+
     private void getViews() {
         this.bnv_menu = findViewById(R.id.main_bnv_menu);
     }
+
     private void setEventListener() {
         bnv_menu.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
@@ -31,6 +33,7 @@ public class SearchActivity extends AppCompatActivity {
             return true;
         });
     }
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);

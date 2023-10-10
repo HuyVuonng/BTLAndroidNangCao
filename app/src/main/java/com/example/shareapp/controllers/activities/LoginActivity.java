@@ -191,7 +191,6 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
                 progressBar.setVisibility(View.VISIBLE);
-
                 mAuth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -213,7 +212,7 @@ public class LoginActivity extends AppCompatActivity {
 //            this.loginWithBiometric();
 //        }
 
-            loginWithBiometric();
+        loginWithBiometric();
 
     }
 

@@ -93,24 +93,29 @@ public class RegisterActivity extends AppCompatActivity {
                 String FullName = fullName.getText().toString().trim();
                 String Address = address.getText().toString().trim();
 
-                if (TextUtils.isEmpty(Email)) {
-                    email.setError("Nhập Email");
-                    return;
-                }
-                if (TextUtils.isEmpty(Pass)) {
-                    passWord.setError("Nhập mật khẩu");
+
+                if (TextUtils.isEmpty(FullName)) {
+                    fullName.setError("Nhập tên");
                     return;
                 }
                 if (TextUtils.isEmpty(PhoneNumber)) {
                     phoneNumber.setError("Nhập số điện thoại");
                     return;
                 }
-                if (TextUtils.isEmpty(FullName)) {
-                    fullName.setError("Nhập tên");
+                if (PhoneNumber.length() > 10) {
+                    phoneNumber.setError("Nhập số điện thoại sai");
                     return;
                 }
                 if (TextUtils.isEmpty(Address)) {
                     address.setError("Nhập địa chỉ");
+                    return;
+                }
+                if (TextUtils.isEmpty(Email)) {
+                    email.setError("Nhập Email");
+                    return;
+                }
+                if (TextUtils.isEmpty(Pass)) {
+                    passWord.setError("Nhập mật khẩu");
                     return;
                 }
                 if (Pass.length() < 6) {

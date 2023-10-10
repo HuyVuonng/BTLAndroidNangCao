@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -46,7 +47,7 @@ public class UserInforActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar4);
         updateInforBTN = findViewById(R.id.UpdateInforbtn);
         bnv_menu = findViewById(R.id.main_bnv_menu);
-        logoutBTN=findViewById(R.id.activity_userInfor_tv_logout);
+        logoutBTN = findViewById(R.id.activity_userInfor_tv_logout);
     }
 
     private void setEventListener() {
@@ -67,6 +68,26 @@ public class UserInforActivity extends AppCompatActivity {
         updateInforBTN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (TextUtils.isEmpty(fullNameEdit.getText().toString().trim())) {
+                    fullNameEdit.setError("Nhập họ tên");
+                    return;
+                }
+                if (TextUtils.isEmpty(phoneNumberEdit.getText().toString().trim())) {
+                    phoneNumberEdit.setError("Nhập số điện thoại");
+                    return;
+                }
+                if (phoneNumberEdit.getText().toString().trim().length() > 10) {
+                    phoneNumberEdit.setError("Nhập số điện thoại sai");
+                    return;
+                }
+                if (TextUtils.isEmpty(addressEdit.getText().toString().trim())) {
+                    addressEdit.setError("Nhập địa chỉ");
+                    return;
+                }
+                if (TextUtils.isEmpty(emailEdit.getText().toString().trim())) {
+                    emailEdit.setError("Nhập địa chỉ email");
+                    return;
+                }
                 progressBar.setVisibility(View.VISIBLE);
                 UpdateData(fullNameEdit.getText().toString().trim(),
                         phoneNumberEdit.getText().toString().trim(),

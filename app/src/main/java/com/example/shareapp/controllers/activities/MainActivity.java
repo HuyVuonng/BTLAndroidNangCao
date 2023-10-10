@@ -47,12 +47,12 @@ public class MainActivity extends AppCompatActivity {
     private void setEventListener() {
         bnv_menu.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
-           if (id == R.id.item_account) {
+            if (id == R.id.item_account) {
                 Intent i = new Intent(MainActivity.this, UserInforActivity.class);
                 startActivity(i);
                 finish();
             }
-           if (id == R.id.item_search) {
+            if (id == R.id.item_search) {
                 Intent i = new Intent(MainActivity.this, SearchActivity.class);
                 startActivity(i);
                 finish();
