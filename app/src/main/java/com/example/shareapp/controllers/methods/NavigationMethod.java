@@ -13,7 +13,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
 public class NavigationMethod {
-    public static void setNavigationMenu(BottomNavigationView bnv_menu, int selectedItemId){
+    public static void setNavigationMenu(BottomNavigationView bnv_menu, int selectedItemId) {
         //Bỏ màu nền
         bnv_menu.setBackground(null);
         bnv_menu.setLabelVisibilityMode(NavigationBarView.LABEL_VISIBILITY_LABELED);
