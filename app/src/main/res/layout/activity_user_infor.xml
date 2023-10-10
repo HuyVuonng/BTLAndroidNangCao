@@ -93,7 +93,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="10dp"
-            android:drawableLeft="@drawable/baseline_email_24_black"
+            android:drawableLeft="@drawable/baseline_phone_24_black"
             android:drawablePadding="20dp"
             android:text="Phone Number"
             android:textColor="@color/black"
