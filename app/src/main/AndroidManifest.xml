@@ -32,6 +32,9 @@
             android:name=".controllers.activities.MainActivity"
             android:exported="false" />
         <activity
+            android:name=".controllers.activities.NonFoodActivity"
+            android:exported="false" />
+        <activity
             android:name=".controllers.activities.UserInforActivity"
             android:exported="false" />
         <activity

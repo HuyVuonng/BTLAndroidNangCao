@@ -29,10 +29,6 @@ import com.google.firebase.database.FirebaseDatabase;
 
 
 public class MainActivity extends AppCompatActivity {
-
-    TextView name, email, address;
-    Button signOutBtn, userInfor;
-
     BottomNavigationView bnv_menu;
 
     private DatabaseReference mDatabase;
@@ -47,6 +43,11 @@ public class MainActivity extends AppCompatActivity {
     private void setEventListener() {
         bnv_menu.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
+            if (id == R.id.item_non_food) {
+                Intent i = new Intent(MainActivity.this, NonFoodActivity.class);
+                startActivity(i);
+                finish();
+            }
             if (id == R.id.item_account) {
                 Intent i = new Intent(MainActivity.this, UserInforActivity.class);
                 startActivity(i);

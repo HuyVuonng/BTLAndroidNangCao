@@ -58,6 +58,11 @@ public class UserInforActivity extends AppCompatActivity {
                 startActivity(i);
                 finish();
             }
+            if (id == R.id.item_non_food) {
+                Intent i = new Intent(UserInforActivity.this, NonFoodActivity.class);
+                startActivity(i);
+                finish();
+            }
             if (id == R.id.item_search) {
                 Intent i = new Intent(UserInforActivity.this, SearchActivity.class);
                 startActivity(i);
