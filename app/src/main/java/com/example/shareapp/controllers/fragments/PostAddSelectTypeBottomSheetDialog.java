@@ -13,17 +13,21 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDialogFragment;
 
 import com.example.shareapp.R;
 
+import java.util.Objects;
+
 
 public class PostAddSelectTypeBottomSheetDialog extends AppCompatDialogFragment {
     LinearLayout ll_food, ll_non_food;
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.bottom_sheet_add_post, null);
         ll_food = view.findViewById(R.id.ll_add_post_select_type_non_food);
         ll_non_food = view.findViewById(R.id.ll_add_post_select_type_food);
@@ -38,14 +42,14 @@ public class PostAddSelectTypeBottomSheetDialog extends AppCompatDialogFragment 
             @Override
             public void onClick(View v) {
                 Toast.makeText(getContext(), "Food", Toast.LENGTH_SHORT).show();
-                getDialog().dismiss();
+                requireDialog().dismiss();
             }
         });
         ll_non_food.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getContext(), "Non Food", Toast.LENGTH_SHORT).show();
-                getDialog().dismiss();
+                requireDialog().dismiss();
             }
         });
     }
@@ -54,7 +58,7 @@ public class PostAddSelectTypeBottomSheetDialog extends AppCompatDialogFragment 
         super.onResume();
         final AlertDialog dialog = (AlertDialog) getDialog();
         if (dialog != null){
-            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            Objects.requireNonNull(dialog.getWindow()).setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             dialog.getWindow().getAttributes().windowAnimations = R.style.BottomSheetAnimation;
             dialog.getWindow().setGravity(Gravity.BOTTOM);
