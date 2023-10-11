@@ -2,4 +2,5 @@
     <string name="app_name">ShareHub</string>
     <string name="_1000000">1000000</string>
     <string name="title_activity_search">SearchActivity</string>
+    <string name="default_web_client_id" translatable="false">20:1d:26:8f:b0:fc:ad:3d:a1:a5:0c:2d:8a:91:de:2c:6e:78:53:96</string>
 </resources>
