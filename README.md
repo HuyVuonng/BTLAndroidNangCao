@@ -112,4 +112,4 @@ res/
 - All **adapters** should be written in `./controllers/adapters/`
 - All **fragments** should be written in `./controllers/fragments/`
 - All **shared methods** should be written in `./controllers/methods/`
-- All **medels** should be written in `./models/`
+- All **models** should be written in `./models/`
