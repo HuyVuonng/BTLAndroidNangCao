@@ -6,15 +6,20 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.shareapp.R;
+import com.example.shareapp.controllers.fragments.PostAddSelectTypeBottomSheetDialog;
 import com.example.shareapp.controllers.methods.NavigationMethod;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class SearchActivity extends AppCompatActivity {
 
     BottomNavigationView bnv_menu;
+    FloatingActionButton btn_add_post;
+
 
     private void getViews() {
         this.bnv_menu = findViewById(R.id.main_bnv_menu);
+        this.btn_add_post = findViewById(R.id.post_fab_add_post);
     }
 
     private void setEventListener() {
@@ -36,6 +41,10 @@ public class SearchActivity extends AppCompatActivity {
                 finish();
             }
             return true;
+        });
+        btn_add_post.setOnClickListener(v -> {
+            PostAddSelectTypeBottomSheetDialog postAddSelectTypeBottomSheetDialog = new PostAddSelectTypeBottomSheetDialog();
+            postAddSelectTypeBottomSheetDialog.show(getSupportFragmentManager(), "postAddSelectTypeBottomSheetDialog");
         });
     }
 

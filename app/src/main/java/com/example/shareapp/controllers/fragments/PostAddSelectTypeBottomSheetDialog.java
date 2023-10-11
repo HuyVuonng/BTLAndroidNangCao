@@ -38,12 +38,14 @@ public class PostAddSelectTypeBottomSheetDialog extends AppCompatDialogFragment 
             @Override
             public void onClick(View v) {
                 Toast.makeText(getContext(), "Food", Toast.LENGTH_SHORT).show();
+                getDialog().dismiss();
             }
         });
         ll_non_food.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getContext(), "Non Food", Toast.LENGTH_SHORT).show();
+                getDialog().dismiss();
             }
         });
     }

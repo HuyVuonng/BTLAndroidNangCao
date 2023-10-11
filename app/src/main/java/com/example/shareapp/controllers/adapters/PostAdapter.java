@@ -1,5 +1,6 @@
 package com.example.shareapp.controllers.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +26,7 @@ public class PostAdapter extends ArrayAdapter {
         this.posts = objects;
     }
 
+    @SuppressLint("ViewHolder")
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {

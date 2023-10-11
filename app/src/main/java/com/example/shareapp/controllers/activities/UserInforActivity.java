@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shareapp.R;
+import com.example.shareapp.controllers.fragments.PostAddSelectTypeBottomSheetDialog;
 import com.example.shareapp.controllers.methods.NavigationMethod;
 import com.example.shareapp.models.User;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -23,6 +24,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
@@ -31,6 +33,8 @@ import com.google.firebase.database.FirebaseDatabase;
 public class UserInforActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
     BottomNavigationView bnv_menu;
+    FloatingActionButton btn_add_post;
+
 
     EditText fullNameEdit, emailEdit, phoneNumberEdit, addressEdit;
     Button updateInforBTN;
@@ -40,13 +44,14 @@ public class UserInforActivity extends AppCompatActivity {
     GoogleSignInOptions gso;
 
     private void getViews() {
+        this.bnv_menu = findViewById(R.id.main_bnv_menu);
+        this.btn_add_post = findViewById(R.id.post_fab_add_post);
         fullNameEdit = findViewById(R.id.fullNameEdit);
         emailEdit = findViewById(R.id.emailEdit);
         phoneNumberEdit = findViewById(R.id.phoneNumberEdit);
         addressEdit = findViewById(R.id.addressEdit);
         progressBar = findViewById(R.id.progressBar4);
         updateInforBTN = findViewById(R.id.UpdateInforbtn);
-        bnv_menu = findViewById(R.id.main_bnv_menu);
         logoutBTN = findViewById(R.id.activity_userInfor_tv_logout);
     }
 
@@ -69,6 +74,10 @@ public class UserInforActivity extends AppCompatActivity {
                 finish();
             }
             return true;
+        });
+        btn_add_post.setOnClickListener(v -> {
+            PostAddSelectTypeBottomSheetDialog postAddSelectTypeBottomSheetDialog = new PostAddSelectTypeBottomSheetDialog();
+            postAddSelectTypeBottomSheetDialog.show(getSupportFragmentManager(), "postAddSelectTypeBottomSheetDialog");
         });
         updateInforBTN.setOnClickListener(new View.OnClickListener() {
             @Override
