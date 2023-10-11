@@ -3,6 +3,8 @@ package com.example.shareapp.controllers.activities;
 import static androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG;
 import static androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL;
 
+import static com.example.shareapp.controllers.constant.AuthenticateConstant.GOOGLE_REQUEST_CODE_SIGN_IN;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -99,7 +101,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = client.getSignInIntent();
-                startActivityForResult(i, 1234);
+                startActivityForResult(i, GOOGLE_REQUEST_CODE_SIGN_IN);
             }
         });
 
@@ -343,6 +345,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 FirebaseUser user = mAuth.getCurrentUser();
+                assert user != null;
                 user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -381,7 +384,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1234) {
+        if (requestCode == GOOGLE_REQUEST_CODE_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
