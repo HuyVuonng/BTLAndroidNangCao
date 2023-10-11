@@ -82,7 +82,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        anhxa();
+        getViews();
         mAuth = FirebaseAuth.getInstance();
 
         sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
@@ -218,7 +218,7 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private void anhxa() {
+    private void getViews() {
         regesterBtn = findViewById(R.id.register);
         forgotPasswordBtn = findViewById(R.id.forgotpass);
         loginbtn = findViewById(R.id.loginbtn);
