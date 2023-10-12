@@ -44,10 +44,10 @@ public class UserInforUpdateActivity extends AppCompatActivity {
 
     EditText fullNameEdit, emailEdit, phoneNumberEdit, addressEdit;
 
-    Button backBTN, updateBTN;
+    Button updateBTN;
 
     ImageView avataEdit;
-    ImageButton folderBtn;
+    ImageButton backBTN;
     ProgressBar progressBar;
 
     Uri uri;
@@ -66,7 +66,6 @@ public class UserInforUpdateActivity extends AppCompatActivity {
         updateBTN = findViewById(R.id.activity_userInfor_update_btn_update);
         avataEdit = findViewById(R.id.activity_userInfor_update_imgv_avata);
         progressBar = findViewById(R.id.progressBar4);
-        folderBtn = findViewById(R.id.activity_userInfor_update_btn_open_camera);
     }
 
     private void setEventListener() {
@@ -94,7 +93,7 @@ public class UserInforUpdateActivity extends AppCompatActivity {
             }
         });
 
-        folderBtn.setOnClickListener(new View.OnClickListener() {
+        avataEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent photoPicker = new Intent(Intent.ACTION_PICK);
@@ -143,8 +142,8 @@ public class UserInforUpdateActivity extends AppCompatActivity {
                             while (!uriTask.isComplete()) ;
                             Uri urlImage = uriTask.getResult();
                             imgUrl = urlImage.toString();
-                            if(oldImgUri!=""){
-                                StorageReference reference= FirebaseStorage.getInstance().getReferenceFromUrl(oldImgUri);
+                            if (oldImgUri != "") {
+                                StorageReference reference = FirebaseStorage.getInstance().getReferenceFromUrl(oldImgUri);
                                 reference.delete();
                             }
                             updateUserInfor(fullName, phoneNumber, address, email, getUserInfor(UserInforUpdateActivity.this).getUid().toString(),
