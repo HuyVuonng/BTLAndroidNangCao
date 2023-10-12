@@ -1,5 +1,8 @@
 package com.example.shareapp.controllers.activities;
 
+import static com.example.shareapp.models.User.getUserInfor;
+import static com.example.shareapp.models.User.readDataUserFromFireBase;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,13 +10,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.shareapp.R;
 import com.example.shareapp.controllers.fragments.PostAddSelectTypeBottomSheetDialog;
 import com.example.shareapp.controllers.methods.NavigationMethod;
@@ -36,23 +42,24 @@ public class UserInforActivity extends AppCompatActivity {
     FloatingActionButton btn_add_post;
 
 
-    EditText fullNameEdit, emailEdit, phoneNumberEdit, addressEdit;
-    Button updateInforBTN;
-    TextView logoutBTN;
+    TextView fullNameView, emailView, phoneNumberView, addressView, logoutBTN;
+    Button EditInforBTN;
     ProgressBar progressBar;
+    ImageView avataView;
     GoogleSignInClient gsc;
     GoogleSignInOptions gso;
 
     private void getViews() {
         this.bnv_menu = findViewById(R.id.main_bnv_menu);
         this.btn_add_post = findViewById(R.id.post_fab_add_post);
-        fullNameEdit = findViewById(R.id.fullNameEdit);
-        emailEdit = findViewById(R.id.emailEdit);
-        phoneNumberEdit = findViewById(R.id.phoneNumberEdit);
-        addressEdit = findViewById(R.id.addressEdit);
+        fullNameView = findViewById(R.id.fullNameView);
+        emailView = findViewById(R.id.emailView);
+        phoneNumberView = findViewById(R.id.phoneNumberView);
+        addressView = findViewById(R.id.addressView);
         progressBar = findViewById(R.id.progressBar4);
-        updateInforBTN = findViewById(R.id.UpdateInforbtn);
+        EditInforBTN = findViewById(R.id.EditInforbtn);
         logoutBTN = findViewById(R.id.activity_userInfor_tv_logout);
+        avataView = findViewById(R.id.activity_userInfor_imgv_avata);
     }
 
     private void setEventListener() {
@@ -79,55 +86,18 @@ public class UserInforActivity extends AppCompatActivity {
             PostAddSelectTypeBottomSheetDialog postAddSelectTypeBottomSheetDialog = new PostAddSelectTypeBottomSheetDialog();
             postAddSelectTypeBottomSheetDialog.show(getSupportFragmentManager(), "postAddSelectTypeBottomSheetDialog");
         });
-        updateInforBTN.setOnClickListener(new View.OnClickListener() {
+
+        EditInforBTN.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                if (TextUtils.isEmpty(fullNameEdit.getText().toString().trim())) {
-                    fullNameEdit.setError("Nhập họ tên");
-                    return;
-                }
-                if (TextUtils.isEmpty(phoneNumberEdit.getText().toString().trim())) {
-                    phoneNumberEdit.setError("Nhập số điện thoại");
-                    return;
-                }
-                if (phoneNumberEdit.getText().toString().trim().length() > 10) {
-                    phoneNumberEdit.setError("Nhập số điện thoại sai");
-                    return;
-                }
-                if (TextUtils.isEmpty(addressEdit.getText().toString().trim())) {
-                    addressEdit.setError("Nhập địa chỉ");
-                    return;
-                }
-                if (TextUtils.isEmpty(emailEdit.getText().toString().trim())) {
-                    emailEdit.setError("Nhập địa chỉ email");
-                    return;
-                }
-                progressBar.setVisibility(View.VISIBLE);
-                UpdateData(fullNameEdit.getText().toString().trim(),
-                        phoneNumberEdit.getText().toString().trim(),
-                        addressEdit.getText().toString().trim(),
-                        emailEdit.getText().toString().trim(),
-                        FirebaseAuth.getInstance().getCurrentUser().getUid().toString());
-                progressBar.setVisibility(View.INVISIBLE);
-                Toast.makeText(getApplicationContext(), "Cập nhật thành công", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+            public void onClick(View view) {
+                startActivity(new Intent(UserInforActivity.this, UserInforUpdateActivity.class));
                 finish();
             }
         });
-
         logoutBTN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SharedPreferences editor = UserInforActivity.this.getSharedPreferences("data", MODE_PRIVATE);
-                editor.edit().clear().apply();
-
-                SharedPreferences editor1 = UserInforActivity.this.getSharedPreferences("dataPass", MODE_PRIVATE);
-                editor1.edit().clear().apply();
-
-                Intent i = new Intent(UserInforActivity.this, LoginActivity.class);
-                startActivity(i);
-                FirebaseAuth.getInstance().signOut();
-                finish();
+                LogOut();
             }
         });
     }
@@ -137,49 +107,24 @@ public class UserInforActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_infor);
 
+        readDataUserFromFireBase(getUserInfor(this.getApplicationContext()).uid, UserInforActivity.this);
         this.getViews();
         this.setEventListener();
-        this.mDatabase = FirebaseDatabase.getInstance().getReference("Users");
-        this.readDataUser();
+        setDataToView();
         NavigationMethod.setNavigationMenu(this.bnv_menu, R.id.item_account);
-
-
     }
 
-
-    public void UpdateData(String fullName, String phoneNumber, String address, String email, String uid) {
-        User user = new User(fullName, phoneNumber, address, email, uid);
-        mDatabase.child(uid).setValue(user);
+    public void setDataToView() {
+        fullNameView.setText(getUserInfor(UserInforActivity.this).getFullName().toString());
+        addressView.setText(getUserInfor(UserInforActivity.this).getAddress().toString());
+        emailView.setText(getUserInfor(UserInforActivity.this).getEmail().toString());
+        phoneNumberView.setText(getUserInfor(UserInforActivity.this).getPhoneNumber().toString());
+        if(getUserInfor(UserInforActivity.this).getAvata()!=""){
+            Glide.with(UserInforActivity.this).load(getUserInfor(UserInforActivity.this).getAvata().toString()).into(avataView);
+        }
     }
 
-    public void readDataUser() {
-        String uid = User.getUserInfor(this.getApplicationContext()).uid;
-        mDatabase.child(uid).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if (task.isSuccessful()) {
-                    if (task.getResult().exists()) {
-                        DataSnapshot dataSnapshot = task.getResult();
-                        String fullName = String.valueOf(dataSnapshot.child("fullName").getValue());
-                        String addressGet = String.valueOf(dataSnapshot.child("address").getValue());
-                        String emailGet = String.valueOf(dataSnapshot.child("email").getValue());
-                        String phoneNumberGet = String.valueOf(dataSnapshot.child("phoneNumber").getValue());
-
-                        fullNameEdit.setText(fullName);
-                        addressEdit.setText(addressGet);
-                        emailEdit.setText(emailGet);
-                        phoneNumberEdit.setText(phoneNumberGet);
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Không có người dùng này", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(getApplicationContext(), "Không đọc được", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
-
-    private void signOut() {
+    public void LogOut() {
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
         gsc = GoogleSignIn.getClient(this, gso);
         gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
