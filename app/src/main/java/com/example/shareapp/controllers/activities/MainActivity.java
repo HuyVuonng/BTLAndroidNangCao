@@ -1,5 +1,8 @@
 package com.example.shareapp.controllers.activities;
 
+import static com.example.shareapp.models.User.getUserInfor;
+import static com.example.shareapp.models.User.readDataUserFromFireBase;
+
 import com.example.shareapp.controllers.fragments.PostAddSelectTypeBottomSheetDialog;
 import com.example.shareapp.controllers.methods.NavigationMethod;
 import com.example.shareapp.models.User;
@@ -79,13 +82,13 @@ public class MainActivity extends AppCompatActivity {
         this.checkAuthenticateType();
 
         NavigationMethod.setNavigationMenu(this.bnv_menu, R.id.item_home);
-
+        readDataUserFromFireBase(FirebaseAuth.getInstance().getCurrentUser().getUid(), MainActivity.this);
     }
 
     private void checkAuthenticateType() {
         mDatabase = FirebaseDatabase.getInstance().getReference("Users");
 
-        readDataUser(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        readDataUserFromFireBase(FirebaseAuth.getInstance().getCurrentUser().getUid(), MainActivity.this);
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
         gsc = GoogleSignIn.getClient(this, gso);
 
@@ -108,47 +111,4 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-    private void readDataUser(String uid) {
-        mDatabase.child(uid).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if (task.isSuccessful()) {
-                    if (task.getResult().exists()) {
-                        DataSnapshot dataSnapshot = task.getResult();
-                        String fullName = String.valueOf(dataSnapshot.child("fullName").getValue());
-                        String addressGet = String.valueOf(dataSnapshot.child("address").getValue());
-                        String emailGet = String.valueOf(dataSnapshot.child("email").getValue());
-                        String phoneNumberget = String.valueOf(dataSnapshot.child("phoneNumber").getValue());
-
-                        User.setUserInfor(fullName, phoneNumberget, addressGet, emailGet, uid, MainActivity.this);
-
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Không có người dùng này", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(getApplicationContext(), "Không đọc được", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
-
-    private void signOut() {
-        gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-
-                SharedPreferences editor = MainActivity.this.getSharedPreferences("data", MODE_PRIVATE);
-                editor.edit().clear().apply();
-
-                SharedPreferences editor1 = MainActivity.this.getSharedPreferences("dataPass", MODE_PRIVATE);
-                editor1.edit().clear().apply();
-
-                Intent i = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(i);
-                FirebaseAuth.getInstance().signOut();
-                finish();
-            }
-        });
-    }
 }

@@ -1,5 +1,7 @@
 package com.example.shareapp.controllers.activities;
 
+import static com.example.shareapp.models.User.CreateNewUser;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -8,7 +10,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.view.MotionEvent;
@@ -102,7 +106,7 @@ public class RegisterActivity extends AppCompatActivity {
                     phoneNumber.setError("Nhập số điện thoại");
                     return;
                 }
-                if (PhoneNumber.length() > 10) {
+                if (PhoneNumber.length() != 10) {
                     phoneNumber.setError("Nhập số điện thoại sai");
                     return;
                 }
@@ -135,7 +139,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     progressBar.setVisibility(View.INVISIBLE);
-                                    writeNewUser(FullName, PhoneNumber, Address, Email, uid);
+                                    CreateNewUser(FullName, PhoneNumber, Address, Email, uid, "", false);
                                     showDialog();
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
@@ -182,13 +186,4 @@ public class RegisterActivity extends AppCompatActivity {
         AlertDialog alert = builder.create();
         alert.show();
     }
-
-    ;
-
-
-    public void writeNewUser(String fullName, String phoneNumber, String address, String email, String uid) {
-        User user = new User(fullName, phoneNumber, address, email, uid);
-        mDatabase.child("Users").child(uid).setValue(user);
-    }
-
 }

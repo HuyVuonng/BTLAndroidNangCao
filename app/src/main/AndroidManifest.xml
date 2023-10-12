@@ -15,7 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ShareApp"
         tools:targetApi="31">
-
+        <activity
+            android:name=".controllers.activities.UserInforUpdateActivity"
+            android:exported="false" />
         <activity
             android:name=".controllers.activities.RegisterActivity"
             android:exported="false" />
@@ -40,6 +42,7 @@
         <activity
             android:name=".controllers.activities.SearchActivity"
             android:exported="false" />
+
         <meta-data
             android:name="com.google.android.gms.wallet.api.enabled"
             android:value="true" />
