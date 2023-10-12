@@ -177,7 +177,7 @@ public class LoginActivity extends AppCompatActivity {
 
                         } else {
                             progressBar.setVisibility(View.INVISIBLE);
-                            Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this, "Sai email đăng nhập hoặc mật khẩu", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -310,8 +310,8 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         promptInfo = new BiometricPrompt.PromptInfo.Builder()
-                .setTitle("Biometric login for my app")
-                .setSubtitle("Log in using your biometric credential")
+                .setTitle("Sharehub")
+                .setSubtitle("Xác thực bằng vân tay, vui lòng chạm vào cảm biến vân tay")
                 .setNegativeButtonText("Use account password")
                 .build();
 
