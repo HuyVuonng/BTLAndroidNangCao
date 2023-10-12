@@ -152,7 +152,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                         } else {
                             progressBar.setVisibility(View.INVISIBLE);
-                            Toast.makeText(RegisterActivity.this, "Lỗi " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterActivity.this, "Lỗi đã tồn tại tài khoản này", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
