@@ -9,6 +9,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
@@ -29,6 +30,7 @@ import com.bumptech.glide.Glide;
 import com.example.shareapp.R;
 import com.example.shareapp.controllers.fragments.PostAddSelectTypeBottomSheetDialog;
 import com.example.shareapp.controllers.methods.NavigationMethod;
+import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -68,23 +70,18 @@ public class UserInforUpdateActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar4);
     }
 
-    private void setEventListener() {
-
-        ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                new ActivityResultCallback<ActivityResult>() {
-                    @Override
-                    public void onActivityResult(ActivityResult result) {
-                        if (result.getResultCode() == Activity.RESULT_OK) {
-                            Intent data = result.getData();
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
                             uri = data.getData();
                             avataEdit.setImageURI(uri);
                         } else {
                             Toast.makeText(UserInforUpdateActivity.this, "No Image Selected", Toast.LENGTH_SHORT).show();
                         }
-                    }
-                }
-        );
+    }
+
+    private void setEventListener() {
         backBTN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -96,9 +93,14 @@ public class UserInforUpdateActivity extends AppCompatActivity {
         avataEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent photoPicker = new Intent(Intent.ACTION_PICK);
-                photoPicker.setType("image/*");
-                activityResultLauncher.launch(photoPicker);
+               ImagePicker.with(UserInforUpdateActivity.this)
+                       .cropSquare()    			//Crop image(Optional), Check Customization for more option
+                       .compress(1024)			//Final image size will be less than 1 MB(Optional)
+                       .maxResultSize(1080, 1080)	//Final image resolution will be less than 1080 x 1080(Optional)
+                       .start();
+//                Intent photoPicker = new Intent(Intent.ACTION_PICK);
+//                photoPicker.setType("image/*");
+//                activityResultLauncher.launch(photoPicker);
             }
         });
 

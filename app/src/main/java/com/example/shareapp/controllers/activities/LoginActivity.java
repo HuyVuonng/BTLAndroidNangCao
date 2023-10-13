@@ -400,7 +400,7 @@ public class LoginActivity extends AppCompatActivity {
                                     String email = acct.getEmail();
                                     ;
 
-                                    chechUserLoginGGExists(uid, fullname, "", "", email);
+                                    chechUserLoginGGExists(uid, fullname, "", "", email,"",false);
 
                                 } else {
                                     Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
@@ -415,7 +415,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    public void chechUserLoginGGExists(String uid, String fullName, String phoneNumber, String address, String email) {
+    public void chechUserLoginGGExists(String uid, String fullName, String phoneNumber, String address, String email,String avata, Boolean block) {
         mDatabase = FirebaseDatabase.getInstance().getReference("Users");
 
         mDatabase.child(uid).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
@@ -426,7 +426,7 @@ public class LoginActivity extends AppCompatActivity {
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(intent);
                     } else {
-                        User user = new User(fullName, phoneNumber, address, email, uid);
+                        User user = new User(fullName, phoneNumber, address, email, uid,avata,block);
                         mDatabase.child(uid).setValue(user);
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(intent);
