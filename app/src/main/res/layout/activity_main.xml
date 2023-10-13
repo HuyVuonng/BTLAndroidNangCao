@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:orientation="vertical">
 
     <FrameLayout
         android:id="@+id/bord"
@@ -29,31 +29,37 @@
     </FrameLayout>
 
     <ListView
+        android:id="@+id/main_lv_post"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" android:background="@color/grey_list"
-        android:id="@+id/main_lv_post"/>
+        android:layout_weight="1"
+        android:background="@color/grey_list" />
+
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <com.google.android.material.bottomappbar.BottomAppBar
+            android:id="@+id/bottomAppBar"
+            style="@style/Widget.MaterialComponents.BottomAppBar.Colored"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/Widget.MaterialComponents.BottomAppBar.Colored"
-            android:layout_gravity="bottom" android:id="@+id/bottomAppBar"
+            android:layout_gravity="bottom"
+            android:background="@color/white"
             android:backgroundTint="@color/white"
             app:fabCradleMargin="-20dp">
+
             <com.google.android.material.bottomnavigation.BottomNavigationView
+                android:id="@+id/main_bnv_menu"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:menu="@menu/menu_bottom_navigation"
                 android:layout_marginEnd="18dp"
                 android:background="@color/white"
+                app:backgroundTint="@color/white"
                 app:itemIconTint="@color/purple_main"
                 app:itemTextColor="@color/purple_main"
                 app:labelVisibilityMode="selected"
-                app:backgroundTint="@color/white"
-                android:id="@+id/main_bnv_menu"/>
+                app:menu="@menu/menu_bottom_navigation" />
 
         </com.google.android.material.bottomappbar.BottomAppBar>
 
@@ -63,12 +69,11 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:clickable="true"
+            android:focusable="true"
             app:backgroundTint="@color/purple_main"
             app:fabCustomSize="48dp"
             app:srcCompat="@android:drawable/ic_input_add"
-            app:tint="@color/white"
-            android:focusable="true"
-          />
+            app:tint="@color/white" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </LinearLayout>

@@ -119,7 +119,7 @@ public class UserInforActivity extends AppCompatActivity {
         addressView.setText(getUserInfor(UserInforActivity.this).getAddress().toString());
         emailView.setText(getUserInfor(UserInforActivity.this).getEmail().toString());
         phoneNumberView.setText(getUserInfor(UserInforActivity.this).getPhoneNumber().toString());
-        if(getUserInfor(UserInforActivity.this).getAvata()!=""){
+        if (getUserInfor(UserInforActivity.this).getAvata() != "") {
             Glide.with(UserInforActivity.this).load(getUserInfor(UserInforActivity.this).getAvata().toString()).into(avataView);
         }
     }
