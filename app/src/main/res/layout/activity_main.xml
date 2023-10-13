@@ -53,6 +53,7 @@
                 android:id="@+id/main_bnv_menu"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                app:itemActiveIndicatorStyle="@style/App.Custom.Indicator"
                 android:layout_marginEnd="18dp"
                 android:background="@color/white"
                 app:backgroundTint="@color/white"
