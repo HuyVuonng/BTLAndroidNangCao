@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="18dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/imgev_avatar_user"
+            android:layout_width="76dp"
+            android:layout_height="76dp"
+            android:src="@mipmap/ic_launcher"
+            android:layout_marginRight="10dp"
+            />
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/imgev_avatar_user"
+        android:layout_centerVertical="true">
+        <LinearLayout
+            android:id="@+id/layout_title_post"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:text="Title"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                android:text="Time"
+                android:layout_marginTop="5dp"/>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/imgv_more_post"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="3dp"
+            android:layout_toEndOf="@+id/layout_title_post"
+            android:src="@drawable/ic_three_dots" />
+    </RelativeLayout>
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:text="Sharing is caring..."/>
+
+    <androidx.constraintlayout.utils.widget.ImageFilterView
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:src="@mipmap/ic_launcher"
+        android:layout_marginBottom="20dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </LinearLayout>
+</LinearLayout>

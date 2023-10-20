@@ -80,9 +80,12 @@ dependencies {
     debugImplementation 'androidx.compose.ui:ui-tooling'
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
 
-//load anh
+    //load anh
     implementation 'com.github.bumptech.glide:glide:4.16.0'
 
-//    pick anh
+    //    pick anh
     implementation 'com.github.dhaval2404:imagepicker:2.1'
+
+    // circle image view
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
 }
