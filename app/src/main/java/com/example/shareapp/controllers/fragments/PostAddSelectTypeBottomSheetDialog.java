@@ -3,6 +3,7 @@ package com.example.shareapp.controllers.fragments;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDialogFragment;
 
 import com.example.shareapp.R;
+import com.example.shareapp.controllers.activities.CreatePostActivty;
 
 import java.util.Objects;
 
@@ -42,14 +44,18 @@ public class PostAddSelectTypeBottomSheetDialog extends AppCompatDialogFragment 
         ll_food.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), "Food", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getActivity(), CreatePostActivty.class);
+                intent.putExtra("TypePost", "Food");
+                startActivity(intent);
                 requireDialog().dismiss();
             }
         });
         ll_non_food.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), "Non Food", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getActivity(), CreatePostActivty.class);
+                intent.putExtra("TypePost", "Non-Food");
+                startActivity(intent);
                 requireDialog().dismiss();
             }
         });

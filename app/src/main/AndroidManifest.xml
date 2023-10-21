@@ -42,7 +42,9 @@
         <activity
             android:name=".controllers.activities.SearchActivity"
             android:exported="false" />
-
+        <activity
+            android:name=".controllers.activities.CreatePostActivty"
+            android:exported="false" />
         <meta-data
             android:name="com.google.android.gms.wallet.api.enabled"
             android:value="true" />

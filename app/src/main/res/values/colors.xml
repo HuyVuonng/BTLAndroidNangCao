@@ -16,6 +16,7 @@
     <color name="grey_list">#F0F2F5</color>
     <color name="grey_background">#F4F3F9</color>
     <color name="grey_rgba">#8C484850</color>
+    <color name="grey_background_create_post">#D5D5D8</color>
 
     <!--<color name="green_first_loading">#267836</color>-->
     <color name="m1">#3f51b5</color>
