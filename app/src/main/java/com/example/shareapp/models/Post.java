@@ -5,7 +5,7 @@ import java.util.UUID;
 
 public class Post {
     private UUID postId;
-    private UUID userId;
+    private User user;
     private String title;
     private String type;
     private int count;
@@ -23,9 +23,9 @@ public class Post {
         return postId;
     }
 
-    public Post(UUID postId, UUID userId, String title, String type, int count, String image, String status, LocalDateTime createdAt, LocalDateTime updatedAt, boolean isDelete, String location) {
+    public Post(UUID postId, User user, String title, String type, int count, String image, String status, LocalDateTime createdAt, LocalDateTime updatedAt, boolean isDelete, String location) {
         this.postId = postId;
-        this.userId = userId;
+        this.user = user;
         this.title = title;
         this.type = type;
         this.count = count;
@@ -41,12 +41,12 @@ public class Post {
         this.postId = postId;
     }
 
-    public UUID getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(UUID userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getTitle() {

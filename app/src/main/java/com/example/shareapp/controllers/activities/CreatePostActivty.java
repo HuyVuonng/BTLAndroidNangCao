@@ -1,5 +1,7 @@
 package com.example.shareapp.controllers.activities;
 
+import static com.example.shareapp.models.User.getUserInfor;
+
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
@@ -55,7 +57,8 @@ public class CreatePostActivty extends AppCompatActivity {
             public void onClick(View view) {
                 Post post = new Post();
                 post.setPostId(UUID.randomUUID());
-                post.setUserId(null);
+                Toast.makeText(CreatePostActivty.this, post.getPostId().toString(), Toast.LENGTH_SHORT).show();
+//                post.setUserId(UUID.fromString(getUserInfor(CreatePostActivty.this).getUid()));
                 post.setTitle(edtTitle.getText().toString());
                 post.setType(typePost);
                 post.setCount(Integer.parseInt(edtQuantity.getText().toString()));

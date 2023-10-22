@@ -4,8 +4,8 @@ import java.util.UUID;
 
 public class Report {
     private UUID reportId;
-    private UUID reporterId;
-    private UUID targetId;
+    private User reporter;
+    private User target;
     private UUID postId;
     private String type;
     private String description;
@@ -13,10 +13,10 @@ public class Report {
     public Report() {
     }
 
-    public Report(UUID reportId, UUID reporterId, UUID targetId, UUID postId, String type, String description) {
+    public Report(UUID reportId, User reporter, User target, UUID postId, String type, String description) {
         this.reportId = reportId;
-        this.reporterId = reporterId;
-        this.targetId = targetId;
+        this.reporter = reporter;
+        this.target = target;
         this.postId = postId;
         this.type = type;
         this.description = description;
@@ -30,20 +30,20 @@ public class Report {
         this.reportId = reportId;
     }
 
-    public UUID getReporterId() {
-        return reporterId;
+    public User getReporter() {
+        return reporter;
     }
 
-    public void setReporterId(UUID reporterId) {
-        this.reporterId = reporterId;
+    public void setReporter(User reporter) {
+        this.reporter = reporter;
     }
 
-    public UUID getTargetId() {
-        return targetId;
+    public User getTarget() {
+        return target;
     }
 
-    public void setTargetId(UUID targetId) {
-        this.targetId = targetId;
+    public void setTarget(User target) {
+        this.target = target;
     }
 
     public UUID getPostId() {
