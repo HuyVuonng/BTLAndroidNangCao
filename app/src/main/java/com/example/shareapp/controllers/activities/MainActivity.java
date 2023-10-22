@@ -1,32 +1,32 @@
 package com.example.shareapp.controllers.activities;
 
-import static com.example.shareapp.models.User.getUserInfor;
 import static com.example.shareapp.models.User.readDataUserFromFireBase;
 
+import com.example.shareapp.controllers.fragments.FoodFragment;
+import com.example.shareapp.controllers.fragments.NonFoodFragment;
 import com.example.shareapp.controllers.fragments.PostAddSelectTypeBottomSheetDialog;
+import com.example.shareapp.controllers.fragments.SearchFragment;
+import com.example.shareapp.controllers.fragments.UserInforFragment;
 import com.example.shareapp.controllers.methods.NavigationMethod;
-import com.example.shareapp.models.User;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager.widget.ViewPager;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.widget.Toast;
+import android.widget.FrameLayout;
 
 import com.example.shareapp.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -34,7 +34,8 @@ import com.google.firebase.database.FirebaseDatabase;
 public class MainActivity extends AppCompatActivity {
     BottomNavigationView bnv_menu;
     FloatingActionButton btn_add_post;
-
+    ViewPager viewPager;
+    FrameLayout frameLayout;
     private DatabaseReference mDatabase;
     GoogleSignInOptions gso;
     GoogleSignInClient gsc;
@@ -42,25 +43,31 @@ public class MainActivity extends AppCompatActivity {
     private void getViews() {
         this.bnv_menu = findViewById(R.id.main_bnv_menu);
         this.btn_add_post = findViewById(R.id.post_fab_add_post);
+//        viewPager= findViewById(R.id.mainViewPager);
+    }
+
+    private void replaceFragment(Fragment fragment) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.content_frame, fragment);
+        transaction.commit();
     }
 
     private void setEventListener() {
         bnv_menu.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
+            if (id == R.id.item_home) {
+                replaceFragment(new FoodFragment());
+            }
             if (id == R.id.item_non_food) {
-                Intent i = new Intent(MainActivity.this, NonFoodActivity.class);
-                startActivity(i);
-                finish();
+                replaceFragment(new NonFoodFragment());
             }
             if (id == R.id.item_account) {
-                Intent i = new Intent(MainActivity.this, UserInforActivity.class);
-                startActivity(i);
-                finish();
+                replaceFragment(new UserInforFragment());
+
             }
             if (id == R.id.item_search) {
-                Intent i = new Intent(MainActivity.this, SearchActivity.class);
-                startActivity(i);
-                finish();
+                replaceFragment(new SearchFragment());
+
             }
             return true;
         });
@@ -83,6 +90,19 @@ public class MainActivity extends AppCompatActivity {
 
         NavigationMethod.setNavigationMenu(this.bnv_menu, R.id.item_home);
         readDataUserFromFireBase(FirebaseAuth.getInstance().getCurrentUser().getUid(), MainActivity.this);
+        checkFragment();
+    }
+
+    private void checkFragment() {
+        SharedPreferences sharedPreferences = getSharedPreferences("fragment", MODE_PRIVATE);
+        String fragment = sharedPreferences.getString("fragment", "home");
+        if (fragment.equals("userInfor")) {
+            replaceFragment(new UserInforFragment());
+            NavigationMethod.setNavigationMenu(this.bnv_menu, R.id.item_account);
+            sharedPreferences.edit().clear().commit();
+        } else {
+            replaceFragment(new FoodFragment());
+        }
     }
 
     private void checkAuthenticateType() {

@@ -28,12 +28,19 @@
 
     </FrameLayout>
 
-    <ListView
-        android:id="@+id/main_lv_post"
+
+    <!--    <androidx.viewpager.widget.ViewPager-->
+    <!--        android:id="@+id/mainViewPager"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="0dp"-->
+    <!--        android:layout_weight="1">-->
+
+    <!--    </androidx.viewpager.widget.ViewPager>-->
+    <FrameLayout
+        android:id="@+id/content_frame"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@color/grey_list" />
+        android:layout_weight="1" />
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
@@ -53,10 +60,10 @@
                 android:id="@+id/main_bnv_menu"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:itemActiveIndicatorStyle="@style/App.Custom.Indicator"
                 android:layout_marginEnd="18dp"
                 android:background="@color/white"
                 app:backgroundTint="@color/white"
+                app:itemActiveIndicatorStyle="@style/App.Custom.Indicator"
                 app:itemIconTint="@color/purple_main"
                 app:itemTextColor="@color/purple_main"
                 app:labelVisibilityMode="selected"
