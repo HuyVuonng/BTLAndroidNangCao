@@ -6,18 +6,18 @@ public class Report {
     private UUID reportId;
     private User reporter;
     private User target;
-    private UUID postId;
+    private Post post;
     private String type;
     private String description;
 
     public Report() {
     }
 
-    public Report(UUID reportId, User reporter, User target, UUID postId, String type, String description) {
+    public Report(UUID reportId, User reporter, User target, Post post, String type, String description) {
         this.reportId = reportId;
         this.reporter = reporter;
         this.target = target;
-        this.postId = postId;
+        this.post = post;
         this.type = type;
         this.description = description;
     }
@@ -46,12 +46,12 @@ public class Report {
         this.target = target;
     }
 
-    public UUID getPostId() {
-        return postId;
+    public Post getPost() {
+        return post;
     }
 
-    public void setPostId(UUID postId) {
-        this.postId = postId;
+    public void setPost(Post post) {
+        this.post = post;
     }
 
     public String getType() {

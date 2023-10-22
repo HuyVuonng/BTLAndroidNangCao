@@ -5,16 +5,16 @@ import java.util.UUID;
 public class Notification {
     private UUID notifiId;
     private Post post;
-    private String userId;
+    private User user;
     private String type;
 
     public Notification() {
     }
 
-    public Notification(UUID notifiId, Post post, String userId, String type) {
+    public Notification(UUID notifiId, Post post, User user, String type) {
         this.notifiId = notifiId;
         this.post = post;
-        this.userId = userId;
+        this.user = user;
         this.type = type;
     }
 
@@ -34,12 +34,12 @@ public class Notification {
         this.post = post;
     }
 
-    public String getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getType() {
