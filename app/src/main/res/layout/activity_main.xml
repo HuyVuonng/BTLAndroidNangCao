@@ -14,7 +14,8 @@
         android:paddingLeft="20dp"
         android:paddingTop="10dp"
         android:paddingRight="20dp"
-        android:paddingBottom="10dp">
+        android:paddingBottom="10dp"
+        >
 
         <TextView
             android:id="@+id/main_tv_app_ame"
@@ -28,12 +29,12 @@
 
     </FrameLayout>
 
-    <ListView
-        android:id="@+id/main_lv_post"
+    <FrameLayout
+        android:id="@+id/list_fragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@color/grey_list" />
+        android:layout_weight="1"/>
+
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"

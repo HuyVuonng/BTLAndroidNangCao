@@ -3,12 +3,16 @@ package com.example.shareapp.controllers.activities;
 import static com.example.shareapp.models.User.getUserInfor;
 import static com.example.shareapp.models.User.readDataUserFromFireBase;
 
+import com.example.shareapp.controllers.fragments.FragmentFood;
+import com.example.shareapp.controllers.fragments.FragmentNonFood;
 import com.example.shareapp.controllers.fragments.PostAddSelectTypeBottomSheetDialog;
 import com.example.shareapp.controllers.methods.NavigationMethod;
 import com.example.shareapp.models.User;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Context;
 import android.content.Intent;
@@ -32,25 +36,37 @@ import com.google.firebase.database.FirebaseDatabase;
 
 
 public class MainActivity extends AppCompatActivity {
+    public static final int FRAGMENT_FOOD = 0;
+    public static final int FRAGMENT_NON_FOOD = 1;
+    public int currentFragment = FRAGMENT_FOOD;
     BottomNavigationView bnv_menu;
     FloatingActionButton btn_add_post;
 
     private DatabaseReference mDatabase;
     GoogleSignInOptions gso;
     GoogleSignInClient gsc;
+    BottomNavigationView navigationView;
 
     private void getViews() {
         this.bnv_menu = findViewById(R.id.main_bnv_menu);
         this.btn_add_post = findViewById(R.id.post_fab_add_post);
+        navigationView = findViewById(R.id.main_bnv_menu);
     }
 
     private void setEventListener() {
         bnv_menu.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
-            if (id == R.id.item_non_food) {
-                Intent i = new Intent(MainActivity.this, NonFoodActivity.class);
-                startActivity(i);
-                finish();
+            if(id == R.id.item_home) {
+                if(currentFragment != FRAGMENT_FOOD) {
+                    replaceFragment(new FragmentFood());
+                    currentFragment = FRAGMENT_FOOD;
+                }
+            }
+            else if (id == R.id.item_non_food) {
+                if(currentFragment != FRAGMENT_NON_FOOD) {
+                    replaceFragment(new FragmentNonFood());
+                    currentFragment = FRAGMENT_NON_FOOD;
+                }
             }
             if (id == R.id.item_account) {
                 Intent i = new Intent(MainActivity.this, UserInforActivity.class);
@@ -83,6 +99,9 @@ public class MainActivity extends AppCompatActivity {
 
         NavigationMethod.setNavigationMenu(this.bnv_menu, R.id.item_home);
         readDataUserFromFireBase(FirebaseAuth.getInstance().getCurrentUser().getUid(), MainActivity.this);
+
+        navigationView.getMenu().findItem(R.id.item_home).setChecked(true);
+        replaceFragment(new FragmentFood());
     }
 
     private void checkAuthenticateType() {
@@ -109,6 +128,12 @@ public class MainActivity extends AppCompatActivity {
             editor.putString("type", "EmailPassWord");
             editor.apply();
         }
+    }
+
+    private void replaceFragment(Fragment fragment) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.list_fragment, fragment);
+        transaction.commit();
     }
 
 }
