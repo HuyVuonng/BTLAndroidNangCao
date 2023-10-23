@@ -13,7 +13,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -74,18 +76,21 @@ public class UserInforUpdateActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
-                            uri = data.getData();
-                            avataEdit.setImageURI(uri);
-                        } else {
-                            Toast.makeText(UserInforUpdateActivity.this, "No Image Selected", Toast.LENGTH_SHORT).show();
-                        }
+            uri = data.getData();
+            avataEdit.setImageURI(uri);
+        } else {
+            Toast.makeText(UserInforUpdateActivity.this, "No Image Selected", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void setEventListener() {
         backBTN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), UserInforActivity.class));
+                SharedPreferences.Editor editor = getSharedPreferences("fragment", Context.MODE_PRIVATE).edit();
+                editor.putString("fragment", "userInfor");
+                editor.apply();
+                startActivity(new Intent(getApplicationContext(), MainActivity.class));
                 finish();
             }
         });
@@ -93,11 +98,11 @@ public class UserInforUpdateActivity extends AppCompatActivity {
         avataEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               ImagePicker.with(UserInforUpdateActivity.this)
-                       .cropSquare()    			//Crop image(Optional), Check Customization for more option
-                       .compress(1024)			//Final image size will be less than 1 MB(Optional)
-                       .maxResultSize(1080, 1080)	//Final image resolution will be less than 1080 x 1080(Optional)
-                       .start();
+                ImagePicker.with(UserInforUpdateActivity.this)
+                        .cropSquare()                //Crop image(Optional), Check Customization for more option
+                        .compress(1024)            //Final image size will be less than 1 MB(Optional)
+                        .maxResultSize(1080, 1080)    //Final image resolution will be less than 1080 x 1080(Optional)
+                        .start();
 //                Intent photoPicker = new Intent(Intent.ACTION_PICK);
 //                photoPicker.setType("image/*");
 //                activityResultLauncher.launch(photoPicker);
@@ -154,7 +159,10 @@ public class UserInforUpdateActivity extends AppCompatActivity {
                             setUserInfor(fullName, phoneNumber, address, email,
                                     getUserInfor(UserInforUpdateActivity.this).getUid().toString(),
                                     imgUrl, getUserInfor(UserInforUpdateActivity.this).getBlock(), getApplicationContext());
-                            startActivity(new Intent(getApplicationContext(), UserInforActivity.class));
+                            SharedPreferences.Editor editor = getSharedPreferences("fragment", Context.MODE_PRIVATE).edit();
+                            editor.putString("fragment", "userInfor");
+                            editor.apply();
+                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
                             finish();
                         }
                     }).addOnFailureListener(new OnFailureListener() {
@@ -170,7 +178,10 @@ public class UserInforUpdateActivity extends AppCompatActivity {
                     setUserInfor(fullName, phoneNumber, address, email,
                             getUserInfor(UserInforUpdateActivity.this).getUid().toString(),
                             getUserInfor(UserInforUpdateActivity.this).getAvata().toString(), getUserInfor(UserInforUpdateActivity.this).getBlock(), getApplicationContext());
-                    startActivity(new Intent(getApplicationContext(), UserInforActivity.class));
+                    SharedPreferences.Editor editor = getSharedPreferences("fragment", Context.MODE_PRIVATE).edit();
+                    editor.putString("fragment", "userInfor");
+                    editor.apply();
+                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
                     finish();
                 }
             }
