@@ -32,7 +32,8 @@
         </activity>
         <activity
             android:name=".controllers.activities.MainActivity"
-            android:exported="false" />
+            android:exported="false" >
+        </activity>
         <activity
             android:name=".controllers.activities.NonFoodActivity"
             android:exported="false" />

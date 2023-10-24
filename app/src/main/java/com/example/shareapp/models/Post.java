@@ -1,29 +1,27 @@
 package com.example.shareapp.models;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.UUID;
 
 public class Post {
-    private UUID postId;
+    private String postId;
     private User user;
     private String title;
     private String type;
     private int count;
     private String image;
     private String status;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private long createdAt;
+    private long updatedAt;
     private boolean isDelete;
     private String location;
 
     public Post() {
     }
 
-    public UUID getPostId() {
-        return postId;
-    }
-
-    public Post(UUID postId, User user, String title, String type, int count, String image, String status, LocalDateTime createdAt, LocalDateTime updatedAt, boolean isDelete, String location) {
+    public Post(String postId, User user, String title, String type, int count, String image, String status, long createdAt, long updatedAt, boolean isDelete, String location) {
         this.postId = postId;
         this.user = user;
         this.title = title;
@@ -37,7 +35,11 @@ public class Post {
         this.location = location;
     }
 
-    public void setPostId(UUID postId) {
+    public String getPostId() {
+        return postId;
+    }
+
+    public void setPostId(String postId) {
         this.postId = postId;
     }
 
@@ -89,19 +91,19 @@ public class Post {
         this.status = status;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public long getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(long createdAt) {
         this.createdAt = createdAt;
     }
 
-    public LocalDateTime getUpdatedAt() {
+    public long getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
+    public void setUpdatedAt(long updatedAt) {
         this.updatedAt = updatedAt;
     }
 
@@ -119,5 +121,21 @@ public class Post {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public String convertCreatedAtToDateTime() {
+        Date date = new Date(createdAt);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        String formattedDate = dateFormat.format(date);
+
+        return formattedDate;
+    }
+
+    public String convertUpdatedAtToDateTime() {
+        Date date = new Date(updatedAt);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        String formattedDate = dateFormat.format(date);
+
+        return formattedDate;
     }
 }

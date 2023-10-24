@@ -3,7 +3,7 @@ package com.example.shareapp.models;
 import java.util.UUID;
 
 public class Report {
-    private UUID reportId;
+    private String reportId;
     private User reporter;
     private User target;
     private Post post;
@@ -13,7 +13,7 @@ public class Report {
     public Report() {
     }
 
-    public Report(UUID reportId, User reporter, User target, Post post, String type, String description) {
+    public Report(String reportId, User reporter, User target, Post post, String type, String description) {
         this.reportId = reportId;
         this.reporter = reporter;
         this.target = target;
@@ -22,11 +22,11 @@ public class Report {
         this.description = description;
     }
 
-    public UUID getReportId() {
+    public String getReportId() {
         return reportId;
     }
 
-    public void setReportId(UUID reportId) {
+    public void setReportId(String reportId) {
         this.reportId = reportId;
     }
 

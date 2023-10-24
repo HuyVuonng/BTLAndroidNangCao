@@ -23,6 +23,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -56,14 +57,17 @@ public class CreatePostActivty extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Post post = new Post();
-                post.setPostId(UUID.randomUUID());
+                post.setPostId(UUID.randomUUID().toString());
                 Toast.makeText(CreatePostActivty.this, post.getPostId().toString(), Toast.LENGTH_SHORT).show();
-//                post.setUserId(UUID.fromString(getUserInfor(CreatePostActivty.this).getUid()));
+                post.setUser(getUserInfor(CreatePostActivty.this));
                 post.setTitle(edtTitle.getText().toString());
                 post.setType(typePost);
                 post.setCount(Integer.parseInt(edtQuantity.getText().toString()));
-                post.setCreatedAt(LocalDateTime.now());
-                post.setUpdatedAt(LocalDateTime.now());
+                post.setCreatedAt(System.currentTimeMillis());
+                post.setUpdatedAt(System.currentTimeMillis());
+                post.setDelete(false);
+                post.setLocation("");
+
                 createPost(post);
             }
         });

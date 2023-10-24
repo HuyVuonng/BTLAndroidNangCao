@@ -1,21 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".controllers.fragments.FoodFragment">
+    tools:context=".controllers.fragments.FoodFragment"
+    android:orientation="vertical">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rcv_list_food"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Main"
-        android:textSize="25sp"/>
-<!--        <ListView-->
-<!--            android:id="@+id/main_lv_post"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="0dp"-->
-<!--            android:layout_weight="1"-->
-<!--            android:background="@color/grey_list" />-->
-
-</FrameLayout>
+        android:layout_height="match_parent"/>
+</LinearLayout>

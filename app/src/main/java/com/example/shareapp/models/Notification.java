@@ -3,7 +3,7 @@ package com.example.shareapp.models;
 import java.util.UUID;
 
 public class Notification {
-    private UUID notifiId;
+    private String notifiId;
     private Post post;
     private User user;
     private String type;
@@ -11,18 +11,18 @@ public class Notification {
     public Notification() {
     }
 
-    public Notification(UUID notifiId, Post post, User user, String type) {
+    public Notification(String notifiId, Post post, User user, String type) {
         this.notifiId = notifiId;
         this.post = post;
         this.user = user;
         this.type = type;
     }
 
-    public UUID getNotifiId() {
+    public String getNotifiId() {
         return notifiId;
     }
 
-    public void setNotifiId(UUID notifiId) {
+    public void setNotifiId(String notifiId) {
         this.notifiId = notifiId;
     }
 
