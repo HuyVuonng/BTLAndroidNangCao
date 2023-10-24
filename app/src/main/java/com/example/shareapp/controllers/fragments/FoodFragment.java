@@ -61,8 +61,8 @@ public class FoodFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         rcvListFood.setLayoutManager(linearLayoutManager);
 
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL);
-        rcvListFood.addItemDecoration(dividerItemDecoration);
+//        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL);
+//        rcvListFood.addItemDecoration(dividerItemDecoration);
 
         mListPost = new ArrayList<>();
         mPostAdapter = new FeedPostAdapter(mListPost);
