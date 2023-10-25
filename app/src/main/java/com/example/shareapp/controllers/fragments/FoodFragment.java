@@ -98,7 +98,7 @@ public class FoodFragment extends Fragment {
                 }
                 for (Post p : mListPost) {
                     if(p.getPostId().equals(post.getPostId())) {
-                        post.setUser(post.getUser());
+                        post.setUserId(post.getUserId());
                         post.setTitle(post.getTitle());
                         post.setCount(post.getCount());
                         post.setUpdatedAt(post.getUpdatedAt());

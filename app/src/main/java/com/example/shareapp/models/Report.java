@@ -4,20 +4,20 @@ import java.util.UUID;
 
 public class Report {
     private String reportId;
-    private User reporter;
-    private User target;
-    private Post post;
+    private String reporterId;
+    private String targetId;
+    private String postId;
     private String type;
     private String description;
 
     public Report() {
     }
 
-    public Report(String reportId, User reporter, User target, Post post, String type, String description) {
+    public Report(String reportId, String reporterId, String targetId, String postId, String type, String description) {
         this.reportId = reportId;
-        this.reporter = reporter;
-        this.target = target;
-        this.post = post;
+        this.reporterId = reporterId;
+        this.targetId = targetId;
+        this.postId = postId;
         this.type = type;
         this.description = description;
     }
@@ -30,28 +30,28 @@ public class Report {
         this.reportId = reportId;
     }
 
-    public User getReporter() {
-        return reporter;
+    public String getReporterId() {
+        return reporterId;
     }
 
-    public void setReporter(User reporter) {
-        this.reporter = reporter;
+    public void setReporterId(String reporterId) {
+        this.reporterId = reporterId;
     }
 
-    public User getTarget() {
-        return target;
+    public String getTargetId() {
+        return targetId;
     }
 
-    public void setTarget(User target) {
-        this.target = target;
+    public void setTargetId(String targetId) {
+        this.targetId = targetId;
     }
 
-    public Post getPost() {
-        return post;
+    public String getPostId() {
+        return postId;
     }
 
-    public void setPost(Post post) {
-        this.post = post;
+    public void setPostId(String postId) {
+        this.postId = postId;
     }
 
     public String getType() {

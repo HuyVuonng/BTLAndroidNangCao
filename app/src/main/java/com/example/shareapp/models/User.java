@@ -12,8 +12,10 @@ import com.example.shareapp.controllers.activities.MainActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class User {
     public String fullName;
@@ -23,9 +25,10 @@ public class User {
     public String uid;
     public String avata;
     public Boolean block;
-
     private static DatabaseReference mDatabase;
-
+    public interface IUserDataReceivedListener {
+        void onUserDataReceived(User user);
+    }
     public User() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
@@ -177,5 +180,25 @@ public class User {
         User user = new User(fullName, phoneNumber, address, email, uid, avata, block);
         mDatabase.child(uid).setValue(user);
         Toast.makeText(context, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
+    }
+
+    public void getUserById(String id, IUserDataReceivedListener listener) {
+        mDatabase = FirebaseDatabase.getInstance().getReference("Users");
+        mDatabase.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists()) {
+                    User user = snapshot.getValue(User.class);
+                    listener.onUserDataReceived(user);
+                } else {
+                    listener.onUserDataReceived(null);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                listener.onUserDataReceived(null);
+            }
+        });
     }
 }

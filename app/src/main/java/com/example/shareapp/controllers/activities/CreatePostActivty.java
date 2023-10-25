@@ -68,6 +68,7 @@ public class CreatePostActivty extends AppCompatActivity {
     private void getViews() {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         imbImagePost = findViewById(R.id.imv_image_post);
         tvErrorImage = findViewById(R.id.tv_error_no_image);
         edtTitle = findViewById(R.id.edt_title_post);
@@ -109,7 +110,7 @@ public class CreatePostActivty extends AppCompatActivity {
                 if(validateData()) {
                     Post post = new Post();
                     post.setPostId(UUID.randomUUID().toString());
-                    post.setUser(getUserInfor(CreatePostActivty.this));
+                    post.setUserId(getUserInfor(CreatePostActivty.this).getUid());
                     post.setTitle(edtTitle.getText().toString());
                     post.setType(typePost);
                     post.setCount(Integer.parseInt(edtQuantity.getText().toString()));

@@ -1,10 +1,12 @@
 package com.example.shareapp.controllers.adapters;
 
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,6 +24,7 @@ public class FeedPostAdapter extends RecyclerView.Adapter<FeedPostAdapter.FeedPo
         this.mListPost = mListPost;
     }
     private View mView;
+    private User mUser;
     @NonNull
     @Override
     public FeedPostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -35,13 +38,21 @@ public class FeedPostAdapter extends RecyclerView.Adapter<FeedPostAdapter.FeedPo
         Post post = mListPost.get(position);
         if(post == null)
             return;
+        mUser = new User();
+        mUser.getUserById(post.getUserId(), new User.IUserDataReceivedListener() {
+            @Override
+            public void onUserDataReceived(User user) {
+                if(user != null) {
+                    Glide.with(mView).load(post.getImage()).into(holder.imvImage);
+                    if(!TextUtils.isEmpty(user.getAvata()))
+                        Glide.with(mView).load(user.getAvata()).into(holder.imvImagePoster);
+                    holder.tvTitle.setText(post.getTitle());
+                    holder.tvFullNamePoster.setText(user.fullName);
+                    holder.tvUploadedAt.setText(post.convertCreatedAtToDateTime());
+                }
+            }
+        });
 
-        Glide.with(mView).load(post.getImage()).into(holder.imvImage);
-        if(post.getUser().getAvata() != null)
-            Glide.with(mView).load(post.getUser().getAvata()).into(holder.imvImagePoster);
-        holder.tvTitle.setText(post.getTitle());
-        holder.tvFullNamePoster.setText(post.getUser().fullName);
-        holder.tvUploadedAt.setText(post.convertCreatedAtToDateTime());
     }
 
     @Override
