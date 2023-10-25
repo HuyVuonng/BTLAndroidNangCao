@@ -32,6 +32,9 @@ import com.google.firebase.database.FirebaseDatabase;
 
 
 public class MainActivity extends AppCompatActivity {
+    public static final String NAME_TYPE = "TypePost";
+    public static final String TYPE_FOOD = "Food";
+    public static final String TYPE_NON_FOOD = "Non-Food";
     BottomNavigationView bnv_menu;
     FloatingActionButton btn_add_post;
     ViewPager viewPager;

@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
+    android:layout_height="120dp"
     android:layout_marginBottom="20dp"
     app:cardElevation="2dp"
     app:cardCornerRadius="5dp"
@@ -14,7 +14,7 @@
     <LinearLayout
         android:id="@+id/layout123"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="120dp"
         android:orientation="vertical"
         android:background="@drawable/round_corner"
         >
@@ -24,8 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:cardCornerRadius="16dp"
-            app:cardElevation="5dp"
-            >
+            app:cardElevation="5dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -33,10 +32,11 @@
                 android:gravity="center"
                 android:orientation="horizontal"
                 android:paddingEnd="10dp"
-                tools:ignore="RtlSymmetry">
+                tools:ignore="RtlSymmetry"
+                android:background="@color/purple_item_post">
 
                 <ImageView
-                    android:id="@+id/item_post_iv_image"
+                    android:id="@+id/item_post_imv_image"
                     android:layout_width="100dp"
                     android:layout_height="match_parent"
                     android:layout_marginEnd="15dp"
@@ -56,26 +56,49 @@
                         android:layout_height="wrap_content"
                         android:paddingBottom="2dp"
                         android:text="Title"
-                        android:textSize="20dp"
+                        android:textSize="22dp"
                         android:textStyle="bold"
                         android:layout_marginBottom="10dp"
                         android:textColor="@color/black"/>
 
-                    <TextView
-                        android:id="@+id/item_post_tv_uploader"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="From Unknow"
-                        android:textSize="18dp"
-                        android:textColor="@color/grey_line_dark"/>
-                    <TextView
-                        android:id="@+id/item_post_tv_uploaded_at"
+                        android:orientation="horizontal">
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/imv_image_poster"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:src="@drawable/avatar_default"/>
+
+                        <TextView
+                            android:id="@+id/tv_full_name_poster"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="From Unknow"
+                            android:textSize="16sp"
+                            android:textColor="@color/black"
+                            android:layout_gravity="center_vertical"
+                            android:textStyle="bold"
+                            android:layout_marginStart="7dp"/>
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="At Unknow"
-                        android:textSize="16dp"
-                        android:textStyle="bold"
-                        android:textColor="@color/purple_main"/>
+                        android:layout_marginTop="10dp">
+
+                        <TextView
+                            android:id="@+id/item_post_tv_uploaded_at"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="At Unknow"
+                            android:textColor="@color/purple_main"
+                            android:textSize="16dp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
                 </LinearLayout>
 
                 <LinearLayout

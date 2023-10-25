@@ -33,11 +33,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link UserInforFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class UserInforFragment extends Fragment {
     public UserInforFragment() {
         // Required empty public constructor

@@ -45,7 +45,8 @@
             android:exported="false" />
         <activity
             android:name=".controllers.activities.CreatePostActivty"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <meta-data
             android:name="com.google.android.gms.wallet.api.enabled"
             android:value="true" />
