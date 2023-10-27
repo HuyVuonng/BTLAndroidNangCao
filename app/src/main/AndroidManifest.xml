@@ -44,7 +44,7 @@
             android:name=".controllers.activities.SearchActivity"
             android:exported="false" />
         <activity
-            android:name=".controllers.activities.CreatePostActivty"
+            android:name=".controllers.activities.CreatePostActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <meta-data

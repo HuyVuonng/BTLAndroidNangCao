@@ -4,14 +4,6 @@ import static com.example.shareapp.models.User.getUserInfor;
 import static com.example.shareapp.models.User.setUserInfor;
 import static com.example.shareapp.models.User.updateUserInfor;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -19,7 +11,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,21 +19,22 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.bumptech.glide.Glide;
 import com.example.shareapp.R;
-import com.example.shareapp.controllers.fragments.PostAddSelectTypeBottomSheetDialog;
-import com.example.shareapp.controllers.methods.NavigationMethod;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+
+import java.util.Objects;
 
 public class UserInforUpdateActivity extends AppCompatActivity {
 
@@ -76,6 +68,7 @@ public class UserInforUpdateActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
+            assert data != null;
             uri = data.getData();
             avataEdit.setImageURI(uri);
         } else {
@@ -140,7 +133,7 @@ public class UserInforUpdateActivity extends AppCompatActivity {
                     emailEdit.setError("Nhập Email");
                     return;
                 }
-                if (uri != null) {
+                if (uri != null && uri.getLastPathSegment() != null) {
                     storageReference = FirebaseStorage.getInstance().getReference().child("Images").child(uri.getLastPathSegment());
                     storageReference.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -153,11 +146,11 @@ public class UserInforUpdateActivity extends AppCompatActivity {
                                 StorageReference reference = FirebaseStorage.getInstance().getReferenceFromUrl(oldImgUri);
                                 reference.delete();
                             }
-                            updateUserInfor(fullName, phoneNumber, address, email, getUserInfor(UserInforUpdateActivity.this).getUid().toString(),
+                            updateUserInfor(fullName, phoneNumber, address, email, getUserInfor(UserInforUpdateActivity.this).getUid(),
                                     imgUrl, getUserInfor(UserInforUpdateActivity.this).getBlock(), getApplicationContext());
                             progressBar.setVisibility(View.INVISIBLE);
                             setUserInfor(fullName, phoneNumber, address, email,
-                                    getUserInfor(UserInforUpdateActivity.this).getUid().toString(),
+                                    getUserInfor(UserInforUpdateActivity.this).getUid(),
                                     imgUrl, getUserInfor(UserInforUpdateActivity.this).getBlock(), getApplicationContext());
                             SharedPreferences.Editor editor = getSharedPreferences("fragment", Context.MODE_PRIVATE).edit();
                             editor.putString("fragment", "userInfor");
@@ -172,12 +165,12 @@ public class UserInforUpdateActivity extends AppCompatActivity {
                         }
                     });
                 } else {
-                    updateUserInfor(fullName, phoneNumber, address, email, getUserInfor(UserInforUpdateActivity.this).getUid().toString(),
+                    updateUserInfor(fullName, phoneNumber, address, email, getUserInfor(UserInforUpdateActivity.this).getUid(),
                             oldImgUri, getUserInfor(UserInforUpdateActivity.this).getBlock(), getApplicationContext());
                     progressBar.setVisibility(View.INVISIBLE);
                     setUserInfor(fullName, phoneNumber, address, email,
-                            getUserInfor(UserInforUpdateActivity.this).getUid().toString(),
-                            getUserInfor(UserInforUpdateActivity.this).getAvata().toString(), getUserInfor(UserInforUpdateActivity.this).getBlock(), getApplicationContext());
+                            getUserInfor(UserInforUpdateActivity.this).getUid(),
+                            getUserInfor(UserInforUpdateActivity.this).getAvata(), getUserInfor(UserInforUpdateActivity.this).getBlock(), getApplicationContext());
                     SharedPreferences.Editor editor = getSharedPreferences("fragment", Context.MODE_PRIVATE).edit();
                     editor.putString("fragment", "userInfor");
                     editor.apply();
@@ -189,14 +182,14 @@ public class UserInforUpdateActivity extends AppCompatActivity {
     }
 
     private void setUserInforToView() {
-        fullNameEdit.setText(getUserInfor(UserInforUpdateActivity.this).getFullName().toString());
-        emailEdit.setText(getUserInfor(UserInforUpdateActivity.this).getEmail().toString());
-        phoneNumberEdit.setText(getUserInfor(UserInforUpdateActivity.this).getPhoneNumber().toString());
-        addressEdit.setText(getUserInfor(UserInforUpdateActivity.this).getAddress().toString());
-        if (getUserInfor(UserInforUpdateActivity.this).getAvata() != "") {
-            Glide.with(UserInforUpdateActivity.this).load(getUserInfor(UserInforUpdateActivity.this).getAvata().toString()).into(avataEdit);
+        fullNameEdit.setText(getUserInfor(UserInforUpdateActivity.this).getFullName());
+        emailEdit.setText(getUserInfor(UserInforUpdateActivity.this).getEmail());
+        phoneNumberEdit.setText(getUserInfor(UserInforUpdateActivity.this).getPhoneNumber());
+        addressEdit.setText(getUserInfor(UserInforUpdateActivity.this).getAddress());
+        if (!Objects.equals(getUserInfor(UserInforUpdateActivity.this).getAvata(), "")) {
+            Glide.with(UserInforUpdateActivity.this).load(getUserInfor(UserInforUpdateActivity.this).getAvata()).into(avataEdit);
         }
-        oldImgUri = getUserInfor(UserInforUpdateActivity.this).getAvata().toString();
+        oldImgUri = getUserInfor(UserInforUpdateActivity.this).getAvata();
     }
 
     @Override

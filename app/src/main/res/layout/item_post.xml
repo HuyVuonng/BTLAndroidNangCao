@@ -1,39 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="120dp"
     android:layout_marginBottom="20dp"
+    app:cardBackgroundColor="#00FFFFFF"
+    app:cardCornerRadius="20dp"
     app:cardElevation="2dp"
-    app:cardCornerRadius="5dp"
-    app:strokeWidth="1dp"
-    app:strokeColor="@color/black">
+    app:strokeColor="#00FFFFFF"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:id="@+id/layout123"
         android:layout_width="match_parent"
         android:layout_height="120dp"
-        android:orientation="vertical"
         android:background="@drawable/round_corner"
-        >
+        android:backgroundTint="#FFFFFF"
+        android:orientation="vertical">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/item_post_cv_card"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="#FFFFFF"
+            android:backgroundTint="#FFFFFF"
+            app:cardBackgroundColor="#FFFFFF"
             app:cardCornerRadius="16dp"
             app:cardElevation="5dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@color/purple_item_post"
                 android:gravity="center"
                 android:orientation="horizontal"
                 android:paddingEnd="10dp"
-                tools:ignore="RtlSymmetry"
-                android:background="@color/purple_item_post">
+                tools:ignore="RtlSymmetry">
 
                 <ImageView
                     android:id="@+id/item_post_imv_image"
@@ -41,7 +44,7 @@
                     android:layout_height="match_parent"
                     android:layout_marginEnd="15dp"
                     android:scaleType="centerCrop"
-                    app:srcCompat="@drawable/no_img"/>
+                    app:srcCompat="@drawable/no_img" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -54,12 +57,12 @@
                         android:id="@+id/item_post_tv_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
                         android:paddingBottom="2dp"
                         android:text="Title"
+                        android:textColor="@color/black"
                         android:textSize="22dp"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="10dp"
-                        android:textColor="@color/black"/>
+                        android:textStyle="bold" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -70,18 +73,18 @@
                             android:id="@+id/imv_image_poster"
                             android:layout_width="35dp"
                             android:layout_height="35dp"
-                            android:src="@drawable/avatar_default"/>
+                            android:src="@drawable/avatar_default" />
 
                         <TextView
                             android:id="@+id/tv_full_name_poster"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="From Unknow"
-                            android:textSize="16sp"
-                            android:textColor="@color/black"
                             android:layout_gravity="center_vertical"
-                            android:textStyle="bold"
-                            android:layout_marginStart="7dp"/>
+                            android:layout_marginStart="7dp"
+                            android:text="From Unknow"
+                            android:textColor="@color/black"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
                     </LinearLayout>
 
                     <LinearLayout

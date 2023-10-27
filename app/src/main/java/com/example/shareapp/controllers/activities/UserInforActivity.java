@@ -3,27 +3,22 @@ package com.example.shareapp.controllers.activities;
 import static com.example.shareapp.models.User.getUserInfor;
 import static com.example.shareapp.models.User.readDataUserFromFireBase;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.shareapp.R;
 import com.example.shareapp.controllers.fragments.PostAddSelectTypeBottomSheetDialog;
 import com.example.shareapp.controllers.methods.NavigationMethod;
-import com.example.shareapp.models.User;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -32,9 +27,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 public class UserInforActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
@@ -115,12 +108,12 @@ public class UserInforActivity extends AppCompatActivity {
     }
 
     public void setDataToView() {
-        fullNameView.setText(getUserInfor(UserInforActivity.this).getFullName().toString());
-        addressView.setText(getUserInfor(UserInforActivity.this).getAddress().toString());
-        emailView.setText(getUserInfor(UserInforActivity.this).getEmail().toString());
+        fullNameView.setText(getUserInfor(UserInforActivity.this).getFullName());
+        addressView.setText(getUserInfor(UserInforActivity.this).getAddress());
+        emailView.setText(getUserInfor(UserInforActivity.this).getEmail());
         phoneNumberView.setText(getUserInfor(UserInforActivity.this).getPhoneNumber().toString());
         if (getUserInfor(UserInforActivity.this).getAvata() != "") {
-            Glide.with(UserInforActivity.this).load(getUserInfor(UserInforActivity.this).getAvata().toString()).into(avataView);
+            Glide.with(UserInforActivity.this).load(getUserInfor(UserInforActivity.this).getAvata()).into(avataView);
         }
     }
 

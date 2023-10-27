@@ -10,11 +10,9 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,15 +20,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.shareapp.R;
 import com.example.shareapp.models.Post;
-import com.example.shareapp.models.User;
 import com.github.dhaval2404.imagepicker.ImagePicker;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -41,11 +36,9 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class CreatePostActivty extends AppCompatActivity {
+public class CreatePostActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private ImageButton imbImagePost;
     private TextView tvErrorImage;
@@ -95,7 +88,7 @@ public class CreatePostActivty extends AppCompatActivity {
         imbImagePost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ImagePicker.with(CreatePostActivty.this)
+                ImagePicker.with(CreatePostActivity.this)
                         .cropSquare()
                         .compress(1024)
                         .maxResultSize(1080, 1080)
@@ -110,7 +103,7 @@ public class CreatePostActivty extends AppCompatActivity {
                 if(validateData()) {
                     Post post = new Post();
                     post.setPostId(UUID.randomUUID().toString());
-                    post.setUserId(getUserInfor(CreatePostActivty.this).getUid());
+                    post.setUserId(getUserInfor(CreatePostActivity.this).getUid());
                     post.setTitle(edtTitle.getText().toString());
                     post.setType(typePost);
                     post.setCount(Integer.parseInt(edtQuantity.getText().toString()));
@@ -193,7 +186,7 @@ public class CreatePostActivty extends AppCompatActivity {
                     public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
                         progressDialog.dismiss();
                         resetData();
-                        Toast.makeText(CreatePostActivty.this, "Create post successed", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(CreatePostActivity.this, "Create post successed", Toast.LENGTH_SHORT).show();
                     }
                 });
             }

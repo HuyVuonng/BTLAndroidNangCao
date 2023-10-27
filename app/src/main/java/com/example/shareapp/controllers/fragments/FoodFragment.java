@@ -1,29 +1,22 @@
 package com.example.shareapp.controllers.fragments;
 
 import static com.example.shareapp.controllers.activities.MainActivity.TYPE_FOOD;
-import static com.example.shareapp.models.User.getUserInfor;
 
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.example.shareapp.R;
-import com.example.shareapp.controllers.activities.CreatePostActivty;
-import com.example.shareapp.controllers.activities.MainActivity;
 import com.example.shareapp.controllers.adapters.FeedPostAdapter;
-import com.example.shareapp.controllers.adapters.PostAdapter;
 import com.example.shareapp.models.Post;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;

@@ -6,7 +6,6 @@ import static com.example.shareapp.controllers.activities.MainActivity.TYPE_NON_
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -16,13 +15,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDialogFragment;
 
 import com.example.shareapp.R;
-import com.example.shareapp.controllers.activities.CreatePostActivty;
+import com.example.shareapp.controllers.activities.CreatePostActivity;
 
 import java.util.Objects;
 
@@ -48,7 +46,7 @@ public class PostAddSelectTypeBottomSheetDialog extends AppCompatDialogFragment 
         ll_food.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), CreatePostActivty.class);
+                Intent intent = new Intent(getActivity(), CreatePostActivity.class);
                 intent.putExtra(NAME_TYPE, TYPE_FOOD);
                 startActivity(intent);
                 requireDialog().dismiss();
@@ -57,7 +55,7 @@ public class PostAddSelectTypeBottomSheetDialog extends AppCompatDialogFragment 
         ll_non_food.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), CreatePostActivty.class);
+                Intent intent = new Intent(getActivity(), CreatePostActivity.class);
                 intent.putExtra(NAME_TYPE, TYPE_NON_FOOD);
                 startActivity(intent);
                 requireDialog().dismiss();

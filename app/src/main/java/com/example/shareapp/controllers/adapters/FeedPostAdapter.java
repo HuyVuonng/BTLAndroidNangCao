@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.shareapp.R;
+import com.example.shareapp.controllers.methods.DateTimeMethod;
 import com.example.shareapp.models.Post;
 import com.example.shareapp.models.User;
 
@@ -48,7 +49,7 @@ public class FeedPostAdapter extends RecyclerView.Adapter<FeedPostAdapter.FeedPo
                         Glide.with(mView).load(user.getAvata()).into(holder.imvImagePoster);
                     holder.tvTitle.setText(post.getTitle());
                     holder.tvFullNamePoster.setText(user.fullName);
-                    holder.tvUploadedAt.setText(post.convertCreatedAtToDateTime());
+                    holder.tvUploadedAt.setText(DateTimeMethod.simplifyDateFormat(post.getCreatedAt()));
                 }
             }
         });

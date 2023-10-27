@@ -4,12 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.res.ColorStateList;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-
-import com.example.shareapp.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
