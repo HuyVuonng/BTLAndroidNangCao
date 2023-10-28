@@ -1,11 +1,12 @@
 package com.example.shareapp.models;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 
-public class Post {
+public class Post implements Serializable {
     private String postId;
     private String userId;
     private String title;
@@ -17,11 +18,11 @@ public class Post {
     private long updatedAt;
     private boolean isDelete;
     private String location;
-
+    private String description;
     public Post() {
     }
 
-    public Post(String postId, String userId, String title, String type, int count, String image, String status, long createdAt, long updatedAt, boolean isDelete, String location) {
+    public Post(String postId, String userId, String title, String type, int count, String image, String status, long createdAt, long updatedAt, boolean isDelete, String location, String description) {
         this.postId = postId;
         this.userId = userId;
         this.title = title;
@@ -33,6 +34,7 @@ public class Post {
         this.updatedAt = updatedAt;
         this.isDelete = isDelete;
         this.location = location;
+        this.description = description;
     }
 
     public String getPostId() {
@@ -121,6 +123,14 @@ public class Post {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String convertCreatedAtToDateTime() {
