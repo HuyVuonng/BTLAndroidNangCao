@@ -1,6 +1,7 @@
 package com.example.shareapp.controllers.activities;
 
 import static com.example.shareapp.controllers.activities.MainActivity.NAME_TYPE;
+import static com.example.shareapp.controllers.activities.MainActivity.TYPE_FOOD;
 import static com.example.shareapp.models.User.getUserInfor;
 
 import android.app.Activity;
@@ -40,6 +41,8 @@ import java.util.UUID;
 
 public class CreatePostActivity extends AppCompatActivity {
     private Toolbar toolbar;
+    private ImageButton imbBackPage;
+    private TextView tvTitlePage;
     private ImageButton imbImagePost;
     private TextView tvErrorImage;
     private EditText edtTitle, edtDescription, edtQuantity;
@@ -61,7 +64,8 @@ public class CreatePostActivity extends AppCompatActivity {
     private void getViews() {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        imbBackPage = findViewById(R.id.imb_back_page);
+        tvTitlePage = findViewById(R.id.tv_title_page);
         imbImagePost = findViewById(R.id.imv_image_post);
         tvErrorImage = findViewById(R.id.tv_error_no_image);
         edtTitle = findViewById(R.id.edt_title_post);
@@ -79,7 +83,14 @@ public class CreatePostActivity extends AppCompatActivity {
     }
 
     private void setEventListener() {
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        String title;
+        if(typePost.equals(TYPE_FOOD)) {
+            title = "Free Food";
+        } else {
+            title = "Free Non-Food";
+        }
+        tvTitlePage.setText(title);
+        imbBackPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onBackPressed();
@@ -111,6 +122,7 @@ public class CreatePostActivity extends AppCompatActivity {
                     post.setUpdatedAt(System.currentTimeMillis());
                     post.setDelete(false);
                     post.setLocation("");
+                    post.setDescription(edtDescription.getText().toString());
 
                     createPost(post);
                 }

@@ -63,7 +63,7 @@ public class FoodFragment extends Fragment {
         rcvListFood.setLayoutManager(linearLayoutManager);
 
         mListPost = new ArrayList<>();
-        mPostAdapter = new FeedPostAdapter(mListPost);
+        mPostAdapter = new FeedPostAdapter(getActivity(), mListPost);
         rcvListFood.setAdapter(mPostAdapter);
     }
 

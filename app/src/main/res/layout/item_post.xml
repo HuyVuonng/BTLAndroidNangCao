@@ -9,10 +9,10 @@
     app:cardCornerRadius="20dp"
     app:cardElevation="2dp"
     app:strokeColor="#00FFFFFF"
-    app:strokeWidth="1dp">
+    app:strokeWidth="1dp"
+    android:id="@+id/cv_item_post">
 
     <LinearLayout
-        android:id="@+id/layout123"
         android:layout_width="match_parent"
         android:layout_height="120dp"
         android:background="@drawable/round_corner"
