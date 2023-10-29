@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +24,7 @@ import com.example.shareapp.models.User;
 
 public class PostDetailActivity extends AppCompatActivity {
     private Toolbar toolbar;
+    private ImageButton imbBackPage;
     private ImageView imvImagePost, cimvImagePoster;
     private TextView tvTitlePage, tvFullNamePoster, tvTitlePost, tvCreatedAt, tvQuantity, tvDescription;
     private Button btnRequestPost;
@@ -42,8 +44,9 @@ public class PostDetailActivity extends AppCompatActivity {
     private void getViews() {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        imbBackPage = findViewById(R.id.imb_back_page);
         tvTitlePage = findViewById(R.id.tv_title_page);
-        imvImagePost = findViewById(R.id.imv_image_post);
+        imvImagePost = findViewById(R.id.iv_image_post);
         cimvImagePoster = findViewById(R.id.cimg_image_poster);
         tvFullNamePoster = findViewById(R.id.tv_full_name_poster);
         tvTitlePost = findViewById(R.id.tv_title_post);
@@ -58,11 +61,10 @@ public class PostDetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mPost = (Post) intent.getSerializableExtra("item_post");
 
-        // set data for control
-//        if(!TextUtils.isEmpty(mPost.getImage()))
-//            Glide.with(PostDetailActivity.this).load(mPost.getImage()).into(imvImagePost);
+        if(!TextUtils.isEmpty(mPost.getImage()))
+            Glide.with(PostDetailActivity.this).load(mPost.getImage()).into(imvImagePost);
         tvTitlePost.setText(mPost.getTitle());
-        tvQuantity.setText(mPost.getCount());
+        tvQuantity.setText(String.valueOf(mPost.getCount()));
         tvDescription.setText(mPost.getDescription());
         new User().getUserById(mPost.getUserId(), new User.IUserDataReceivedListener() {
             @Override
@@ -71,7 +73,7 @@ public class PostDetailActivity extends AppCompatActivity {
                     if(user.getAvata() != null) {
                         Glide.with(PostDetailActivity.this).load(user.getAvata()).into(cimvImagePoster);
                     }
-                    tvFullNamePoster.setText(user.getFullName() + " is giving away");
+                    tvFullNamePoster.setText(user.getFullName() + " đang cho đi");
                 }
             }
         });
@@ -79,6 +81,12 @@ public class PostDetailActivity extends AppCompatActivity {
 
     private void setEventListener() {
         tvTitlePage.setText(mPost.getTitle());
+        imbBackPage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
         btnRequestPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

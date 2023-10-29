@@ -81,7 +81,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Quantity"
+            android:text="Số lượng sản phẩm còn"
             android:textSize="16sp"
             android:textStyle="bold"/>
 
@@ -121,7 +121,7 @@
             android:paddingTop="10dp"
             android:paddingRight="20dp"
             android:paddingBottom="10dp"
-            android:text="Everything in this section is given away for free .Strictly no selling, no swaps, no donations"
+            android:text="Mọi thứ trong mục này đều được tặng miễn phí. Tuyệt đối không bán, không đổi, không quyên góp."
             android:textSize="16sp"
             android:background="@color/grey_background_create_post"/>
 
@@ -138,7 +138,7 @@
                 android:id="@+id/btn_request_post"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Request this"
+                android:text="Yêu cầu tặng"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_gravity="bottom"
