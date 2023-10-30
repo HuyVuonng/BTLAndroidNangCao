@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+    <item android:title="Quản lý">
+        <menu>
+            <group android:checkableBehavior="single">
+
+                <item
+                    android:id="@+id/nav_manager_post"
+                    android:icon="@drawable/baseline_receipt_long_24"
+                    android:title="Quản lý bài đăng" />
+                <item
+                    android:id="@+id/nav_notify"
+                    android:icon="@drawable/baseline_notifications_24"
+                    android:title="Thông báo" />
+                <item
+                    android:id="@+id/nav_location"
+                    android:icon="@drawable/baseline_location_on_24"
+                    android:title="Vị trí" />
+            </group>
+        </menu>
+
+    </item>
+
+    <item android:title="Tài khoản">
+        <menu>
+            <item
+                android:id="@+id/nav_edit_profile"
+                android:icon="@drawable/baseline_create_24"
+                android:title="Chỉnh sửa thông tin" />
+            <item
+                android:id="@+id/nav_change_password"
+                android:icon="@drawable/baseline_password_24"
+                android:title="Đổi mật khẩu"
+                />
+            <item
+                android:id="@+id/nav_logout"
+                android:icon="@drawable/baseline_exit_to_app_24"
+                android:title="Logout" />
+        </menu>
+
+    </item>
+
+
+</menu>
