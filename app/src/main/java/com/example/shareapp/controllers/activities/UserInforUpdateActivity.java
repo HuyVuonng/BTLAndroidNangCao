@@ -51,6 +51,7 @@ public class UserInforUpdateActivity extends AppCompatActivity {
 
     DatabaseReference databaseReference;
     StorageReference storageReference;
+    ImageButton changeAvatarbtn;
 
 
     private void getViews() {
@@ -62,6 +63,7 @@ public class UserInforUpdateActivity extends AppCompatActivity {
         updateBTN = findViewById(R.id.activity_userInfor_update_btn_update);
         avataEdit = findViewById(R.id.activity_userInfor_update_imgv_avata);
         progressBar = findViewById(R.id.progressBar4);
+        changeAvatarbtn = findViewById(R.id.changeAvatarbtn);
     }
 
     @Override
@@ -103,6 +105,19 @@ public class UserInforUpdateActivity extends AppCompatActivity {
         });
 
 
+        changeAvatarbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ImagePicker.with(UserInforUpdateActivity.this)
+                        .cropSquare()                //Crop image(Optional), Check Customization for more option
+                        .compress(1024)            //Final image size will be less than 1 MB(Optional)
+                        .maxResultSize(1080, 1080)    //Final image resolution will be less than 1080 x 1080(Optional)
+                        .start();
+//                Intent photoPicker = new Intent(Intent.ACTION_PICK);
+//                photoPicker.setType("image/*");
+//                activityResultLauncher.launch(photoPicker);
+            }
+        });
         updateBTN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -115,22 +130,27 @@ public class UserInforUpdateActivity extends AppCompatActivity {
 
                 if (TextUtils.isEmpty(fullName)) {
                     fullNameEdit.setError("Nhập tên");
+                    progressBar.setVisibility(View.INVISIBLE);
                     return;
                 }
                 if (TextUtils.isEmpty(phoneNumber)) {
                     phoneNumberEdit.setError("Nhập số điện thoại");
+                    progressBar.setVisibility(View.INVISIBLE);
                     return;
                 }
                 if (phoneNumber.length() != 10) {
                     phoneNumberEdit.setError("Nhập số điện thoại sai");
+                    progressBar.setVisibility(View.INVISIBLE);
                     return;
                 }
                 if (TextUtils.isEmpty(address)) {
                     addressEdit.setError("Nhập địa chỉ");
+                    progressBar.setVisibility(View.INVISIBLE);
                     return;
                 }
                 if (TextUtils.isEmpty(email)) {
                     emailEdit.setError("Nhập Email");
+                    progressBar.setVisibility(View.INVISIBLE);
                     return;
                 }
                 if (uri != null && uri.getLastPathSegment() != null) {
@@ -142,7 +162,7 @@ public class UserInforUpdateActivity extends AppCompatActivity {
                             while (!uriTask.isComplete()) ;
                             Uri urlImage = uriTask.getResult();
                             imgUrl = urlImage.toString();
-                            if (oldImgUri != "") {
+                            if (oldImgUri.length() > 0) {
                                 StorageReference reference = FirebaseStorage.getInstance().getReferenceFromUrl(oldImgUri);
                                 reference.delete();
                             }

@@ -11,6 +11,8 @@ import androidx.annotation.NonNull;
 import com.example.shareapp.controllers.activities.MainActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -175,7 +177,6 @@ public class User {
             }
         });
     }
-
     public static void updateUserInfor(String fullName, String phoneNumber, String address, String email, String uid, String avata, Boolean block, Context context) {
         User user = new User(fullName, phoneNumber, address, email, uid, avata, block);
         mDatabase.child(uid).setValue(user);
