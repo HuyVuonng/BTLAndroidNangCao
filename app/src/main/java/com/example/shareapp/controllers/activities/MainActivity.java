@@ -380,7 +380,7 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                 });
                     }else{
-                        password.setError("Mật khẩu không đúng");
+                        passwordOld.setError("Mật khẩu không đúng");
                     }
                 }else{
                     repassword.setError("Mật khẩu không trùng khớp, hãy nhập lại");
