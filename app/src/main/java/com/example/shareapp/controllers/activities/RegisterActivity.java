@@ -47,6 +47,7 @@ public class RegisterActivity extends AppCompatActivity {
         anhxa();
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
+        mAuth.useAppLanguage();
         SharedPreferences editor = RegisterActivity.this.getSharedPreferences("data", MODE_PRIVATE);
         editor.edit().clear().commit();
 
@@ -99,30 +100,37 @@ public class RegisterActivity extends AppCompatActivity {
 
                 if (TextUtils.isEmpty(FullName)) {
                     fullName.setError("Nhập tên");
+                    progressBar.setVisibility(View.INVISIBLE);
                     return;
                 }
                 if (TextUtils.isEmpty(PhoneNumber)) {
                     phoneNumber.setError("Nhập số điện thoại");
+                    progressBar.setVisibility(View.INVISIBLE);
                     return;
                 }
                 if (PhoneNumber.length() != 10) {
                     phoneNumber.setError("Nhập số điện thoại sai");
+                    progressBar.setVisibility(View.INVISIBLE);
                     return;
                 }
                 if (TextUtils.isEmpty(Address)) {
                     address.setError("Nhập địa chỉ");
+                    progressBar.setVisibility(View.INVISIBLE);
                     return;
                 }
                 if (TextUtils.isEmpty(Email)) {
                     email.setError("Nhập Email");
+                    progressBar.setVisibility(View.INVISIBLE);
                     return;
                 }
                 if (TextUtils.isEmpty(Pass)) {
                     passWord.setError("Nhập mật khẩu");
+                    progressBar.setVisibility(View.INVISIBLE);
                     return;
                 }
                 if (Pass.length() < 6) {
                     passWord.setError("Mật khẩu ít nhất 6 ký tự");
+                    progressBar.setVisibility(View.INVISIBLE);
                     return;
                 }
 

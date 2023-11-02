@@ -17,7 +17,7 @@
         android:layout_marginEnd="50dp"
         android:layout_marginBottom="10dp"
         android:gravity="center"
-        android:text="Register"
+        android:text="Đăng ký"
         android:textColor="@color/white"
         android:textSize="35dp"
         android:textStyle="bold" />
@@ -35,7 +35,7 @@
         android:background="#30ffffff"
         android:drawableLeft="@drawable/ic_baseline_person_outline_24"
         android:drawablePadding="20dp"
-        android:hint="Full name"
+        android:hint="Họ tên"
         android:padding="20dp"
         android:textColor="@color/white"
         android:textColorHint="@color/white" />
@@ -52,7 +52,7 @@
         android:background="#30ffffff"
         android:drawableLeft="@drawable/baseline_phone_android_24"
         android:drawablePadding="20dp"
-        android:hint="Phone number"
+        android:hint="Số điện thoại"
         android:inputType="phone"
         android:padding="20dp"
         android:textColor="@color/white"
@@ -70,7 +70,7 @@
         android:background="#30ffffff"
         android:drawableLeft="@drawable/baseline_home_24"
         android:drawablePadding="20dp"
-        android:hint="Address"
+        android:hint="Địa chỉ"
         android:padding="20dp"
         android:textColor="@color/white"
         android:textColorHint="@color/white" />
@@ -105,7 +105,7 @@
         android:drawableLeft="@drawable/ic_baseline_info_24"
         android:drawableRight="@drawable/baseline_visibility_off_24"
         android:drawablePadding="20dp"
-        android:hint="Password"
+        android:hint="Mật khẩu"
         android:inputType="textPassword"
         android:padding="20dp"
         android:textColor="@color/white"
@@ -122,7 +122,7 @@
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
         android:backgroundTint="@color/design_default_color_secondary"
-        android:text="Register" />
+        android:text="Đăng ký" />
 
     <ProgressBar
         android:id="@+id/progressBar"

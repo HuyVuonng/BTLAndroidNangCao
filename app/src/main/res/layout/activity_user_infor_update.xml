@@ -54,28 +54,38 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:text="Edit Your Profile"
+            android:text="Thay đổi thông tin"
             android:textSize="34sp" />
 
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
-            <ImageView
+<!--            <ImageView-->
+<!--                android:id="@+id/activity_userInfor_update_imgv_avata"-->
+<!--                android:layout_width="150dp"-->
+<!--                android:layout_height="150dp"-->
+<!--                android:scaleType="fitXY"-->
+<!--                android:src="@drawable/no_img" />-->
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/activity_userInfor_update_imgv_avata"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
-                android:scaleType="fitXY"
-                android:src="@drawable/no_img" />
+                android:src="@drawable/no_img"
+                tools:ignore="MissingClass" />
 
             <ImageButton
-                android:layout_width="150dp"
-                android:layout_height="30dp"
-                android:layout_gravity="bottom|center"
+                android:id="@+id/changeAvatarbtn"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_gravity="bottom|right"
+                android:layout_marginBottom="15dp"
                 android:layout_toRightOf="@+id/activity_userInfor_update_imgv_avata"
-                android:background="@color/grey_rgba"
+                android:background="@drawable/circle_change_pic_btn"
                 android:scaleType="center"
                 android:src="@drawable/baseline_photo_camera_24" />
+
+
         </FrameLayout>
 
 
@@ -89,7 +99,7 @@
             android:layout_marginBottom="10dp"
             android:drawableLeft="@drawable/baseline_person_24_black"
             android:drawablePadding="20dp"
-            android:text="Full Name"
+            android:text="Họ tên"
             android:textColor="@color/black"
             android:textSize="16sp" />
 
@@ -103,7 +113,7 @@
             android:layout_marginBottom="10dp"
             android:drawableLeft="@drawable/baseline_home_24_black"
             android:drawablePadding="20dp"
-            android:text="Address"
+            android:text="Địa chỉ"
             android:textColor="@color/black"
             android:textSize="16sp" />
 
@@ -117,6 +127,7 @@
             android:layout_marginBottom="10dp"
             android:drawableLeft="@drawable/baseline_email_24_black"
             android:drawablePadding="20dp"
+            android:enabled="false"
             android:text="Email"
             android:textColor="@color/black"
             android:textSize="16sp" />
@@ -131,7 +142,7 @@
             android:layout_marginBottom="10dp"
             android:drawableLeft="@drawable/baseline_phone_24_black"
             android:drawablePadding="20dp"
-            android:text="Phone Number"
+            android:text="Số điện thoại"
             android:textColor="@color/black"
             android:textSize="16sp" />
 
@@ -144,7 +155,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/purple_main"
-                android:text="Update"
+                android:text="Cập nhật"
                 android:textColor="@color/white" />
         </LinearLayout>
 
