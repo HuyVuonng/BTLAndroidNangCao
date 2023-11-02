@@ -47,6 +47,7 @@ public class RegisterActivity extends AppCompatActivity {
         anhxa();
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
+        mAuth.useAppLanguage();
         SharedPreferences editor = RegisterActivity.this.getSharedPreferences("data", MODE_PRIVATE);
         editor.edit().clear().commit();
 

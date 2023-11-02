@@ -66,6 +66,7 @@ public class LoginActivity extends AppCompatActivity {
     FirebaseAuth mAuth;
     private GoogleSignInClient client;
     GoogleSignInOptions gso;
+    GoogleSignInClient gsc;
     private Executor executor;
     private BiometricPrompt biometricPrompt;
     private BiometricPrompt.PromptInfo promptInfo;
@@ -83,7 +84,7 @@ public class LoginActivity extends AppCompatActivity {
 
         getViews();
         mAuth = FirebaseAuth.getInstance();
-
+        mAuth.useAppLanguage();
         sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
         String email = sharedPreferences.getString("email", "");
         Email.setText(email);
@@ -258,11 +259,19 @@ public class LoginActivity extends AppCompatActivity {
             public void onAuthenticationError(int errorCode,
                                               @NonNull CharSequence errString) {
                 super.onAuthenticationError(errorCode, errString);
-                SharedPreferences editor = LoginActivity.this.getSharedPreferences("data", MODE_PRIVATE);
-                editor.edit().clear().commit();
+                SharedPreferences editor = getApplicationContext().getSharedPreferences("data", MODE_PRIVATE);
+                editor.edit().clear().apply();
 
-                SharedPreferences editor1 = LoginActivity.this.getSharedPreferences("dataPass", MODE_PRIVATE);
-                editor1.edit().clear().commit();
+                SharedPreferences editor1 = getApplicationContext().getSharedPreferences("dataPass", MODE_PRIVATE);
+                editor1.edit().clear().apply();
+                gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+                gsc = GoogleSignIn.getClient(LoginActivity.this, gso);
+                gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        FirebaseAuth.getInstance().signOut();
+                    }
+                });
 //                Toast.makeText(getApplicationContext(), "Authentication error: " + errString, Toast.LENGTH_SHORT).show();
             }
 
@@ -399,7 +408,7 @@ public class LoginActivity extends AppCompatActivity {
                                     String email = acct.getEmail();
                                     ;
 
-                                    chechUserLoginGGExists(uid, fullname, "", "", email,"",false);
+                                    chechUserLoginGGExists(uid, fullname, "", "", email, "", false);
 
                                 } else {
                                     Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
@@ -414,7 +423,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    public void chechUserLoginGGExists(String uid, String fullName, String phoneNumber, String address, String email,String avata, Boolean block) {
+    public void chechUserLoginGGExists(String uid, String fullName, String phoneNumber, String address, String email, String avata, Boolean block) {
         mDatabase = FirebaseDatabase.getInstance().getReference("Users");
 
         mDatabase.child(uid).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
@@ -425,7 +434,7 @@ public class LoginActivity extends AppCompatActivity {
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(intent);
                     } else {
-                        User user = new User(fullName, phoneNumber, address, email, uid,avata,block);
+                        User user = new User(fullName, phoneNumber, address, email, uid, avata, block);
                         mDatabase.child(uid).setValue(user);
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(intent);
