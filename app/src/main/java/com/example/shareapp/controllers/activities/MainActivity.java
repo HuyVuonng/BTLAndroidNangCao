@@ -231,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void LogOut() {
+    public void LogOut() {
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
         gsc = GoogleSignIn.getClient(this, gso);
         gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
