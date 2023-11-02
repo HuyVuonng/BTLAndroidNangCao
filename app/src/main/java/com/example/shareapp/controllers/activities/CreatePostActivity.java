@@ -25,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.shareapp.R;
+import com.example.shareapp.controllers.fragments.NonFoodFragment;
 import com.example.shareapp.models.Post;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -199,6 +200,7 @@ public class CreatePostActivity extends AppCompatActivity {
                         progressDialog.dismiss();
                         resetData();
                         Toast.makeText(CreatePostActivity.this, "Create post successed", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(CreatePostActivity.this, MainActivity.class));
                     }
                 });
             }

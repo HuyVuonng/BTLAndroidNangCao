@@ -22,6 +22,7 @@ import com.example.shareapp.models.Post;
 import com.example.shareapp.models.User;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.List;
 
 public class FeedPostAdapter extends RecyclerView.Adapter<FeedPostAdapter.FeedPostViewHolder> {
@@ -57,6 +58,9 @@ public class FeedPostAdapter extends RecyclerView.Adapter<FeedPostAdapter.FeedPo
                         Glide.with(mView).load(user.getAvata()).into(holder.imvImagePoster);
                     holder.tvTitle.setText(post.getTitle());
                     holder.tvFullNamePoster.setText(user.fullName);
+                    // convert gio
+                    Calendar calendar = Calendar.getInstance();
+//                    calendar.add(Calendar.DATE);
                     holder.tvUploadedAt.setText(DateTimeMethod.simplifyDateFormat(post.getCreatedAt()));
                 }
             }

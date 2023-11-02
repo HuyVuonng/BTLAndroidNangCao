@@ -3,7 +3,10 @@ package com.example.shareapp.models;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 public class Post implements Serializable {
@@ -147,5 +150,21 @@ public class Post implements Serializable {
         String formattedDate = dateFormat.format(date);
 
         return formattedDate;
+    }
+
+    public ArrayList<Integer> convertCreatedAtToCalendar() {
+        ArrayList<Integer> list = new ArrayList<>();
+        Date date = new Date(createdAt);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        int ngay = calendar.get(Calendar.DAY_OF_WEEK);
+        int gio = calendar.get(Calendar.HOUR_OF_DAY);
+        int phut = calendar.get(Calendar.MINUTE);
+        list.add(ngay);
+        list.add(gio);
+        list.add(phut);
+
+        return list;
     }
 }

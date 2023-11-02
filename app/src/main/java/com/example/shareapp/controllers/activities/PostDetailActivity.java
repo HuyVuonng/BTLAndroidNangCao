@@ -90,7 +90,8 @@ public class PostDetailActivity extends AppCompatActivity {
         btnRequestPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Toast.makeText(PostDetailActivity.this, "Gửi yêu cầu thành công", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(PostDetailActivity.this, MainActivity.class));
             }
         });
     }
