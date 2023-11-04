@@ -3,7 +3,13 @@ package com.example.shareapp.models;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 public class Post implements Serializable {
@@ -147,5 +153,23 @@ public class Post implements Serializable {
         String formattedDate = dateFormat.format(date);
 
         return formattedDate;
+    }
+
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("postId", postId);
+        result.put("userId", userId);
+        result.put("title", title);
+        result.put("type", type);
+        result.put("count", count);
+        result.put("image", image);
+        result.put("status", status);
+        result.put("createdAt", createdAt);
+        result.put("updatedAt", updatedAt);
+        result.put("isDelete", isDelete);
+        result.put("location", location);
+        result.put("description", description);
+
+        return result;
     }
 }

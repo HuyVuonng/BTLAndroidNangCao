@@ -1,5 +1,7 @@
 package com.example.shareapp.controllers.fragments;
 
+import static com.example.shareapp.controllers.activities.MainActivity.ACTION_CREATE_POST;
+import static com.example.shareapp.controllers.activities.MainActivity.ACTION_NAME;
 import static com.example.shareapp.controllers.activities.MainActivity.NAME_TYPE;
 import static com.example.shareapp.controllers.activities.MainActivity.TYPE_FOOD;
 import static com.example.shareapp.controllers.activities.MainActivity.TYPE_NON_FOOD;
@@ -47,6 +49,7 @@ public class PostAddSelectTypeBottomSheetDialog extends AppCompatDialogFragment 
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), CreatePostActivity.class);
+                intent.putExtra(ACTION_NAME, ACTION_CREATE_POST);
                 intent.putExtra(NAME_TYPE, TYPE_FOOD);
                 startActivity(intent);
                 requireDialog().dismiss();
@@ -56,6 +59,7 @@ public class PostAddSelectTypeBottomSheetDialog extends AppCompatDialogFragment 
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), CreatePostActivity.class);
+                intent.putExtra(ACTION_NAME, ACTION_CREATE_POST);
                 intent.putExtra(NAME_TYPE, TYPE_NON_FOOD);
                 startActivity(intent);
                 requireDialog().dismiss();
