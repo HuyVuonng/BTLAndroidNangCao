@@ -1,5 +1,10 @@
 package com.example.shareapp.controllers.activities;
 
+import static com.example.shareapp.controllers.activities.MainActivity.ACTION_NAME;
+import static com.example.shareapp.controllers.activities.MainActivity.ACTION_UPDATE_POST;
+import static com.example.shareapp.controllers.activities.MainActivity.MY_POST;
+import static com.example.shareapp.controllers.activities.MainActivity.NAME_TYPE;
+
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -8,8 +13,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -23,19 +26,19 @@ import com.example.shareapp.controllers.methods.DateTimeMethod;
 import com.example.shareapp.models.Post;
 import com.example.shareapp.models.User;
 
-public class PostDetailActivity extends AppCompatActivity {
+public class MyPostDetailActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private ImageButton imbBackPage;
     private ImageView imvImagePost, cimvImagePoster;
     private TextView tvTitlePage, tvFullNamePoster, tvTitlePost, tvCreatedAt, tvQuantity, tvDescription;
-    private Button btnRequestPost;
+    private Button btnUpdate, btnDelete;
     private Post mPost;
 
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_post_detail);
+        setContentView(R.layout.activity_my_post_detail);
 
         getViews();
         getDataIntent();
@@ -54,7 +57,8 @@ public class PostDetailActivity extends AppCompatActivity {
         tvCreatedAt = findViewById(R.id.tv_created_at);
         tvQuantity = findViewById(R.id.tv_quantity_product);
         tvDescription = findViewById(R.id.tv_description);
-        btnRequestPost = findViewById(R.id.btn_request_post);
+        btnUpdate = findViewById(R.id.btn_update);
+        btnDelete = findViewById(R.id.btn_delete);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
@@ -63,7 +67,7 @@ public class PostDetailActivity extends AppCompatActivity {
         mPost = (Post) intent.getSerializableExtra("item_post");
 
         if(!TextUtils.isEmpty(mPost.getImage()))
-            Glide.with(PostDetailActivity.this).load(mPost.getImage()).into(imvImagePost);
+            Glide.with(MyPostDetailActivity.this).load(mPost.getImage()).into(imvImagePost);
         tvCreatedAt.setText("Từ " + DateTimeMethod.timeDifference(mPost.getCreatedAt()));
         tvTitlePost.setText(mPost.getTitle());
         tvQuantity.setText(String.valueOf(mPost.getCount()));
@@ -73,7 +77,7 @@ public class PostDetailActivity extends AppCompatActivity {
             public void onUserDataReceived(User user) {
                 if(user != null) {
                     if(user.getAvata() != null) {
-                        Glide.with(PostDetailActivity.this).load(user.getAvata()).into(cimvImagePoster);
+                        Glide.with(MyPostDetailActivity.this).load(user.getAvata()).into(cimvImagePoster);
                     }
                     tvFullNamePoster.setText(user.getFullName() + " đang cho đi");
                 }
@@ -89,11 +93,20 @@ public class PostDetailActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
-        btnRequestPost.setOnClickListener(new View.OnClickListener() {
+        btnUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(PostDetailActivity.this, "Gửi yêu cầu thành công", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(PostDetailActivity.this, MainActivity.class));
+                Intent intent = new Intent(MyPostDetailActivity.this, CreatePostActivity.class);
+                intent.putExtra(ACTION_NAME, ACTION_UPDATE_POST);
+                intent.putExtra(MY_POST, mPost);
+                intent.putExtra(NAME_TYPE, mPost.getType());
+                startActivity(intent);
+            }
+        });
+        btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
             }
         });
     }

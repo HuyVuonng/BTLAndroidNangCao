@@ -70,6 +70,10 @@ public class MainActivity extends AppCompatActivity {
     public static final String NAME_TYPE = "TypePost";
     public static final String TYPE_FOOD = "Food";
     public static final String TYPE_NON_FOOD = "Non-Food";
+    public static final String ACTION_NAME = "action";
+    public static final String ACTION_CREATE_POST = "create_post";
+    public static final String ACTION_UPDATE_POST = "update_post";
+    public static final String MY_POST = "myPost";
     BottomNavigationView bnv_menu;
     FloatingActionButton btn_add_post;
     ViewPager viewPager;

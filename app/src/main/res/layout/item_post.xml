@@ -101,9 +101,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="At Unknow"
-                            android:textColor="@color/purple_main"
-                            android:textSize="16dp"
-                            android:textStyle="bold" />
+                            android:textColor="@color/grey_rgba"
+                            android:textSize="14sp"/>
                     </LinearLayout>
 
                 </LinearLayout>

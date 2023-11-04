@@ -1,5 +1,8 @@
 package com.example.shareapp.controllers.activities;
 
+import static com.example.shareapp.controllers.activities.MainActivity.ACTION_CREATE_POST;
+import static com.example.shareapp.controllers.activities.MainActivity.ACTION_NAME;
+import static com.example.shareapp.controllers.activities.MainActivity.MY_POST;
 import static com.example.shareapp.controllers.activities.MainActivity.NAME_TYPE;
 import static com.example.shareapp.controllers.activities.MainActivity.TYPE_FOOD;
 import static com.example.shareapp.models.User.getUserInfor;
@@ -24,6 +27,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.bumptech.glide.Glide;
 import com.example.shareapp.R;
 import com.example.shareapp.controllers.fragments.NonFoodFragment;
 import com.example.shareapp.models.Post;
@@ -52,6 +56,8 @@ public class CreatePostActivity extends AppCompatActivity {
     private FirebaseDatabase database;
     private ProgressDialog progressDialog;
     private Uri uriImage;
+    private Post mPost;
+    private String mAction;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,10 +86,17 @@ public class CreatePostActivity extends AppCompatActivity {
 
     private void getDataIntent() {
         Intent intent = getIntent();
+        mAction = intent.getStringExtra(ACTION_NAME);
         typePost = intent.getStringExtra(NAME_TYPE);
+        mPost = (Post) intent.getSerializableExtra(MY_POST);
     }
 
     private void setEventListener() {
+        if(mAction.equals(ACTION_CREATE_POST)) {
+            btnSubmit.setText("Đăng");
+        } else {
+            btnSubmit.setText("Cập nhật");
+        }
         String title;
         if(typePost.equals(TYPE_FOOD)) {
             title = "Free Food";
@@ -91,6 +104,14 @@ public class CreatePostActivity extends AppCompatActivity {
             title = "Free Non-Food";
         }
         tvTitlePage.setText(title);
+
+        if(mPost != null) {
+            Glide.with(CreatePostActivity.this).load(mPost.getImage()).into(imbImagePost);
+            edtTitle.setText(mPost.getTitle());
+            edtQuantity.setText(String.valueOf(mPost.getCount()));
+            edtDescription.setText(mPost.getDescription());
+        }
+
         imbBackPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -113,27 +134,38 @@ public class CreatePostActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(validateData()) {
-                    Post post = new Post();
-                    post.setPostId(UUID.randomUUID().toString());
-                    post.setUserId(getUserInfor(CreatePostActivity.this).getUid());
-                    post.setTitle(edtTitle.getText().toString());
-                    post.setType(typePost);
-                    post.setCount(Integer.parseInt(edtQuantity.getText().toString()));
-                    post.setCreatedAt(System.currentTimeMillis());
-                    post.setUpdatedAt(System.currentTimeMillis());
-                    post.setDelete(false);
-                    post.setLocation("");
-                    post.setDescription(edtDescription.getText().toString());
+                    if (mPost == null) {
+                        Post post = new Post();
+                        post.setPostId(UUID.randomUUID().toString());
+                        post.setUserId(getUserInfor(CreatePostActivity.this).getUid());
+                        post.setTitle(edtTitle.getText().toString());
+                        post.setType(typePost);
+                        post.setCount(Integer.parseInt(edtQuantity.getText().toString()));
+                        post.setCreatedAt(System.currentTimeMillis());
+                        post.setUpdatedAt(System.currentTimeMillis());
+                        post.setDelete(false);
+                        post.setLocation("");
+                        post.setDescription(edtDescription.getText().toString());
 
-                    createPost(post);
+                        createPost(post);
+                    } else {
+                        mPost.setTitle(edtTitle.getText().toString());
+                        mPost.setCount(Integer.parseInt(edtQuantity.getText().toString()));
+                        mPost.setUpdatedAt(System.currentTimeMillis());
+                        mPost.setLocation("");
+                        mPost.setDescription(edtDescription.getText().toString());
+
+                        updatePost(mPost);
+                    }
                 }
+
             }
         });
     }
 
     private boolean validateData() {
         boolean isOk = true;
-        if(uriImage == null) {
+        if(TextUtils.isEmpty(mPost.getImage()) && uriImage == null) {
             tvErrorImage.setText("Vui lòng chọn ảnh");
             isOk = false;
         }
@@ -160,7 +192,6 @@ public class CreatePostActivity extends AppCompatActivity {
 
         // Đẩy ảnh lên firebase
         uploadImageToFirebase(post, myRef);
-
     }
 
     private void resetData() {
@@ -210,5 +241,48 @@ public class CreatePostActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Lỗi upload ảnh", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void updatePost(Post post) {
+        DatabaseReference myRef = database.getReference("Posts");
+        progressDialog.show();
+
+        if(uriImage == null) {
+            myRef.child(post.getPostId()).setValue(post, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                    progressDialog.dismiss();
+                    Toast.makeText(CreatePostActivity.this, "Update post successed", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(CreatePostActivity.this, MainActivity.class));
+                }
+            });
+        } else {
+            StorageReference myStore = FirebaseStorage.getInstance().getReference().child("Images/Post").child(uriImage.getLastPathSegment());
+            myStore.putFile(uriImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                    while (!uriTask.isComplete());
+                    Uri resultUri = uriTask.getResult();
+                    String urlImageString = resultUri.toString();
+
+                    post.setImage(urlImageString);
+                    myRef.child(post.getPostId()).setValue(post, new DatabaseReference.CompletionListener() {
+                        @Override
+                        public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                            progressDialog.dismiss();
+                            Toast.makeText(CreatePostActivity.this, "Update post successed", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(CreatePostActivity.this, MainActivity.class));
+                        }
+                    });
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(getApplicationContext(), "Lỗi upload ảnh", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
     }
 }

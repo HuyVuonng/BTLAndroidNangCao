@@ -1,5 +1,7 @@
 package com.example.shareapp.controllers.adapters;
 
+import static com.example.shareapp.models.User.getUserInfor;
+
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
@@ -16,12 +18,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.shareapp.R;
+import com.example.shareapp.controllers.activities.MyPostDetailActivity;
 import com.example.shareapp.controllers.activities.PostDetailActivity;
 import com.example.shareapp.controllers.methods.DateTimeMethod;
 import com.example.shareapp.models.Post;
 import com.example.shareapp.models.User;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -59,9 +63,8 @@ public class FeedPostAdapter extends RecyclerView.Adapter<FeedPostAdapter.FeedPo
                     holder.tvTitle.setText(post.getTitle());
                     holder.tvFullNamePoster.setText(user.fullName);
                     // convert gio
-                    Calendar calendar = Calendar.getInstance();
-//                    calendar.add(Calendar.DATE);
-                    holder.tvUploadedAt.setText(DateTimeMethod.simplifyDateFormat(post.getCreatedAt()));
+                    String timeDiff = DateTimeMethod.timeDifference(post.getCreatedAt());
+                    holder.tvUploadedAt.setText("Từ " + timeDiff);
                 }
             }
         });
@@ -69,7 +72,11 @@ public class FeedPostAdapter extends RecyclerView.Adapter<FeedPostAdapter.FeedPo
         holder.cvItemPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(_context, PostDetailActivity.class);
+                Intent intent;
+                if(getUserInfor(_context).getUid().equals(post.getUserId()))
+                    intent = new Intent(_context, MyPostDetailActivity.class);
+                else
+                    intent = new Intent(_context, PostDetailActivity.class);
                 intent.putExtra("item_post", (Serializable) post);
                 _context.startActivity(intent);
             }
