@@ -1,5 +1,7 @@
 package com.example.shareapp.models;
 
+import com.google.firebase.database.DatabaseReference;
+
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -171,5 +173,9 @@ public class Post implements Serializable {
         result.put("description", description);
 
         return result;
+    }
+
+    public static DatabaseReference getFirebaseReference() {
+        return com.google.firebase.database.FirebaseDatabase.getInstance().getReference("Posts");
     }
 }

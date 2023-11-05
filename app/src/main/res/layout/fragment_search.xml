@@ -4,13 +4,123 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".controllers.fragments.SearchFragment">
-
-    <!-- TODO: Update blank fragment layout -->
-    <ListView
-        android:id="@+id/main_lv_post"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:background="@color/grey_list" />
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingEnd="10dp">
+
+            <EditText
+                android:id="@+id/search_et_search"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:ems="10"
+                android:inputType="text"
+                android:background="#00000000"
+                android:hint="Bắt đầu tìm kiếm"
+                android:textColor="@color/black"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"/>
+
+            <Button
+                android:id="@+id/search_btn_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/purple_main"
+                android:text="Tìm kiếm"
+                />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+                    <Button
+                        android:id="@+id/search_btn_sort"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="#A9A9A9"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:drawableLeft="@drawable/ic_filter_list"
+                        android:layout_marginEnd="10dp"
+                        style="?android:attr/buttonBarButtonStyle" />
+                    <Button
+                        android:id="@+id/search_btn_filter_location"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="#A9A9A9"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:text="@string/search_filter_location"
+                        android:layout_marginEnd="10dp"
+                        style="?android:attr/buttonBarButtonStyle" />
+                    <Button
+                        android:id="@+id/search_btn_filter_type"
+                        style="?android:attr/buttonBarButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="#A9A9A9"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:text="@string/search_filter_type"
+                        android:textColor="@color/white"
+                        android:textStyle="bold" />
+
+                    <Button
+                        android:id="@+id/search_btn_clear"
+                        style="?android:attr/buttonBarButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/purple_main"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:visibility="gone"
+                        android:text="Xóa kết quả"
+                        android:textColor="@color/white"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </HorizontalScrollView>
+        </LinearLayout>
+        <!-- TODO: Update blank fragment layout -->
+        <ProgressBar
+            android:id="@+id/search_pb_post"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="40dp"
+            android:visibility="gone"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/search_rv_post"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="18dp"
+            android:layout_marginEnd="18dp"
+            android:layout_marginBottom="10dp"/>
+    </LinearLayout>
+
+
+
 
 </FrameLayout>
