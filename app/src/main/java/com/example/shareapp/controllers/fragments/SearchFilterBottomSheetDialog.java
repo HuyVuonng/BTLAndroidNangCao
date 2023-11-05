@@ -31,19 +31,10 @@ import com.example.shareapp.controllers.activities.CreatePostActivity;
 
 import java.util.Objects;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link SearchFilterBottomSheetDialog#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class SearchFilterBottomSheetDialog extends AppCompatDialogFragment {
-
     protected int type = 0;
     protected int location = 0;
     protected int sort = 0;
-
-
-
 
     Button btn_type_all,btn_type_food, btn_type_non_food,
             btn_location_all, btn_location_1, btn_location_3, btn_location_5, btn_location_10,

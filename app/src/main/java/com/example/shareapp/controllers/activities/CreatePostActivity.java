@@ -53,7 +53,6 @@ public class CreatePostActivity extends AppCompatActivity {
     private EditText edtTitle, edtDescription, edtQuantity;
     private Button btnSubmit;
     private String typePost;
-    private FirebaseDatabase database;
     private ProgressDialog progressDialog;
     private Uri uriImage;
     private Post mPost;
@@ -80,8 +79,6 @@ public class CreatePostActivity extends AppCompatActivity {
         edtQuantity = findViewById(R.id.edt_quantity);
         btnSubmit = findViewById(R.id.btn_submit);
         progressDialog = new ProgressDialog(this);
-
-        database = FirebaseDatabase.getInstance();
     }
 
     private void getDataIntent() {
@@ -187,7 +184,7 @@ public class CreatePostActivity extends AppCompatActivity {
     }
 
     private void createPost(Post post) {
-        DatabaseReference myRef = database.getReference("Posts");
+        DatabaseReference myRef = Post.getFirebaseReference();
         progressDialog.show();
 
         // Đẩy ảnh lên firebase
@@ -244,7 +241,7 @@ public class CreatePostActivity extends AppCompatActivity {
     }
 
     private void updatePost(Post post) {
-        DatabaseReference myRef = database.getReference("Posts");
+        DatabaseReference myRef = Post.getFirebaseReference();
         progressDialog.show();
 
         if(uriImage == null) {
