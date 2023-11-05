@@ -1,35 +1,26 @@
 package com.example.shareapp.controllers.fragments;
 
-import static com.example.shareapp.controllers.activities.MainActivity.TYPE_FOOD;
-
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.shareapp.R;
 import com.example.shareapp.controllers.adapters.FeedPostAdapter;
-import com.example.shareapp.controllers.adapters.PostAdapter;
 import com.example.shareapp.models.Post;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -88,6 +79,13 @@ public class SearchFragment extends Fragment {
             this.listPost.clear();
             this.postAdapter.notifyDataSetChanged();
             this.btn_clear.setVisibility(View.GONE);
+        });
+        this.btn_sort.setOnClickListener(v -> {
+            SearchFilterBottomSheetDialog bottomSheetDialog = new SearchFilterBottomSheetDialog(
+                    R.id.search_filter_btn_type_all,
+                    R.id.search_filter_btn_location_all,
+                    R.id.search_filter_sort_rb_latest);
+            bottomSheetDialog.show(getChildFragmentManager(), "filter");
         });
     }
 
