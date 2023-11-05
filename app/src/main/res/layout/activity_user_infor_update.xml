@@ -61,12 +61,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
-<!--            <ImageView-->
-<!--                android:id="@+id/activity_userInfor_update_imgv_avata"-->
-<!--                android:layout_width="150dp"-->
-<!--                android:layout_height="150dp"-->
-<!--                android:scaleType="fitXY"-->
-<!--                android:src="@drawable/no_img" />-->
+            <!--            <ImageView-->
+            <!--                android:id="@+id/activity_userInfor_update_imgv_avata"-->
+            <!--                android:layout_width="150dp"-->
+            <!--                android:layout_height="150dp"-->
+            <!--                android:scaleType="fitXY"-->
+            <!--                android:src="@drawable/no_img" />-->
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/activity_userInfor_update_imgv_avata"
                 android:layout_width="150dp"
@@ -99,6 +99,7 @@
             android:layout_marginBottom="10dp"
             android:drawableLeft="@drawable/baseline_person_24_black"
             android:drawablePadding="20dp"
+            android:inputType="text"
             android:text="Họ tên"
             android:textColor="@color/black"
             android:textSize="16sp" />
@@ -113,6 +114,7 @@
             android:layout_marginBottom="10dp"
             android:drawableLeft="@drawable/baseline_home_24_black"
             android:drawablePadding="20dp"
+            android:inputType="text"
             android:text="Địa chỉ"
             android:textColor="@color/black"
             android:textSize="16sp" />
@@ -128,6 +130,7 @@
             android:drawableLeft="@drawable/baseline_email_24_black"
             android:drawablePadding="20dp"
             android:enabled="false"
+            android:inputType="textEmailAddress"
             android:text="Email"
             android:textColor="@color/black"
             android:textSize="16sp" />
@@ -144,6 +147,7 @@
             android:drawablePadding="20dp"
             android:text="Số điện thoại"
             android:textColor="@color/black"
+            android:inputType="phone"
             android:textSize="16sp" />
 
         <LinearLayout
