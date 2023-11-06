@@ -153,17 +153,12 @@ public class SearchFragment extends Fragment {
     protected boolean checkPostType(Post post) {
         this.displayFilterType();
         if (this.filter_type == R.id.search_filter_btn_type_all) {
-            Log.e("SearchFragment", "Type");
-            this.btn_filter_type.setText(R.string.search_filter_type);
-            this.btn_filter_type.setVisibility(View.GONE);
             return true;
         }
         else if (this.filter_type == R.id.search_filter_btn_type_food && Objects.equals(post.getType(), PostTypeConstant.TYPE_FOOD)) {
-            Log.e("SearchFragment", "Food");
             return true;
         }
         else if (this.filter_type == R.id.search_filter_btn_type_non_food && Objects.equals(post.getType(), PostTypeConstant.TYPE_NON_FOOD)) {
-            Log.e("SearchFragment", "Non-Food");
             return true;
         }
         return false;
