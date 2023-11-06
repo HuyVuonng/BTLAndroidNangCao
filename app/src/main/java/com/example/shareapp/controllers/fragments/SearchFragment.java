@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.shareapp.R;
 import com.example.shareapp.controllers.adapters.FeedPostAdapter;
+import com.example.shareapp.controllers.constant.PostTypeConstant;
 import com.example.shareapp.models.Post;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -25,6 +26,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,6 +35,8 @@ import java.util.List;
  */
 public class SearchFragment extends Fragment {
 
+
+    private int filter_type = R.id.search_filter_btn_type_all, filter_location = R.id.search_filter_btn_location_all, filter_sort = R.id.search_filter_sort_rb_latest;
     private RecyclerView rv_post;
     private EditText et_search;
     private List<Post> listPost;
@@ -77,15 +81,35 @@ public class SearchFragment extends Fragment {
         this.btn_clear.setOnClickListener(v -> {
             et_search.setText("");
             this.listPost.clear();
+            this.filter_type = R.id.search_filter_btn_type_all;
+            this.displayFilterType();
+            this.filter_location = R.id.search_filter_btn_location_all;
+            this.displayFilterLocation();
+            this.filter_sort = R.id.search_filter_sort_rb_latest;
             this.postAdapter.notifyDataSetChanged();
             this.btn_clear.setVisibility(View.GONE);
         });
         this.btn_sort.setOnClickListener(v -> {
             SearchFilterBottomSheetDialog bottomSheetDialog = new SearchFilterBottomSheetDialog(
-                    R.id.search_filter_btn_type_all,
-                    R.id.search_filter_btn_location_all,
-                    R.id.search_filter_sort_rb_latest);
-            bottomSheetDialog.show(getChildFragmentManager(), "filter");
+                    this.filter_type,
+                    this.filter_location,
+                    this.filter_sort,
+                    data -> {
+                        this.filter_type = data.getType();
+                        this.filter_location = data.getLocation();
+                        this.filter_sort = data.getSort();
+                    });
+            bottomSheetDialog.show(getChildFragmentManager(), "search_filter_bottom_sheet");
+        });
+        this.btn_filter_type.setOnClickListener(v -> {
+            this.filter_type = R.id.search_filter_btn_type_all;
+            this.displayFilterType();
+            this.renderListView(et_search.getText().toString());
+        });
+        this.btn_filter_location.setOnClickListener(v -> {
+            this.filter_location = R.id.search_filter_btn_location_all;
+            this.displayFilterLocation();
+            this.renderListView(et_search.getText().toString());
         });
     }
 
@@ -99,8 +123,17 @@ public class SearchFragment extends Fragment {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Post post = dataSnapshot.getValue(Post.class);
                     if (post != null && post.getTitle().toLowerCase().contains(search.toLowerCase())) {
+                        if (!checkPostType(post)) {
+                            continue;
+                        }
+                        if (!checkPostLocation(post)) {
+                            continue;
+                        }
                         listPost.add(post);
                     }
+                }
+                if (filter_sort == R.id.search_filter_sort_rb_latest) {
+                    listPost.sort((o1, o2) -> (int) (o2.getUpdatedAt() - o1.getUpdatedAt()));
                 }
                 postAdapter.notifyDataSetChanged();
                 pb_post.setVisibility(View.GONE);
@@ -116,6 +149,74 @@ public class SearchFragment extends Fragment {
             }
         });
     }
+
+    protected boolean checkPostType(Post post) {
+        this.displayFilterType();
+        if (this.filter_type == R.id.search_filter_btn_type_all) {
+            Log.e("SearchFragment", "Type");
+            this.btn_filter_type.setText(R.string.search_filter_type);
+            this.btn_filter_type.setVisibility(View.GONE);
+            return true;
+        }
+        else if (this.filter_type == R.id.search_filter_btn_type_food && Objects.equals(post.getType(), PostTypeConstant.TYPE_FOOD)) {
+            Log.e("SearchFragment", "Food");
+            return true;
+        }
+        else if (this.filter_type == R.id.search_filter_btn_type_non_food && Objects.equals(post.getType(), PostTypeConstant.TYPE_NON_FOOD)) {
+            Log.e("SearchFragment", "Non-Food");
+            return true;
+        }
+        return false;
+    }
+
+    protected void displayFilterType() {
+        if (this.filter_type == R.id.search_filter_btn_type_all) {
+            this.btn_filter_type.setText(R.string.search_filter_type);
+            this.btn_filter_type.setVisibility(View.GONE);
+        }
+        else if (this.filter_type == R.id.search_filter_btn_type_food) {
+            this.btn_filter_type.setText("Loại sản phẩm: " + PostTypeConstant.TYPE_FOOD);
+            this.btn_filter_type.setVisibility(View.VISIBLE);
+        }
+        else if (this.filter_type == R.id.search_filter_btn_type_non_food) {
+            this.btn_filter_type.setText("Loại sản phẩm: " + PostTypeConstant.TYPE_NON_FOOD);
+            this.btn_filter_type.setVisibility(View.VISIBLE);
+        }
+    }
+
+    protected boolean checkPostLocation(Post post) {
+        this.displayFilterLocation();
+        if(this.filter_location == R.id.search_filter_btn_location_all) {
+            return true;
+        }
+//        @todo: check post location
+        return false;
+    }
+
+    protected void displayFilterLocation() {
+        if (this.filter_location == R.id.search_filter_btn_location_all) {
+            this.btn_filter_location.setText(R.string.search_filter_location);
+            this.btn_filter_location.setVisibility(View.GONE);
+        }
+        else if (this.filter_location == R.id.search_filter_btn_location_1) {
+            this.btn_filter_location.setText("Khoảng cách: 1km");
+            this.btn_filter_location.setVisibility(View.VISIBLE);
+        }
+        else if (this.filter_location == R.id.search_filter_btn_location_3) {
+            this.btn_filter_location.setText("Khoảng cách: 3km");
+            this.btn_filter_location.setVisibility(View.VISIBLE);
+        }
+        else if (this.filter_location == R.id.search_filter_btn_location_5) {
+            this.btn_filter_location.setText("Khoảng cách: 5km");
+            this.btn_filter_location.setVisibility(View.VISIBLE);
+        }
+        else if (this.filter_location == R.id.search_filter_btn_location_10) {
+            this.btn_filter_location.setText("Khoảng cách: 10km");
+            this.btn_filter_location.setVisibility(View.VISIBLE);
+        }
+    }
+
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

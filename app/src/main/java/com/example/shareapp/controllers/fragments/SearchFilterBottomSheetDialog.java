@@ -1,33 +1,23 @@
 package com.example.shareapp.controllers.fragments;
 
-import static com.example.shareapp.controllers.activities.MainActivity.ACTION_CREATE_POST;
-import static com.example.shareapp.controllers.activities.MainActivity.ACTION_NAME;
-import static com.example.shareapp.controllers.activities.MainActivity.NAME_TYPE;
-import static com.example.shareapp.controllers.activities.MainActivity.TYPE_FOOD;
-import static com.example.shareapp.controllers.activities.MainActivity.TYPE_NON_FOOD;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatDialogFragment;
-import androidx.fragment.app.Fragment;
-
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.RadioGroup;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDialogFragment;
+import androidx.fragment.app.Fragment;
 
 import com.example.shareapp.R;
-import com.example.shareapp.controllers.activities.CreatePostActivity;
 
 import java.util.Objects;
 
@@ -42,7 +32,27 @@ public class SearchFilterBottomSheetDialog extends AppCompatDialogFragment {
     protected int location = 0;
     protected int sort = 0;
 
+    private DialogCallback callback;
 
+    public static class Data {
+        private int type;
+        private int location;
+        private int sort;
+        public Data(int type, int location, int sort) {
+            this.location = location;
+            this.sort = sort;
+            this.type = type;
+        }
+
+        public int getType() { return this.type;}
+        public int getLocation() { return this.location;}
+        public int getSort() { return this.sort;}
+
+     }
+
+    public interface DialogCallback {
+        void onDataReturned(Data data);
+    }
 
 
     Button btn_type_all,btn_type_food, btn_type_non_food,
@@ -53,10 +63,11 @@ public class SearchFilterBottomSheetDialog extends AppCompatDialogFragment {
 
     View view;
 
-    public SearchFilterBottomSheetDialog(int type, int location, int sort) {
+    public SearchFilterBottomSheetDialog(int type, int location, int sort, DialogCallback callback) {
         this.type = type;
         this.location = location;
         this.sort = sort;
+        this.callback = callback;
     }
 
     @NonNull
@@ -76,6 +87,22 @@ public class SearchFilterBottomSheetDialog extends AppCompatDialogFragment {
 
 
     private void setEventListener() {
+        this.btn_type_all.setOnClickListener(v -> this.setTypeValue(R.id.search_filter_btn_type_all));
+        this.btn_type_food.setOnClickListener(v -> this.setTypeValue(R.id.search_filter_btn_type_food));
+        this.btn_type_non_food.setOnClickListener(v -> this.setTypeValue(R.id.search_filter_btn_type_non_food));
+        this.btn_location_all.setOnClickListener(v -> this.setLocationValue(R.id.search_filter_btn_location_all));
+        this.btn_location_1.setOnClickListener(v -> this.setLocationValue(R.id.search_filter_btn_location_1));
+        this.btn_location_3.setOnClickListener(v -> this.setLocationValue(R.id.search_filter_btn_location_3));
+        this.btn_location_5.setOnClickListener(v -> this.setLocationValue(R.id.search_filter_btn_location_5));
+        this.btn_location_10.setOnClickListener(v -> this.setLocationValue(R.id.search_filter_btn_location_10));
+        this.rg_sort.setOnCheckedChangeListener((group, checkedId) -> {
+            this.sort = checkedId;
+        });
+        this.btn_apply.setOnClickListener(v -> {
+            Log.e("SearchFilterBottomSheetDialog", "setEventListener:" + this.type);
+            callback.onDataReturned(new Data(this.type, this.location, this.sort));
+            dismiss();
+        });
     }
 
     private void getViews(View view) {
@@ -96,6 +123,7 @@ public class SearchFilterBottomSheetDialog extends AppCompatDialogFragment {
         btn_type_food.setBackgroundTintList(getResources().getColorStateList(R.color.grey_main));
         btn_type_non_food.setBackgroundTintList(getResources().getColorStateList(R.color.grey_main));
         this.view.findViewById(type_id).setBackgroundTintList(getResources().getColorStateList(R.color.purple_main));
+        this.type = type_id;
     }
 
     private void setLocationValue(int location_id) {
@@ -105,10 +133,12 @@ public class SearchFilterBottomSheetDialog extends AppCompatDialogFragment {
         btn_location_5.setBackgroundTintList(getResources().getColorStateList(R.color.grey_main));
         btn_location_10.setBackgroundTintList(getResources().getColorStateList(R.color.grey_main));
         this.view.findViewById(location_id).setBackgroundTintList(getResources().getColorStateList(R.color.purple_main));
+        this.location = location_id;
     }
 
     private void setSortValue(int sort_id) {
         rg_sort.check(sort_id);
+        this.sort = sort_id;
     }
 
     @Override
