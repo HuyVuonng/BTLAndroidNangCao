@@ -162,7 +162,7 @@ public class CreatePostActivity extends AppCompatActivity {
 
     private boolean validateData() {
         boolean isOk = true;
-        if(TextUtils.isEmpty(mPost.getImage()) && uriImage == null) {
+        if(mPost == null && uriImage == null) {
             tvErrorImage.setText("Vui lòng chọn ảnh");
             isOk = false;
         }

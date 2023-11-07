@@ -4,11 +4,14 @@ import static com.example.shareapp.controllers.activities.MainActivity.ACTION_NA
 import static com.example.shareapp.controllers.activities.MainActivity.ACTION_UPDATE_POST;
 import static com.example.shareapp.controllers.activities.MainActivity.MY_POST;
 import static com.example.shareapp.controllers.activities.MainActivity.NAME_TYPE;
+import static com.example.shareapp.models.Post.deletePost;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -106,7 +109,20 @@ public class MyPostDetailActivity extends AppCompatActivity {
         btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                new AlertDialog.Builder(MyPostDetailActivity.this)
+                        .setTitle("Thông báo")
+                        .setIcon(R.drawable.ic_warning)
+                        .setMessage("Bạn có chắc muốn xóa bài viết này không?\nChú ý sau khi xóa sẽ không khôi phục được dữ liệu!")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                deletePost(mPost.getPostId());
+                                Toast.makeText(MyPostDetailActivity.this, "Đã xóa bài viết.", Toast.LENGTH_SHORT).show();
+                                startActivity(new Intent(MyPostDetailActivity.this, MainActivity.class));
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, null)
+                        .show();
             }
         });
     }

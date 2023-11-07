@@ -178,4 +178,8 @@ public class Post implements Serializable {
     public static DatabaseReference getFirebaseReference() {
         return com.google.firebase.database.FirebaseDatabase.getInstance().getReference("Posts");
     }
+
+    public static void deletePost(String postId) {
+        getFirebaseReference().child(postId).child("delete").setValue(true);
+    }
 }
