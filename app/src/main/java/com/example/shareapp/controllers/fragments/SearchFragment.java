@@ -98,6 +98,9 @@ public class SearchFragment extends Fragment {
                         this.filter_type = data.getType();
                         this.filter_location = data.getLocation();
                         this.filter_sort = data.getSort();
+                        if (!this.et_search.getText().toString().isEmpty()) {
+                            this.renderListView(this.et_search.getText().toString());
+                        }
                     });
             bottomSheetDialog.show(getChildFragmentManager(), "search_filter_bottom_sheet");
         });
