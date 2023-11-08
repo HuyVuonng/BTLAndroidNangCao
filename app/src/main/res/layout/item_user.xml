@@ -35,6 +35,7 @@
                 android:background="@color/purple_item_post"
                 android:gravity="center"
                 android:orientation="horizontal"
+                android:paddingStart="10dp"
                 android:paddingEnd="10dp"
                 tools:ignore="RtlSymmetry">
 
@@ -47,49 +48,50 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:layout_marginStart="5dp"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:layout_marginStart="5dp"
                     android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/item_user_tv_username"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
                         android:paddingBottom="2dp"
                         android:text="Username"
                         android:textColor="@color/black"
                         android:textSize="22dp"
-                        android:textStyle="bold"
-                        android:ellipsize="end"
-                        android:maxLines="1"/>
+                        android:textStyle="bold" />
 
-                        <TextView
-                            android:id="@+id/item_user_tv_email"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginTop="4dp"
-                            android:text="example@example.com"
-                            android:textColor="@color/black"
-                            android:textSize="16sp"
-                            android:ellipsize="end"
-                            android:maxLines="1"/>
+                    <TextView
+                        android:id="@+id/item_user_tv_email"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginTop="4dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="example@example.com"
+                        android:textColor="@color/black"
+                        android:textSize="16sp" />
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
                         android:gravity="end"
-                        >
+                        android:orientation="horizontal">
+
                         <Button
                             android:id="@+id/item_user_btn_detail"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="Show profile"
                             android:minWidth="0dp"
                             android:minHeight="0dp"
-                            android:textSize="12sp"/>
+                            android:text="Show profile"
+                            android:textSize="12sp" />
 
                     </LinearLayout>
                 </LinearLayout>
