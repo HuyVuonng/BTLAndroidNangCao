@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".controllers.fragments.SearchFragment">
     <LinearLayout
         android:layout_width="match_parent"
@@ -103,7 +104,25 @@
                 </LinearLayout>
             </HorizontalScrollView>
         </LinearLayout>
-        <!-- TODO: Update blank fragment layout -->
+        <com.google.android.material.tabs.TabLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabBackground="@color/white"
+            android:id="@+id/search_tl_result">
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bài đăng"
+                android:textStyle="bold"
+                android:id="@+id/search_ti_result_post"/>
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Người dùng"
+                android:textStyle="bold"
+                android:id="@+id/search_ti_result_user"/>
+        </com.google.android.material.tabs.TabLayout>
+
         <ProgressBar
             android:id="@+id/search_pb_post"
             android:layout_width="wrap_content"
@@ -113,13 +132,21 @@
             android:visibility="gone"/>
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/search_rv_post"
-            android:layout_weight="1"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginStart="18dp"
             android:layout_marginEnd="18dp"
             android:layout_marginBottom="10dp"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/search_rv_user"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="18dp"
+            android:layout_marginEnd="18dp"
+            android:layout_marginBottom="10dp"/>
+
     </LinearLayout>
 
 

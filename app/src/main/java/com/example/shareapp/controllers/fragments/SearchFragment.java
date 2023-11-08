@@ -18,9 +18,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.shareapp.R;
 import com.example.shareapp.controllers.adapters.FeedPostAdapter;
+import com.example.shareapp.controllers.adapters.UserAdapter;
 import com.example.shareapp.controllers.constant.PostTypeConstant;
 import com.example.shareapp.models.Post;
 import com.example.shareapp.models.User;
+import com.google.android.material.tabs.TabItem;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -36,19 +39,23 @@ public class SearchFragment extends Fragment {
     private int filter_type = R.id.search_filter_btn_type_all, filter_location = R.id.search_filter_btn_location_all, filter_sort = R.id.search_filter_sort_rb_latest;
     private List<Integer> typeList = new ArrayList<>(Arrays.asList(R.id.search_filter_btn_product, R.id.search_filter_btn_user));
     private List<Integer> userFilterKeyList = new ArrayList<>(Arrays.asList(R.id.search_filter_btn_user_email, R.id.search_filter_btn_user_name, R.id.search_filter_btn_user_description));
-    private RecyclerView rv_post;
+    private RecyclerView rv_post, rv_user;
     private EditText et_search;
     private List<Post> listPost;
     private List<User> listUser;
     private FeedPostAdapter postAdapter;
+    private UserAdapter userAdapter;
     private Button btn_search, btn_sort, btn_filter_location, btn_filter_type, btn_clear;
     private ProgressBar pb_post;
+    private TabLayout tl_result;
+    private TabItem ti_result_post, ti_result_user;
     public SearchFragment() {
         // Required empty public constructor
     }
 
     protected void getViews(View view) {
         this.rv_post = view.findViewById(R.id.search_rv_post);
+        this.rv_user = view.findViewById(R.id.search_rv_user);
         this.et_search = view.findViewById(R.id.search_et_search);
         this.btn_search = view.findViewById(R.id.search_btn_search);
         this.btn_sort = view.findViewById(R.id.search_btn_sort);
@@ -56,17 +63,21 @@ public class SearchFragment extends Fragment {
         this.btn_filter_type = view.findViewById(R.id.search_btn_filter_type);
         this.pb_post = view.findViewById(R.id.search_pb_post);
         this.btn_clear = view.findViewById(R.id.search_btn_clear);
-
+        this.tl_result = view.findViewById(R.id.search_tl_result);
+        this.ti_result_post = view.findViewById(R.id.search_ti_result_post);
+        this.ti_result_user = view.findViewById(R.id.search_ti_result_user);
     }
 
     private void initRecyclerView() {
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        rv_post.setLayoutManager(linearLayoutManager);
+//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        rv_post.setLayoutManager(new LinearLayoutManager(getActivity()));
         listPost = new ArrayList<>();
         postAdapter = new FeedPostAdapter(getActivity(), listPost);
         rv_post.setAdapter(postAdapter);
+        rv_user.setLayoutManager( new LinearLayoutManager(getActivity()));
         listUser = new ArrayList<>();
-
+        userAdapter = new UserAdapter(getActivity(), listUser);
+        rv_user.setAdapter(userAdapter);
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -91,6 +102,7 @@ public class SearchFragment extends Fragment {
             this.postAdapter.notifyDataSetChanged();
             this.typeList = new ArrayList<>(Arrays.asList(R.id.search_filter_btn_product, R.id.search_filter_btn_user));
             this.userFilterKeyList = new ArrayList<>(Arrays.asList(R.id.search_filter_btn_user_email, R.id.search_filter_btn_user_name, R.id.search_filter_btn_user_description));
+            this.userAdapter.notifyDataSetChanged();
             this.btn_clear.setVisibility(View.GONE);
         });
         this.btn_sort.setOnClickListener(v -> {
@@ -122,12 +134,37 @@ public class SearchFragment extends Fragment {
             this.displayFilterLocation();
             this.renderListView(et_search.getText().toString());
         });
+        this.tl_result.addOnTabSelectedListener(
+                new TabLayout.OnTabSelectedListener() {
+                    @Override
+                    public void onTabSelected(TabLayout.Tab tab) {
+                        setActiveTab();
+                    }
+
+                    @Override
+                    public void onTabUnselected(TabLayout.Tab tab) {
+                        setActiveTab();
+                    }
+
+                    @Override
+                    public void onTabReselected(TabLayout.Tab tab) {
+                        setActiveTab();
+                    }
+                }
+        );
     }
 
     protected void renderListView(String search) {
         this.pb_post.setVisibility(View.VISIBLE);
         this.listPost.clear();
         this.listUser.clear();
+        if (this.typeList.contains(R.id.search_filter_btn_product) && !this.typeList.contains(R.id.search_filter_btn_user)) {
+            this.tl_result.getTabAt(0).select();
+        } else if (!this.typeList.contains(R.id.search_filter_btn_product) && this.typeList.contains(R.id.search_filter_btn_user)) {
+            this.tl_result.getTabAt(1).select();
+        } else {
+            this.tl_result.getTabAt(0).select();
+        }
         if(this.typeList.contains(R.id.search_filter_btn_product)) {
             Post.getFirebaseReference().addValueEventListener(new ValueEventListener() {
                 @SuppressLint("NotifyDataSetChanged")
@@ -163,6 +200,7 @@ public class SearchFragment extends Fragment {
         }
 
         if (this.typeList.contains(R.id.search_filter_btn_user)) {
+            Log.d("SearchFragment", "renderListView: " + this.userFilterKeyList);
             User.getFirebaseReference().addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -182,6 +220,7 @@ public class SearchFragment extends Fragment {
                         }
 
                     }
+                    userAdapter.notifyDataSetChanged();
                     pb_post.setVisibility(View.GONE);
                     if (!listUser.isEmpty()) {
                         rv_post.smoothScrollToPosition(0);
@@ -257,7 +296,16 @@ public class SearchFragment extends Fragment {
         }
     }
 
-
+    private void setActiveTab() {
+        if (this.tl_result.getSelectedTabPosition() == 0) {
+            this.rv_post.setVisibility(View.VISIBLE);
+            this.rv_user.setVisibility(View.GONE);
+        }
+        else {
+            this.rv_post.setVisibility(View.GONE);
+            this.rv_user.setVisibility(View.VISIBLE);
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
