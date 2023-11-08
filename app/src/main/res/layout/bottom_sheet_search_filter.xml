@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/bottom_sheet_background">
 
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,19 +19,15 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp">
-
+        android:orientation="vertical">
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Product Type"
+            android:text="Search by"
             android:textColor="@color/purple_main"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            />
+            android:layout_marginTop="5dp"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -44,60 +41,56 @@
                 android:minWidth="0dp"
                 android:minHeight="0dp"
                 android:layout_marginEnd="10sp"
-                android:id="@+id/search_filter_btn_type_all"
+                android:id="@+id/search_filter_btn_user"
                 android:textStyle="bold"
                 android:textColor="@color/white"
-                android:text="All"
-                android:backgroundTint="@color/grey_main"
-                />
+                android:text="User"
+                android:backgroundTint="@color/grey_main" />
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:minWidth="0dp"
                 android:minHeight="0dp"
                 android:layout_marginEnd="10sp"
-                android:id="@+id/search_filter_btn_type_food"
+                android:id="@+id/search_filter_btn_product"
                 android:textStyle="bold"
-                android:text="Food"
+                android:text="Product"
                 android:textColor="@color/white"
-                android:backgroundTint="@color/grey_main"
-                />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:minWidth="0dp"
-                android:minHeight="0dp"
-                android:layout_marginEnd="10sp"
-                android:id="@+id/search_filter_btn_type_non_food"
-                android:textStyle="bold"
-                android:text="NonFood"
-                android:textColor="@color/white"
-                android:backgroundTint="@color/grey_main"
-            />
+                android:backgroundTint="@color/grey_main" />
 
         </LinearLayout>
+
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp">
-
+        android:id="@+id/search_filter_ll_product_filter"
+        android:orientation="vertical">
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Maximun Distance"
-            android:textColor="@color/purple_main"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            />
-        <HorizontalScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:text="Product Filter"
+            android:textColor="@color/purple_main"
+            android:layout_marginTop="5dp"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Product Type"
+                android:textColor="@color/purple_main"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                />
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -111,10 +104,10 @@
                     android:minWidth="0dp"
                     android:minHeight="0dp"
                     android:layout_marginEnd="10sp"
-                    android:id="@+id/search_filter_btn_location_all"
+                    android:id="@+id/search_filter_btn_type_all"
                     android:textStyle="bold"
+                    android:textColor="@color/white"
                     android:text="All"
-                    android:textColor="@color/white"
                     android:backgroundTint="@color/grey_main"
                     />
                 <Button
@@ -123,9 +116,9 @@
                     android:minWidth="0dp"
                     android:minHeight="0dp"
                     android:layout_marginEnd="10sp"
-                    android:id="@+id/search_filter_btn_location_1"
+                    android:id="@+id/search_filter_btn_type_food"
                     android:textStyle="bold"
-                    android:text="1 km"
+                    android:text="Food"
                     android:textColor="@color/white"
                     android:backgroundTint="@color/grey_main"
                     />
@@ -136,83 +129,232 @@
                     android:minWidth="0dp"
                     android:minHeight="0dp"
                     android:layout_marginEnd="10sp"
-                    android:id="@+id/search_filter_btn_location_3"
+                    android:id="@+id/search_filter_btn_type_non_food"
                     android:textStyle="bold"
-                    android:text="3 km"
+                    android:text="NonFood"
                     android:textColor="@color/white"
                     android:backgroundTint="@color/grey_main"
-                    />
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:minWidth="0dp"
-                    android:minHeight="0dp"
-                    android:layout_marginEnd="10sp"
-                    android:id="@+id/search_filter_btn_location_5"
-                    android:textStyle="bold"
-                    android:text="5 km"
-                    android:textColor="@color/white"
-                    android:backgroundTint="@color/grey_main"
-                    />
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:minWidth="0dp"
-                    android:minHeight="0dp"
-                    android:layout_marginEnd="10sp"
-                    android:id="@+id/search_filter_btn_location_10"
-                    android:textStyle="bold"
-                    android:text="10 km"
-                    android:textColor="@color/white"
-                    android:backgroundTint="@color/grey_main"
-                    />
+                />
+
             </LinearLayout>
-        </HorizontalScrollView>
+        </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Maximum Distance"
+                android:textColor="@color/purple_main"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                />
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="none">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp">
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:layout_marginEnd="10sp"
+                        android:id="@+id/search_filter_btn_location_all"
+                        android:textStyle="bold"
+                        android:text="All"
+                        android:textColor="@color/white"
+                        android:backgroundTint="@color/grey_main"
+                        />
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:layout_marginEnd="10sp"
+                        android:id="@+id/search_filter_btn_location_1"
+                        android:textStyle="bold"
+                        android:text="1 km"
+                        android:textColor="@color/white"
+                        android:backgroundTint="@color/grey_main"
+                        />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:layout_marginEnd="10sp"
+                        android:id="@+id/search_filter_btn_location_3"
+                        android:textStyle="bold"
+                        android:text="3 km"
+                        android:textColor="@color/white"
+                        android:backgroundTint="@color/grey_main"
+                        />
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:layout_marginEnd="10sp"
+                        android:id="@+id/search_filter_btn_location_5"
+                        android:textStyle="bold"
+                        android:text="5 km"
+                        android:textColor="@color/white"
+                        android:backgroundTint="@color/grey_main"
+                        />
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:layout_marginEnd="10sp"
+                        android:id="@+id/search_filter_btn_location_10"
+                        android:textStyle="bold"
+                        android:text="10 km"
+                        android:textColor="@color/white"
+                        android:backgroundTint="@color/grey_main"
+                        />
+                </LinearLayout>
+            </HorizontalScrollView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp" >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Order By"
+                android:textColor="@color/purple_main"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                />
+            <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/search_filter_rg_sort">
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Latest"
+                    android:textColor="@color/black"
+                    android:buttonTint="@color/purple_main"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:id="@+id/search_filter_sort_rb_latest"
+                    android:checked="true"/>
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Closest"
+                    android:textColor="@color/black"
+                    android:buttonTint="@color/purple_main"
+                    android:textSize="18sp"
+                    android:id="@+id/search_filter_sort_rb_closest"
+                    android:textStyle="bold"/>
+
+            </RadioGroup>
+        </LinearLayout>
     </LinearLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp" >
+        android:id="@+id/search_filter_ll_user_filter"
+        android:orientation="vertical">
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Order By"
+            android:text="User Filter"
             android:textColor="@color/purple_main"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            />
-        <RadioGroup
-            android:layout_width="wrap_content"
+            android:layout_marginTop="5dp"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/search_filter_rg_sort">
-            <RadioButton
+            android:orientation="vertical"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            >
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Latest"
-                android:textColor="@color/black"
-                android:buttonTint="@color/purple_main"
+                android:text="Search by"
+                android:textColor="@color/purple_main"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:id="@+id/search_filter_sort_rb_latest"
-                android:checked="true"/>
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Closest"
-                android:textColor="@color/black"
-                android:buttonTint="@color/purple_main"
-                android:textSize="18sp"
-                android:id="@+id/search_filter_sort_rb_closest"
-                android:textStyle="bold"/>
+                />
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp">
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:layout_marginEnd="10sp"
+                        android:id="@+id/search_filter_btn_user_email"
+                        android:textStyle="bold"
+                        android:text="Email"
+                        android:textColor="@color/white"
+                        android:backgroundTint="@color/grey_main"
+                        />
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:layout_marginEnd="10sp"
+                        android:id="@+id/search_filter_btn_user_name"
+                        android:textStyle="bold"
+                        android:text="Username"
+                        android:textColor="@color/white"
+                        android:backgroundTint="@color/grey_main"
+                        />
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:layout_marginEnd="10sp"
+                        android:id="@+id/search_filter_btn_user_description"
+                        android:textStyle="bold"
+                        android:text="Description"
+                        android:textColor="@color/white"
+                        android:backgroundTint="@color/grey_main"
+                        />
 
-        </RadioGroup>
+
+                </LinearLayout>
+            </HorizontalScrollView>
+        </LinearLayout>
     </LinearLayout>
-
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

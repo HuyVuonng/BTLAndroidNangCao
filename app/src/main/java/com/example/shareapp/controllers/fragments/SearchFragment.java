@@ -20,11 +20,13 @@ import com.example.shareapp.R;
 import com.example.shareapp.controllers.adapters.FeedPostAdapter;
 import com.example.shareapp.controllers.constant.PostTypeConstant;
 import com.example.shareapp.models.Post;
+import com.example.shareapp.models.User;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -37,9 +39,12 @@ public class SearchFragment extends Fragment {
 
 
     private int filter_type = R.id.search_filter_btn_type_all, filter_location = R.id.search_filter_btn_location_all, filter_sort = R.id.search_filter_sort_rb_latest;
+    private List<Integer> typeList = new ArrayList<>(Arrays.asList(R.id.search_filter_btn_product, R.id.search_filter_btn_user));
+    private List<Integer> userFilterKeyList = new ArrayList<>(Arrays.asList(R.id.search_filter_btn_user_email, R.id.search_filter_btn_user_name, R.id.search_filter_btn_user_description));
     private RecyclerView rv_post;
     private EditText et_search;
     private List<Post> listPost;
+    private List<User> listUser;
     private FeedPostAdapter postAdapter;
     private Button btn_search, btn_sort, btn_filter_location, btn_filter_type, btn_clear;
     private ProgressBar pb_post;
@@ -65,6 +70,7 @@ public class SearchFragment extends Fragment {
         listPost = new ArrayList<>();
         postAdapter = new FeedPostAdapter(getActivity(), listPost);
         rv_post.setAdapter(postAdapter);
+        listUser = new ArrayList<>();
 
     }
 
@@ -81,12 +87,15 @@ public class SearchFragment extends Fragment {
         this.btn_clear.setOnClickListener(v -> {
             et_search.setText("");
             this.listPost.clear();
+            this.listUser.clear();
             this.filter_type = R.id.search_filter_btn_type_all;
             this.displayFilterType();
             this.filter_location = R.id.search_filter_btn_location_all;
             this.displayFilterLocation();
             this.filter_sort = R.id.search_filter_sort_rb_latest;
             this.postAdapter.notifyDataSetChanged();
+            this.typeList = new ArrayList<>(Arrays.asList(R.id.search_filter_btn_product, R.id.search_filter_btn_user));
+            this.userFilterKeyList = new ArrayList<>(Arrays.asList(R.id.search_filter_btn_user_email, R.id.search_filter_btn_user_name, R.id.search_filter_btn_user_description));
             this.btn_clear.setVisibility(View.GONE);
         });
         this.btn_sort.setOnClickListener(v -> {
@@ -94,10 +103,14 @@ public class SearchFragment extends Fragment {
                     this.filter_type,
                     this.filter_location,
                     this.filter_sort,
+                    this.typeList,
+                    this.userFilterKeyList,
                     data -> {
                         this.filter_type = data.getType();
                         this.filter_location = data.getLocation();
                         this.filter_sort = data.getSort();
+                        this.typeList = data.getTypeList();
+                        this.userFilterKeyList = data.getUserFilterKeyList();
                         if (!this.et_search.getText().toString().isEmpty()) {
                             this.renderListView(this.et_search.getText().toString());
                         }
@@ -118,39 +131,74 @@ public class SearchFragment extends Fragment {
 
     protected void renderListView(String search) {
         this.pb_post.setVisibility(View.VISIBLE);
-        Post.getFirebaseReference().addValueEventListener(new ValueEventListener() {
-            @SuppressLint("NotifyDataSetChanged")
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                listPost.clear();
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    Post post = dataSnapshot.getValue(Post.class);
-                    if (post != null && post.getTitle().toLowerCase().contains(search.toLowerCase())) {
-                        if (!checkPostType(post)) {
-                            continue;
+        this.listPost.clear();
+        this.listUser.clear();
+        if(this.typeList.contains(R.id.search_filter_btn_product)) {
+            Post.getFirebaseReference().addValueEventListener(new ValueEventListener() {
+                @SuppressLint("NotifyDataSetChanged")
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        Post post = dataSnapshot.getValue(Post.class);
+                        if (post != null && post.getTitle().toLowerCase().contains(search.toLowerCase())) {
+                            if (!checkPostType(post)) {
+                                continue;
+                            }
+                            if (!checkPostLocation(post)) {
+                                continue;
+                            }
+                            listPost.add(post);
                         }
-                        if (!checkPostLocation(post)) {
-                            continue;
-                        }
-                        listPost.add(post);
+                    }
+                    if (filter_sort == R.id.search_filter_sort_rb_latest) {
+                        listPost.sort((o1, o2) -> (int) (o2.getUpdatedAt() - o1.getUpdatedAt()));
+                    }
+                    postAdapter.notifyDataSetChanged();
+                    pb_post.setVisibility(View.GONE);
+                    if (!listPost.isEmpty()) {
+                        rv_post.smoothScrollToPosition(0);
+                        btn_clear.setVisibility(View.VISIBLE);
                     }
                 }
-                if (filter_sort == R.id.search_filter_sort_rb_latest) {
-                    listPost.sort((o1, o2) -> (int) (o2.getUpdatedAt() - o1.getUpdatedAt()));
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.e("SearchFragment - Post", error.getMessage());
                 }
-                postAdapter.notifyDataSetChanged();
-                pb_post.setVisibility(View.GONE);
-                if (!listPost.isEmpty()) {
-                    rv_post.smoothScrollToPosition(0);
-                    btn_clear.setVisibility(View.VISIBLE);
-                }
-            }
+            });
+        }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("SearchFragment", error.getMessage());
-            }
-        });
+        if (this.typeList.contains(R.id.search_filter_btn_user)) {
+            User.getFirebaseReference().addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        User user = dataSnapshot.getValue(User.class);
+                        if (user != null && userFilterKeyList.contains(R.id.search_filter_btn_user_name) && user.getFullName().toLowerCase().contains(search.toLowerCase())) {
+                            listUser.add(user);
+                            continue;
+                        }
+                        if (user != null && userFilterKeyList.contains(R.id.search_filter_btn_user_email) && user.getEmail().toLowerCase().contains(search.toLowerCase())) {
+                            listUser.add(user);
+                            continue;
+                        }
+                        if (user != null && userFilterKeyList.contains(R.id.search_filter_btn_user_description)) {
+//                            listUser.add(user);
+//                            @todo: add search by description
+                        }
+
+                    }
+                    pb_post.setVisibility(View.GONE);
+                    if (!listUser.isEmpty()) {
+                        rv_post.smoothScrollToPosition(0);
+                        btn_clear.setVisibility(View.VISIBLE);
+                    }
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.e("SearchFragment - User", error.getMessage());
+                }
+            });
+        }
     }
 
     protected boolean checkPostType(Post post) {
