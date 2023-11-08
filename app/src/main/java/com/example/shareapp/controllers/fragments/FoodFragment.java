@@ -77,8 +77,8 @@ public class FoodFragment extends Fragment {
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 prgbFood.setVisibility(View.INVISIBLE);
                 Post post = snapshot.getValue(Post.class);
-                if(post != null && post.getType().equals(TYPE_FOOD)) {
-                    mListPost.add(post);
+                if(post != null && post.getType().equals(TYPE_FOOD) && !post.isDelete()) {
+                    mListPost.add(0, post);
                     mPostAdapter.notifyDataSetChanged();
                 }
             }
