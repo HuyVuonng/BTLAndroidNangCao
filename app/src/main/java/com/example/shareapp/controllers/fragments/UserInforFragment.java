@@ -23,6 +23,7 @@ import com.bumptech.glide.Glide;
 import com.example.shareapp.R;
 import com.example.shareapp.controllers.activities.LoginActivity;
 import com.example.shareapp.controllers.activities.UserInforUpdateActivity;
+import com.example.shareapp.models.Post;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -31,7 +32,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 public class UserInforFragment extends Fragment {
     public UserInforFragment() {
@@ -49,13 +53,14 @@ public class UserInforFragment extends Fragment {
     FloatingActionButton btn_add_post;
 
 
-    TextView fullNameView, emailView, phoneNumberView, addressView;
+    TextView fullNameView, emailView, phoneNumberView, addressView, introduceView, numberOfPostView;
 
     ProgressBar progressBar;
     ImageView avataView;
     GoogleSignInClient gsc;
     GoogleSignInOptions gso;
     private View mVIew;
+    int soBaiDang = 0;
 
     private void getViews() {
         fullNameView = mVIew.findViewById(R.id.fullNameView);
@@ -64,11 +69,28 @@ public class UserInforFragment extends Fragment {
         addressView = mVIew.findViewById(R.id.addressView);
         progressBar = mVIew.findViewById(R.id.progressBar4);
         avataView = mVIew.findViewById(R.id.activity_userInfor_imgv_avata);
+        introduceView = mVIew.findViewById(R.id.IntroduceView);
+        numberOfPostView = mVIew.findViewById(R.id.numberOfPostView);
     }
 
-    private void setEventListener() {
+    private void getNumberOfPost(String uid) {
+        Post.getFirebaseReference().addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    Post post = dataSnapshot.getValue(Post.class);
+                    if (post.getUserId().equals(uid)) {
+                        soBaiDang++;
+                    }
+                }
+                numberOfPostView.setText("Tổng số bài đăng: " + soBaiDang);
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
 
+            }
+        });
     }
 
     @Override
@@ -79,8 +101,7 @@ public class UserInforFragment extends Fragment {
 
         readDataUserFromFireBase(getUserInfor(getActivity()).uid, getActivity());
         this.getViews();
-        this.setEventListener();
-        setDataToView();
+        this.setDataToView();
         return mVIew;
     }
 
@@ -92,5 +113,7 @@ public class UserInforFragment extends Fragment {
         if (getUserInfor(getActivity()).getAvata().length() > 0) {
             Glide.with(getActivity()).load(getUserInfor(getActivity()).getAvata().toString()).into(avataView);
         }
+        introduceView.setText(getUserInfor(getActivity()).getIntroduce().toString());
+        getNumberOfPost(getUserInfor(getActivity()).getUid().toString());
     }
 }

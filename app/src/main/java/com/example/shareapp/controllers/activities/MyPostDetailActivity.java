@@ -77,13 +77,14 @@ public class MyPostDetailActivity extends AppCompatActivity {
         tvDescription.setText(mPost.getDescription());
         new User().getUserById(mPost.getUserId(), new User.IUserDataReceivedListener() {
             @Override
-            public void onUserDataReceived(User user) {
+            public Boolean onUserDataReceived(User user) {
                 if(user != null) {
                     if(user.getAvata() != null) {
                         Glide.with(MyPostDetailActivity.this).load(user.getAvata()).into(cimvImagePoster);
                     }
                     tvFullNamePoster.setText(user.getFullName() + " đang cho đi");
                 }
+                return null;
             }
         });
     }

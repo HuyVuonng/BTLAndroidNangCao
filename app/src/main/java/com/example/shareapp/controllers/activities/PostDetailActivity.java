@@ -8,8 +8,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -62,7 +60,7 @@ public class PostDetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mPost = (Post) intent.getSerializableExtra("item_post");
 
-        if(!TextUtils.isEmpty(mPost.getImage()))
+        if (!TextUtils.isEmpty(mPost.getImage()))
             Glide.with(PostDetailActivity.this).load(mPost.getImage()).into(imvImagePost);
         tvCreatedAt.setText("Từ " + DateTimeMethod.timeDifference(mPost.getCreatedAt()));
         tvTitlePost.setText(mPost.getTitle());
@@ -70,13 +68,14 @@ public class PostDetailActivity extends AppCompatActivity {
         tvDescription.setText(mPost.getDescription());
         new User().getUserById(mPost.getUserId(), new User.IUserDataReceivedListener() {
             @Override
-            public void onUserDataReceived(User user) {
-                if(user != null) {
-                    if(user.getAvata() != null) {
+            public Boolean onUserDataReceived(User user) {
+                if (user != null) {
+                    if (user.getAvata() != null) {
                         Glide.with(PostDetailActivity.this).load(user.getAvata()).into(cimvImagePoster);
                     }
                     tvFullNamePoster.setText(user.getFullName() + " đang cho đi");
                 }
+                return null;
             }
         });
     }
@@ -94,6 +93,17 @@ public class PostDetailActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Toast.makeText(PostDetailActivity.this, "Gửi yêu cầu thành công", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(PostDetailActivity.this, MainActivity.class));
+            }
+        });
+
+        cimvImagePoster.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = getIntent();
+                mPost = (Post) intent.getSerializableExtra("item_post");
+                Intent i = new Intent(getApplicationContext(), UserInforPublicActivity.class);
+                i.putExtra("uid", mPost.getUserId());
+                startActivity(i);
             }
         });
     }

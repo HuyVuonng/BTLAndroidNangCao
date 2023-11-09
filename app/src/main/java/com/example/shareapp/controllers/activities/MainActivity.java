@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
     FloatingActionButton btn_add_post;
     ViewPager viewPager;
     FrameLayout frameLayout;
-    boolean passWordVisible,passWordOldVisible,passWordRepeatVisible;
+    boolean passWordVisible, passWordOldVisible, passWordRepeatVisible;
 
     DrawerLayout drawerLayout;
     ImageButton sideBarBtn;
@@ -152,8 +152,7 @@ public class MainActivity extends AppCompatActivity {
         navView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.nav_manager_post) {
-                replaceFragment(new FoodFragment());
-                navView.getMenu().findItem(R.id.nav_manager_post).setChecked(true);
+                startActivity(new Intent(getApplicationContext(), ManagerPost.class));
             }
             if (id == R.id.nav_notify) {
                 navView.getMenu().findItem(R.id.nav_notify).setChecked(true);
@@ -168,12 +167,12 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             }
             if (id == R.id.nav_change_password) {
-                SharedPreferences sharedPreferences =getSharedPreferences("dataPass", MODE_PRIVATE);
+                SharedPreferences sharedPreferences = getSharedPreferences("dataPass", MODE_PRIVATE);
                 String Pass = sharedPreferences.getString("password", "");
-                if(Pass.length()>=6){
+                if (Pass.length() >= 6) {
                     showDialog(Pass);
-                }else{
-                    Toast.makeText(getApplicationContext(),"Bạn đang đăng nhập bằng tài khoản Google nên không dùng được chức năng này",Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Bạn đang đăng nhập bằng tài khoản Google nên không dùng được chức năng này", Toast.LENGTH_LONG).show();
                 }
             }
             if (id == R.id.nav_logout) {
@@ -201,12 +200,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkFragment() {
-        SharedPreferences sharedPreferences = getSharedPreferences("fragment", MODE_PRIVATE);
-        String fragment = sharedPreferences.getString("fragment", "home");
-        if (fragment.equals("userInfor")) {
+        String fragment = getIntent().getStringExtra("fragment");
+        if (fragment != null && fragment.equals("userInfor")) {
             replaceFragment(new UserInforFragment());
             NavigationMethod.setNavigationMenu(this.bnv_menu, R.id.item_account);
-            sharedPreferences.edit().clear().commit();
         } else {
             replaceFragment(new FoodFragment());
         }
@@ -268,11 +265,11 @@ public class MainActivity extends AppCompatActivity {
         dialog.setContentView(R.layout.dialog_change_pass);
         dialog.show();
 
-        EditText password= dialog.findViewById(R.id.passwordChange);
-        EditText passwordOld= dialog.findViewById(R.id.passwordOld);
-        EditText repassword= dialog.findViewById(R.id.repassword);
-        Button changePassBtn= dialog.findViewById(R.id.changePasswordBtn);
-        Button backBtn= dialog.findViewById(R.id.backbtn);
+        EditText password = dialog.findViewById(R.id.passwordChange);
+        EditText passwordOld = dialog.findViewById(R.id.passwordOld);
+        EditText repassword = dialog.findViewById(R.id.repassword);
+        Button changePassBtn = dialog.findViewById(R.id.changePasswordBtn);
+        Button backBtn = dialog.findViewById(R.id.backbtn);
 
         password.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -352,15 +349,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                if(password.getText().toString().trim().length()<6){
+                if (password.getText().toString().trim().length() < 6) {
                     password.setError("Mật khẩu phải có ít nhất 6 ký tự");
                     return;
                 }
 
-                if (password.getText().toString().trim().equals(repassword.getText().toString().trim())){
-                    if(Pass.equals(passwordOld.getText().toString().trim())){
-                        FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
-                        AuthCredential authCredential= EmailAuthProvider.getCredential(getUserInfor(getApplicationContext()).getEmail(),Pass);
+                if (password.getText().toString().trim().equals(repassword.getText().toString().trim())) {
+                    if (Pass.equals(passwordOld.getText().toString().trim())) {
+                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                        AuthCredential authCredential = EmailAuthProvider.getCredential(getUserInfor(getApplicationContext()).getEmail(), Pass);
                         user.reauthenticate(authCredential)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
@@ -368,13 +365,13 @@ public class MainActivity extends AppCompatActivity {
                                         user.updatePassword(password.getText().toString().trim()).addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void unused) {
-                                                Toast.makeText(getApplicationContext(),"Cập nhập thành công", Toast.LENGTH_LONG).show();
+                                                Toast.makeText(getApplicationContext(), "Cập nhập thành công", Toast.LENGTH_LONG).show();
                                                 dialog.dismiss();
                                             }
                                         }).addOnFailureListener(new OnFailureListener() {
                                             @Override
                                             public void onFailure(@NonNull Exception e) {
-                                                Toast.makeText(getApplicationContext(),"Cập nhập thất bại", Toast.LENGTH_LONG).show();
+                                                Toast.makeText(getApplicationContext(), "Cập nhập thất bại", Toast.LENGTH_LONG).show();
                                                 dialog.dismiss();
                                             }
                                         });
@@ -382,14 +379,14 @@ public class MainActivity extends AppCompatActivity {
                                 }).addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
-                                        Toast.makeText(getApplicationContext(),"Cập nhập thất bại", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getApplicationContext(), "Cập nhập thất bại", Toast.LENGTH_LONG).show();
                                         dialog.dismiss();
                                     }
                                 });
-                    }else{
+                    } else {
                         passwordOld.setError("Mật khẩu không đúng");
                     }
-                }else{
+                } else {
                     repassword.setError("Mật khẩu không trùng khớp, hãy nhập lại");
                 }
 
@@ -424,8 +421,6 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.dispatchTouchEvent(ev);
     }
-
-
 
 
 }

@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -25,8 +24,6 @@ import com.example.shareapp.models.Post;
 import com.example.shareapp.models.User;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 public class FeedPostAdapter extends RecyclerView.Adapter<FeedPostAdapter.FeedPostViewHolder> {
@@ -55,7 +52,7 @@ public class FeedPostAdapter extends RecyclerView.Adapter<FeedPostAdapter.FeedPo
         mUser = new User();
         mUser.getUserById(post.getUserId(), new User.IUserDataReceivedListener() {
             @Override
-            public void onUserDataReceived(User user) {
+            public Boolean onUserDataReceived(User user) {
                 if(user != null) {
                     Glide.with(mView).load(post.getImage()).into(holder.imvImage);
                     if(!TextUtils.isEmpty(user.getAvata()))
@@ -66,6 +63,7 @@ public class FeedPostAdapter extends RecyclerView.Adapter<FeedPostAdapter.FeedPo
                     String timeDiff = DateTimeMethod.timeDifference(post.getCreatedAt());
                     holder.tvUploadedAt.setText("Từ " + timeDiff);
                 }
+                return null;
             }
         });
 

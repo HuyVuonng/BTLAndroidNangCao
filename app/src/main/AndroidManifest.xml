@@ -2,8 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.USE_FINGERPRINT" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <application
         android:allowBackup="true"
@@ -16,11 +21,17 @@
         android:theme="@style/Theme.ShareApp"
         tools:targetApi="31">
         <activity
+            android:name=".controllers.activities.ManagerPost"
+            android:exported="false" />
+        <activity
+            android:name=".controllers.activities.UserInforPublicActivity"
+            android:exported="false" />
+        <activity
             android:name=".controllers.activities.MyPostDetailActivity"
             android:exported="false" />
         <activity
             android:name=".controllers.activities.PostDetailActivity"
-            android:exported="false"></activity>
+            android:exported="false" />
         <activity
             android:name=".controllers.activities.UserInforUpdateActivity"
             android:exported="false" />

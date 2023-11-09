@@ -22,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.shareapp.R;
+import com.example.shareapp.controllers.methods.KeyBoardMethod;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -150,7 +151,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     progressBar.setVisibility(View.INVISIBLE);
-                                    CreateNewUser(FullName, PhoneNumber, Address, Email, uid, "", false);
+                                    CreateNewUser(FullName, PhoneNumber, Address, Email, uid, "", "", false, false);
                                     showDialog();
                                 }
                             }).addOnFailureListener(new OnFailureListener() {

@@ -34,6 +34,7 @@ import androidx.biometric.BiometricPrompt;
 import androidx.core.content.ContextCompat;
 
 import com.example.shareapp.R;
+import com.example.shareapp.controllers.methods.KeyBoardMethod;
 import com.example.shareapp.models.User;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -169,12 +170,36 @@ public class LoginActivity extends AppCompatActivity {
                                 showDialog();
                             } else {
                                 progressBar.setVisibility(View.INVISIBLE);
-                                sharedPreferences = getSharedPreferences("dataPass", MODE_PRIVATE);
-                                sharedPreferences.edit().putString("password", Password.getText().toString().trim()).apply();
-                                Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
-                                startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                            }
+                                User.getUserById(FirebaseAuth.getInstance().getCurrentUser().getUid(), new User.IUserDataReceivedListener() {
+                                    @Override
+                                    public Boolean onUserDataReceived(User user) {
+                                        if (user != null) {
+                                            if (!user.getBlock()) {
+                                                sharedPreferences = getSharedPreferences("dataPass", MODE_PRIVATE);
+                                                sharedPreferences.edit().putString("password", Password.getText().toString().trim()).apply();
+                                                Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
+                                                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                                            } else {
+                                                SharedPreferences editor = getApplicationContext().getSharedPreferences("data", MODE_PRIVATE);
+                                                editor.edit().clear().apply();
 
+                                                SharedPreferences editor1 = getApplicationContext().getSharedPreferences("dataPass", MODE_PRIVATE);
+                                                editor1.edit().clear().apply();
+                                                gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+                                                gsc = GoogleSignIn.getClient(LoginActivity.this, gso);
+                                                gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        FirebaseAuth.getInstance().signOut();
+                                                    }
+                                                });
+                                                Toast.makeText(LoginActivity.this, "Tài khoản của bạn đã bị khóa", Toast.LENGTH_LONG).show();
+                                            }
+                                        }
+                                        return null;
+                                    }
+                                });
+                            }
                         } else {
                             progressBar.setVisibility(View.INVISIBLE);
                             Toast.makeText(LoginActivity.this, "Sai email đăng nhập hoặc mật khẩu", Toast.LENGTH_SHORT).show();
@@ -281,12 +306,42 @@ public class LoginActivity extends AppCompatActivity {
                 super.onAuthenticationSucceeded(result);
                 sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
                 String type = sharedPreferences.getString("type", "");
+                progressBar.setVisibility(View.VISIBLE);
                 if (type.equals("google")) {
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     if (user != null) {
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        Log.d("here", "1");
+                        progressBar.setVisibility(View.INVISIBLE);
+
+
+                        User.getUserById(FirebaseAuth.getInstance().getCurrentUser().getUid(), new User.IUserDataReceivedListener() {
+                            @Override
+                            public Boolean onUserDataReceived(User user) {
+                                if (user != null) {
+                                    if (!user.getBlock()) {
+                                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                        startActivity(intent);
+                                    } else {
+                                        SharedPreferences editor = getApplicationContext().getSharedPreferences("data", MODE_PRIVATE);
+                                        editor.edit().clear().apply();
+
+                                        SharedPreferences editor1 = getApplicationContext().getSharedPreferences("dataPass", MODE_PRIVATE);
+                                        editor1.edit().clear().apply();
+                                        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+                                        gsc = GoogleSignIn.getClient(LoginActivity.this, gso);
+                                        gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                FirebaseAuth.getInstance().signOut();
+                                            }
+                                        });
+                                        Toast.makeText(LoginActivity.this, "Tài khoản của bạn đã bị khóa", Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                                return null;
+                            }
+                        });
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Hết hạn đăng nhập", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
@@ -298,15 +353,43 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-                                Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT);
-                                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                                progressBar.setVisibility(View.INVISIBLE);
+
+
+                                User.getUserById(FirebaseAuth.getInstance().getCurrentUser().getUid(), new User.IUserDataReceivedListener() {
+                                    @Override
+                                    public Boolean onUserDataReceived(User user) {
+                                        if (user != null) {
+                                            if (!user.getBlock()) {
+                                                Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT);
+                                                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                                            } else {
+                                                SharedPreferences editor = getApplicationContext().getSharedPreferences("data", MODE_PRIVATE);
+                                                editor.edit().clear().apply();
+
+                                                SharedPreferences editor1 = getApplicationContext().getSharedPreferences("dataPass", MODE_PRIVATE);
+                                                editor1.edit().clear().apply();
+                                                gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+                                                gsc = GoogleSignIn.getClient(LoginActivity.this, gso);
+                                                gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        FirebaseAuth.getInstance().signOut();
+                                                    }
+                                                });
+                                                Toast.makeText(LoginActivity.this, "Tài khoản của bạn đã bị khóa", Toast.LENGTH_LONG).show();
+                                            }
+                                        }
+                                        return null;
+                                    }
+                                });
                             } else {
+                                progressBar.setVisibility(View.INVISIBLE);
                                 Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT);
                             }
                         }
                     });
                 }
-
                 Toast.makeText(getApplicationContext(), "Authentication succeeded!", Toast.LENGTH_SHORT).show();
             }
 
@@ -393,8 +476,10 @@ public class LoginActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == GOOGLE_REQUEST_CODE_SIGN_IN) {
+
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
+                progressBar.setVisibility(View.VISIBLE);
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
                 FirebaseAuth.getInstance().signInWithCredential(credential)
@@ -404,24 +489,25 @@ public class LoginActivity extends AppCompatActivity {
                                 if (task.isSuccessful()) {
                                     String fullname = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
                                     String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                                    String avatar = String.valueOf(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl());
                                     GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(LoginActivity.this);
                                     String email = acct.getEmail();
-                                    ;
 
-                                    chechUserLoginGGExists(uid, fullname, "", "", email, "", false);
-
+                                    chechUserLoginGGExists(uid, fullname, "", "", email, avatar, false);
+                                    progressBar.setVisibility(View.INVISIBLE);
                                 } else {
+                                    progressBar.setVisibility(View.INVISIBLE);
                                     Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
             } catch (ApiException e) {
+                progressBar.setVisibility(View.INVISIBLE);
                 e.printStackTrace();
             }
 
         }
     }
-
 
     public void chechUserLoginGGExists(String uid, String fullName, String phoneNumber, String address, String email, String avata, Boolean block) {
         mDatabase = FirebaseDatabase.getInstance().getReference("Users");
@@ -431,19 +517,66 @@ public class LoginActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 if (task.isSuccessful()) {
                     if (task.getResult().exists()) {
-                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                        startActivity(intent);
+                        User.getUserById(FirebaseAuth.getInstance().getCurrentUser().getUid(), new User.IUserDataReceivedListener() {
+                            @Override
+                            public Boolean onUserDataReceived(User user) {
+                                if (user != null) {
+                                    if (!user.getBlock()) {
+                                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                        startActivity(intent);
+                                    } else {
+                                        SharedPreferences editor = getApplicationContext().getSharedPreferences("data", MODE_PRIVATE);
+                                        editor.edit().clear().apply();
+
+                                        SharedPreferences editor1 = getApplicationContext().getSharedPreferences("dataPass", MODE_PRIVATE);
+                                        editor1.edit().clear().apply();
+                                        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+                                        gsc = GoogleSignIn.getClient(LoginActivity.this, gso);
+                                        gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                FirebaseAuth.getInstance().signOut();
+                                            }
+                                        });
+                                        Toast.makeText(LoginActivity.this, "Tài khoản của bạn đã bị khóa", Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                                return null;
+                            }
+                        });
                     } else {
                         User user = new User(fullName, phoneNumber, address, email, uid, avata, block);
                         mDatabase.child(uid).setValue(user);
+                        progressBar.setVisibility(View.INVISIBLE);
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(intent);
                         finish();
                     }
                 } else {
+                    progressBar.setVisibility(View.INVISIBLE);
                     Toast.makeText(getApplicationContext(), "Không đọc được", Toast.LENGTH_SHORT).show();
                 }
             }
         });
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        View v = getCurrentFocus();
+
+        if (v != null && (ev.getAction() == MotionEvent.ACTION_UP || ev.getAction() == MotionEvent.ACTION_MOVE) &&
+                v instanceof EditText &&
+                !v.getClass().getName().startsWith("android.webkit.")) {
+            int[] sourceCoordinates = new int[2];
+            v.getLocationOnScreen(sourceCoordinates);
+            float x = ev.getRawX() + v.getLeft() - sourceCoordinates[0];
+            float y = ev.getRawY() + v.getTop() - sourceCoordinates[1];
+
+            if (x < v.getLeft() || x > v.getRight() || y < v.getTop() || y > v.getBottom()) {
+                KeyBoardMethod.hideKeyboard(this);
+            }
+
+        }
+        return super.dispatchTouchEvent(ev);
     }
 }

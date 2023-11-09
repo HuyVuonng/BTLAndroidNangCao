@@ -8,11 +8,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.example.shareapp.controllers.activities.MainActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -26,11 +23,14 @@ public class User {
     public String email;
     public String uid;
     public String avata;
-    public Boolean block;
+    public Boolean block, showPhoneNumberPublic;
+    public String introduce;
     private static DatabaseReference mDatabase;
+
     public interface IUserDataReceivedListener {
-        void onUserDataReceived(User user);
+        Boolean onUserDataReceived(User user);
     }
+
     public User() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
@@ -60,6 +60,34 @@ public class User {
         this.email = email;
         this.uid = uid;
         this.avata = avata;
+    }
+
+    public User(String fullName, String phoneNumber, String address, String email, String uid, String avata, Boolean block, Boolean showPhoneNumberPublic, String introduce) {
+        this.fullName = fullName;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+        this.email = email;
+        this.uid = uid;
+        this.avata = avata;
+        this.block = block;
+        this.showPhoneNumberPublic = showPhoneNumberPublic;
+        this.introduce = introduce;
+    }
+
+    public Boolean getShowPhoneNumberPublic() {
+        return showPhoneNumberPublic;
+    }
+
+    public void setShowPhoneNumberPublic(Boolean showPhoneNumberPublic) {
+        this.showPhoneNumberPublic = showPhoneNumberPublic;
+    }
+
+    public String getIntroduce() {
+        return introduce;
+    }
+
+    public void setIntroduce(String introduce) {
+        this.introduce = introduce;
     }
 
     public String getAvata() {
@@ -119,7 +147,7 @@ public class User {
     }
 
 
-    public static void setUserInfor(String fullName, String phoneNumber, String address, String email, String uid, String avata, Boolean block, Context context) {
+    public static void setUserInfor(String fullName, String phoneNumber, String address, String email, String uid, String avata, Boolean block, Boolean showPhoneNumberPublic, String introduce, Context context) {
         SharedPreferences.Editor editor = context.getSharedPreferences("userInfor", MODE_PRIVATE).edit();
         editor.putString("email", email);
         editor.putString("fullName", fullName);
@@ -127,7 +155,9 @@ public class User {
         editor.putString("address", address);
         editor.putString("uid", uid);
         editor.putString("avata", avata);
+        editor.putString("introduce", introduce);
         editor.putBoolean("Block", block);
+        editor.putBoolean("showPhoneNumberPublic", showPhoneNumberPublic);
         editor.apply();
     }
 
@@ -140,13 +170,15 @@ public class User {
         String uid = sharedPreferences.getString("uid", "");
         String avata = sharedPreferences.getString("avata", "");
         Boolean block = sharedPreferences.getBoolean("block", false);
+        String introduce = sharedPreferences.getString("introduce", "");
+        Boolean showPhoneNumberPublic = sharedPreferences.getBoolean("showPhoneNumberPublic", false);
 
-        return new User(fullName, phoneNumber, address, email, uid, avata, block);
+        return new User(fullName, phoneNumber, address, email, uid, avata, block, showPhoneNumberPublic, introduce);
     }
 
-    public static void CreateNewUser(String fullName, String phoneNumber, String address, String email, String uid, String avata, Boolean block) {
+    public static void CreateNewUser(String fullName, String phoneNumber, String address, String email, String uid, String avata, String introduce, Boolean showPhoneNumberPublic, Boolean block) {
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        User user = new User(fullName, phoneNumber, address, email, uid, avata, block);
+        User user = new User(fullName, phoneNumber, address, email, uid, avata, block, showPhoneNumberPublic, introduce);
         mDatabase.child("Users").child(uid).setValue(user);
     }
 
@@ -164,9 +196,16 @@ public class User {
                         String phoneNumberget = String.valueOf(dataSnapshot.child("phoneNumber").getValue());
                         String avataGet = String.valueOf(dataSnapshot.child("avata").getValue());
                         Boolean blockGet = (Boolean) dataSnapshot.child("block").getValue();
+                        String intrduceGet = "";
+                        Boolean showPhoneNumberPublic = false;
+                        if (dataSnapshot.child("introduce").getValue() != null) {
+                            intrduceGet = String.valueOf(dataSnapshot.child("introduce").getValue());
+                        }
 
-
-                        setUserInfor(fullName, phoneNumberget, addressGet, emailGet, uid, avataGet, blockGet, context);
+                        if (dataSnapshot.child("showPhoneNumberPublic").getValue() != null) {
+                            showPhoneNumberPublic = (Boolean) dataSnapshot.child("showPhoneNumberPublic").getValue();
+                        }
+                        setUserInfor(fullName, phoneNumberget, addressGet, emailGet, uid, avataGet, blockGet, showPhoneNumberPublic, intrduceGet, context);
 
                     } else {
                         Toast.makeText(context, "Không có người dùng này", Toast.LENGTH_SHORT).show();
@@ -177,18 +216,19 @@ public class User {
             }
         });
     }
-    public static void updateUserInfor(String fullName, String phoneNumber, String address, String email, String uid, String avata, Boolean block, Context context) {
-        User user = new User(fullName, phoneNumber, address, email, uid, avata, block);
+
+    public static void updateUserInfor(String fullName, String phoneNumber, String address, String email, String uid, String avata, String introduce, Boolean showPhoneNumberPublic, Boolean block, Context context) {
+        User user = new User(fullName, phoneNumber, address, email, uid, avata, block, showPhoneNumberPublic, introduce);
         mDatabase.child(uid).setValue(user);
         Toast.makeText(context, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
     }
 
-    public void getUserById(String id, IUserDataReceivedListener listener) {
+    public static void getUserById(String id, IUserDataReceivedListener listener) {
         mDatabase = FirebaseDatabase.getInstance().getReference("Users");
         mDatabase.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists()) {
+                if (snapshot.exists()) {
                     User user = snapshot.getValue(User.class);
                     listener.onUserDataReceived(user);
                 } else {
