@@ -1,7 +1,10 @@
 package com.example.shareapp.controllers.activities;
 
+import static com.example.shareapp.controllers.constant.ReportTypeConstant.TYPE_POST;
+import static com.example.shareapp.controllers.constant.ReportTypeConstant.TYPE_USER;
 import static com.example.shareapp.models.User.getUserInfor;
 import static com.example.shareapp.models.User.readDataUserFromFireBase;
+import static com.example.shareapp.models.User.updateUserInfor;
 
 import com.bumptech.glide.Glide;
 import com.example.shareapp.controllers.fragments.FoodFragment;
@@ -50,6 +53,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shareapp.R;
+import com.example.shareapp.models.Report;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -65,8 +69,11 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -193,10 +200,10 @@ public class MainActivity extends AppCompatActivity {
         this.setEventListener();
 
         this.checkAuthenticateType();
-
         NavigationMethod.setNavigationMenu(this.bnv_menu, R.id.item_home);
         readDataUserFromFireBase(FirebaseAuth.getInstance().getCurrentUser().getUid(), MainActivity.this);
         checkFragment();
+        checkBlock();
     }
 
     private void checkFragment() {
@@ -422,5 +429,36 @@ public class MainActivity extends AppCompatActivity {
         return super.dispatchTouchEvent(ev);
     }
 
+    private void checkBlock() {
+        final int[] countReportUser = {0};
+        final int[] countReportPost = {0};
+        Report.getFirebaseReference().addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    Report report = dataSnapshot.getValue(Report.class);
+                    if (report != null && report.getTargetId().equals(getUserInfor(MainActivity.this).getUid()) && report.getType().equals(TYPE_USER)) {
+                        countReportUser[0]++;
+                    }
+                    if (report != null && report.getTargetId().equals(getUserInfor(MainActivity.this).getUid()) && report.getType().equals(TYPE_POST)) {
+                        countReportPost[0]++;
+                    }
+                }
+                if (countReportUser[0] >= 2 && countReportPost[0] >= 2) {
+                    updateUserInfor(getUserInfor(MainActivity.this).getFullName(), getUserInfor(MainActivity.this).getPhoneNumber(),
+                            getUserInfor(MainActivity.this).getAddress(), getUserInfor(MainActivity.this).getEmail(), getUserInfor(MainActivity.this).getUid(),
+                            getUserInfor(MainActivity.this).getAvata(), getUserInfor(MainActivity.this).getIntroduce(), getUserInfor(MainActivity.this).getShowPhoneNumberPublic(),
+                            true, MainActivity.this);
+                    SharedPreferences.Editor editor = getSharedPreferences("userInfor", MODE_PRIVATE).edit();
+                    editor.putBoolean("Block", true);
+                    editor.apply();
+                }
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
 }

@@ -169,11 +169,11 @@ public class LoginActivity extends AppCompatActivity {
                                 progressBar.setVisibility(View.INVISIBLE);
                                 showDialog();
                             } else {
-                                progressBar.setVisibility(View.INVISIBLE);
                                 User.getUserById(FirebaseAuth.getInstance().getCurrentUser().getUid(), new User.IUserDataReceivedListener() {
                                     @Override
                                     public Boolean onUserDataReceived(User user) {
                                         if (user != null) {
+                                            progressBar.setVisibility(View.INVISIBLE);
                                             if (!user.getBlock()) {
                                                 sharedPreferences = getSharedPreferences("dataPass", MODE_PRIVATE);
                                                 sharedPreferences.edit().putString("password", Password.getText().toString().trim()).apply();
@@ -310,13 +310,11 @@ public class LoginActivity extends AppCompatActivity {
                 if (type.equals("google")) {
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     if (user != null) {
-                        progressBar.setVisibility(View.INVISIBLE);
-
-
                         User.getUserById(FirebaseAuth.getInstance().getCurrentUser().getUid(), new User.IUserDataReceivedListener() {
                             @Override
                             public Boolean onUserDataReceived(User user) {
                                 if (user != null) {
+                                    progressBar.setVisibility(View.INVISIBLE);
                                     if (!user.getBlock()) {
                                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                         startActivity(intent);
@@ -353,13 +351,11 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-                                progressBar.setVisibility(View.INVISIBLE);
-
-
                                 User.getUserById(FirebaseAuth.getInstance().getCurrentUser().getUid(), new User.IUserDataReceivedListener() {
                                     @Override
                                     public Boolean onUserDataReceived(User user) {
                                         if (user != null) {
+                                            progressBar.setVisibility(View.INVISIBLE);
                                             if (!user.getBlock()) {
                                                 Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT);
                                                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
@@ -390,7 +386,7 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     });
                 }
-                Toast.makeText(getApplicationContext(), "Authentication succeeded!", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "Authentication succeeded!", Toast.LENGTH_SHORT).show();
             }
 
             @Override

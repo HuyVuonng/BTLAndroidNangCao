@@ -180,6 +180,7 @@ public class UserInforUpdateActivity extends AppCompatActivity {
                             updateUserInfor(fullName, phoneNumber, address, email, getUserInfor(UserInforUpdateActivity.this).getUid(),
                                     imgUrl, introduceEdit.getText().toString().trim(), showPhoneNumber, getUserInfor(UserInforUpdateActivity.this).getBlock(), getApplicationContext());
                             progressBar.setVisibility(View.INVISIBLE);
+                            Toast.makeText(getApplicationContext(), "Cập nhật thành công", Toast.LENGTH_SHORT).show();
                             setUserInfor(fullName, phoneNumber, address, email,
                                     getUserInfor(UserInforUpdateActivity.this).getUid(),
                                     imgUrl, getUserInfor(UserInforUpdateActivity.this).getBlock(), showPhoneNumber, introduceEdit.getText().toString().trim(), getApplicationContext());
@@ -198,6 +199,7 @@ public class UserInforUpdateActivity extends AppCompatActivity {
                     updateUserInfor(fullName, phoneNumber, address, email, getUserInfor(UserInforUpdateActivity.this).getUid(),
                             oldImgUri, introduceEdit.getText().toString().trim(), showPhoneNumber, getUserInfor(UserInforUpdateActivity.this).getBlock(), getApplicationContext());
                     progressBar.setVisibility(View.INVISIBLE);
+                    Toast.makeText(getApplicationContext(), "Cập nhật thành công", Toast.LENGTH_SHORT).show();
                     setUserInfor(fullName, phoneNumber, address, email,
                             getUserInfor(UserInforUpdateActivity.this).getUid(),
                             getUserInfor(UserInforUpdateActivity.this).getAvata(), getUserInfor(UserInforUpdateActivity.this).getBlock(), showPhoneNumber, introduceEdit.getText().toString().trim(), getApplicationContext());

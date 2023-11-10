@@ -1,6 +1,8 @@
 package com.example.shareapp.controllers.activities;
 
 import static com.example.shareapp.controllers.constant.AuthenticateConstant.PEMISSION_CALL_CODE;
+import static com.example.shareapp.controllers.constant.ReportTypeConstant.TYPE_USER;
+import static com.example.shareapp.models.User.getUserInfor;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -8,6 +10,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -18,23 +22,28 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.shareapp.R;
 import com.example.shareapp.models.Post;
+import com.example.shareapp.models.Report;
 import com.example.shareapp.models.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.UUID;
+
 public class UserInforPublicActivity extends AppCompatActivity {
     ImageView avatar;
     TextView name, address, email, phone, introduce, numberOfPost, viewAllPost;
     FloatingActionButton callBtn, sendMail;
-    private ImageButton imbBackPage;
+    private ImageButton imbBackPage, imbReport;
 
     int soBaiDang = 0;
+    private Boolean isReported = false;
 
     private void getViews() {
         avatar = findViewById(R.id.activity_userInforPublic_imgv_avata);
@@ -49,6 +58,7 @@ public class UserInforPublicActivity extends AppCompatActivity {
         callBtn = findViewById(R.id.activity_userInforPublic_fb_floatingActionButton);
         sendMail = findViewById(R.id.activity_userInforPublic_fb_floatingActionButtonSendMail);
         viewAllPost = findViewById(R.id.viewAllPost);
+        imbReport = findViewById(R.id.imb_report);
     }
 
     private void getUserInforByIDUserPost(String uid) {
@@ -152,6 +162,35 @@ public class UserInforPublicActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        imbReport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(UserInforPublicActivity.this);
+                builder.setTitle("Thông báo");
+                builder.setMessage("Bạn có chắc chắn muốn báo cáo người này không?");
+                builder.setPositiveButton("Có", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (!isReported) {
+                            String idUserTarget = getIntent().getStringExtra("uid");
+                            Report.CreateNewReport(UUID.randomUUID().toString(), getUserInfor(UserInforPublicActivity.this).getUid(), idUserTarget, "", TYPE_USER);
+                            Toast.makeText(getApplicationContext(), "Báo cáo thành công", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Bạn đã báo cáo người dùng này", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                builder.setNegativeButton("Không", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+        });
     }
 
     @Override
@@ -164,6 +203,26 @@ public class UserInforPublicActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
+    private void checkReportUser() {
+        String idUserTarget = getIntent().getStringExtra("uid");
+        Report.getFirebaseReference().addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    Report report = dataSnapshot.getValue(Report.class);
+                    if (report != null && report.getReporterId().equals(getUserInfor(UserInforPublicActivity.this).getUid()) && report.getTargetId().equals(idUserTarget) && report.getType().equals(TYPE_USER)) {
+                        isReported = true;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -173,5 +232,6 @@ public class UserInforPublicActivity extends AppCompatActivity {
         getUserInforByIDUserPost(idUser);
         getNumberOfPost(idUser);
         setEventListener();
+        checkReportUser();
     }
 }

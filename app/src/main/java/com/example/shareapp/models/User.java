@@ -220,7 +220,6 @@ public class User {
     public static void updateUserInfor(String fullName, String phoneNumber, String address, String email, String uid, String avata, String introduce, Boolean showPhoneNumberPublic, Boolean block, Context context) {
         User user = new User(fullName, phoneNumber, address, email, uid, avata, block, showPhoneNumberPublic, introduce);
         mDatabase.child(uid).setValue(user);
-        Toast.makeText(context, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
     }
 
     public static void getUserById(String id, IUserDataReceivedListener listener) {
