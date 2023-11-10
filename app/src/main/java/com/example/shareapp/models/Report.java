@@ -1,5 +1,8 @@
 package com.example.shareapp.models;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.UUID;
 
 public class Report {
@@ -9,6 +12,8 @@ public class Report {
     private String postId;
     private String type;
     private String description;
+    private static DatabaseReference mDatabase;
+
 
     public Report() {
     }
@@ -20,6 +25,14 @@ public class Report {
         this.postId = postId;
         this.type = type;
         this.description = description;
+    }
+
+    public Report(String reportId, String reporterId, String targetId, String postId, String type) {
+        this.reportId = reportId;
+        this.reporterId = reporterId;
+        this.targetId = targetId;
+        this.postId = postId;
+        this.type = type;
     }
 
     public String getReportId() {
@@ -68,5 +81,14 @@ public class Report {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public static void CreateNewReport(String reportId, String reporterId, String targetId, String postId,String type) {
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        Report report = new Report(reportId,reporterId,targetId,postId,type);
+        mDatabase.child("Reports").child(reportId).setValue(report);
+    }
+    public static DatabaseReference getFirebaseReference() {
+        return com.google.firebase.database.FirebaseDatabase.getInstance().getReference("Reports");
     }
 }

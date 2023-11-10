@@ -10,18 +10,23 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 
 import com.bumptech.glide.Glide;
 import com.example.shareapp.R;
@@ -38,7 +43,10 @@ import java.util.Objects;
 
 public class UserInforUpdateActivity extends AppCompatActivity {
 
-    EditText fullNameEdit, emailEdit, phoneNumberEdit, addressEdit;
+    EditText fullNameEdit, emailEdit, phoneNumberEdit, addressEdit, introduceEdit;
+    TextView introduceQuantity;
+    SwitchCompat showPhoneNumberPublic;
+    final int quantityIntroduceText = 300;
 
     Button updateBTN;
 
@@ -52,7 +60,8 @@ public class UserInforUpdateActivity extends AppCompatActivity {
     DatabaseReference databaseReference;
     StorageReference storageReference;
     ImageButton changeAvatarbtn;
-
+    String text = "";
+    Boolean showPhoneNumber;
 
     private void getViews() {
         backBTN = findViewById(R.id.activity_userInfor_update_btn_back);
@@ -64,6 +73,9 @@ public class UserInforUpdateActivity extends AppCompatActivity {
         avataEdit = findViewById(R.id.activity_userInfor_update_imgv_avata);
         progressBar = findViewById(R.id.progressBar4);
         changeAvatarbtn = findViewById(R.id.changeAvatarbtn);
+        introduceEdit = findViewById(R.id.activity_userInfor_update_edt_introduce);
+        introduceQuantity = findViewById(R.id.activity_userInfor_update_tv_introduceQuantity);
+        showPhoneNumberPublic = findViewById(R.id.activity_userInfor_update_sw_showPhoneNumberPublic);
     }
 
     @Override
@@ -82,10 +94,9 @@ public class UserInforUpdateActivity extends AppCompatActivity {
         backBTN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SharedPreferences.Editor editor = getSharedPreferences("fragment", Context.MODE_PRIVATE).edit();
-                editor.putString("fragment", "userInfor");
-                editor.apply();
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent.putExtra("fragment", "userInfor");
+                startActivity(intent);
                 finish();
             }
         });
@@ -167,15 +178,15 @@ public class UserInforUpdateActivity extends AppCompatActivity {
                                 reference.delete();
                             }
                             updateUserInfor(fullName, phoneNumber, address, email, getUserInfor(UserInforUpdateActivity.this).getUid(),
-                                    imgUrl, getUserInfor(UserInforUpdateActivity.this).getBlock(), getApplicationContext());
+                                    imgUrl, introduceEdit.getText().toString().trim(), showPhoneNumber, getUserInfor(UserInforUpdateActivity.this).getBlock(), getApplicationContext());
                             progressBar.setVisibility(View.INVISIBLE);
+                            Toast.makeText(getApplicationContext(), "Cập nhật thành công", Toast.LENGTH_SHORT).show();
                             setUserInfor(fullName, phoneNumber, address, email,
                                     getUserInfor(UserInforUpdateActivity.this).getUid(),
-                                    imgUrl, getUserInfor(UserInforUpdateActivity.this).getBlock(), getApplicationContext());
-                            SharedPreferences.Editor editor = getSharedPreferences("fragment", Context.MODE_PRIVATE).edit();
-                            editor.putString("fragment", "userInfor");
-                            editor.apply();
-                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                                    imgUrl, getUserInfor(UserInforUpdateActivity.this).getBlock(), showPhoneNumber, introduceEdit.getText().toString().trim(), getApplicationContext());
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            intent.putExtra("fragment", "userInfor");
+                            startActivity(intent);
                             finish();
                         }
                     }).addOnFailureListener(new OnFailureListener() {
@@ -186,16 +197,53 @@ public class UserInforUpdateActivity extends AppCompatActivity {
                     });
                 } else {
                     updateUserInfor(fullName, phoneNumber, address, email, getUserInfor(UserInforUpdateActivity.this).getUid(),
-                            oldImgUri, getUserInfor(UserInforUpdateActivity.this).getBlock(), getApplicationContext());
+                            oldImgUri, introduceEdit.getText().toString().trim(), showPhoneNumber, getUserInfor(UserInforUpdateActivity.this).getBlock(), getApplicationContext());
                     progressBar.setVisibility(View.INVISIBLE);
+                    Toast.makeText(getApplicationContext(), "Cập nhật thành công", Toast.LENGTH_SHORT).show();
                     setUserInfor(fullName, phoneNumber, address, email,
                             getUserInfor(UserInforUpdateActivity.this).getUid(),
-                            getUserInfor(UserInforUpdateActivity.this).getAvata(), getUserInfor(UserInforUpdateActivity.this).getBlock(), getApplicationContext());
-                    SharedPreferences.Editor editor = getSharedPreferences("fragment", Context.MODE_PRIVATE).edit();
-                    editor.putString("fragment", "userInfor");
-                    editor.apply();
-                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                            getUserInfor(UserInforUpdateActivity.this).getAvata(), getUserInfor(UserInforUpdateActivity.this).getBlock(), showPhoneNumber, introduceEdit.getText().toString().trim(), getApplicationContext());
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    intent.putExtra("fragment", "userInfor");
+                    startActivity(intent);
                     finish();
+                }
+            }
+        });
+
+        introduceEdit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+                int lenght = String.valueOf(editable).trim().length();
+                if (lenght <= quantityIntroduceText) {
+                    introduceQuantity.setText(lenght + "/" + quantityIntroduceText);
+                    text = String.valueOf(editable).trim();
+                } else {
+                    introduceEdit.setText(text);
+                }
+            }
+        });
+
+        showPhoneNumberPublic.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (compoundButton.isChecked()) {
+                    showPhoneNumber = true;
+                    Toast.makeText(getApplicationContext(), "show", Toast.LENGTH_SHORT).show();
+                } else {
+                    showPhoneNumber = false;
+                    Toast.makeText(getApplicationContext(), "hide", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -210,6 +258,10 @@ public class UserInforUpdateActivity extends AppCompatActivity {
             Glide.with(UserInforUpdateActivity.this).load(getUserInfor(UserInforUpdateActivity.this).getAvata()).into(avataEdit);
         }
         oldImgUri = getUserInfor(UserInforUpdateActivity.this).getAvata();
+        showPhoneNumberPublic.setChecked(getUserInfor(UserInforUpdateActivity.this).getShowPhoneNumberPublic());
+        showPhoneNumber = getUserInfor(UserInforUpdateActivity.this).getShowPhoneNumberPublic();
+        introduceEdit.setText(getUserInfor(UserInforUpdateActivity.this).getIntroduce());
+        introduceQuantity.setText(getUserInfor(UserInforUpdateActivity.this).getIntroduce().length() + "/" + quantityIntroduceText);
     }
 
     @Override

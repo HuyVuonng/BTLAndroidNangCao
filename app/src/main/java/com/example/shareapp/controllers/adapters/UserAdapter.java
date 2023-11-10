@@ -1,6 +1,8 @@
 package com.example.shareapp.controllers.adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.shareapp.R;
+import com.example.shareapp.controllers.activities.UserInforPublicActivity;
 import com.example.shareapp.models.User;
 
 import java.util.List;
@@ -40,13 +43,17 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     @Override
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
         User user = this.listUser.get(position);
-        if(user == null)
+        if (user == null)
             return;
         holder.tv_username.setText(user.getFullName());
         holder.tv_email.setText(user.getEmail());
-        Glide.with(this.view).load(user.getAvata()).into(holder.civ_avatar);
+        if(!TextUtils.isEmpty(user.getAvata())){
+            Glide.with(this.view).load(user.getAvata()).into(holder.civ_avatar);
+        }
         holder.btn_detail.setOnClickListener(v -> {
-            Toast.makeText(this.view.getContext(), "Todo: Navigate to User Detail", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this.view.getContext(), UserInforPublicActivity.class);
+            intent.putExtra("uid", user.getUid());
+            this.view.getContext().startActivity(intent);
         });
     }
 
@@ -61,6 +68,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         private CircleImageView civ_avatar;
         private TextView tv_username, tv_email;
         private Button btn_detail;
+
         public UserViewHolder(@NonNull View itemView) {
             super(itemView);
             this.cv_item = itemView.findViewById(R.id.user_cv_item);

@@ -1,7 +1,10 @@
 package com.example.shareapp.controllers.activities;
 
+import static com.example.shareapp.controllers.constant.ReportTypeConstant.TYPE_POST;
+import static com.example.shareapp.controllers.constant.ReportTypeConstant.TYPE_USER;
 import static com.example.shareapp.models.User.getUserInfor;
 import static com.example.shareapp.models.User.readDataUserFromFireBase;
+import static com.example.shareapp.models.User.updateUserInfor;
 
 import com.bumptech.glide.Glide;
 import com.example.shareapp.controllers.fragments.FoodFragment;
@@ -50,6 +53,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shareapp.R;
+import com.example.shareapp.models.Report;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -65,8 +69,11 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -81,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
     FloatingActionButton btn_add_post;
     ViewPager viewPager;
     FrameLayout frameLayout;
-    boolean passWordVisible,passWordOldVisible,passWordRepeatVisible;
+    boolean passWordVisible, passWordOldVisible, passWordRepeatVisible;
 
     DrawerLayout drawerLayout;
     ImageButton sideBarBtn;
@@ -152,8 +159,7 @@ public class MainActivity extends AppCompatActivity {
         navView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.nav_manager_post) {
-                replaceFragment(new FoodFragment());
-                navView.getMenu().findItem(R.id.nav_manager_post).setChecked(true);
+                startActivity(new Intent(getApplicationContext(), ManagerPost.class));
             }
             if (id == R.id.nav_notify) {
                 navView.getMenu().findItem(R.id.nav_notify).setChecked(true);
@@ -168,12 +174,12 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             }
             if (id == R.id.nav_change_password) {
-                SharedPreferences sharedPreferences =getSharedPreferences("dataPass", MODE_PRIVATE);
+                SharedPreferences sharedPreferences = getSharedPreferences("dataPass", MODE_PRIVATE);
                 String Pass = sharedPreferences.getString("password", "");
-                if(Pass.length()>=6){
+                if (Pass.length() >= 6) {
                     showDialog(Pass);
-                }else{
-                    Toast.makeText(getApplicationContext(),"Bạn đang đăng nhập bằng tài khoản Google nên không dùng được chức năng này",Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Bạn đang đăng nhập bằng tài khoản Google nên không dùng được chức năng này", Toast.LENGTH_LONG).show();
                 }
             }
             if (id == R.id.nav_logout) {
@@ -194,19 +200,17 @@ public class MainActivity extends AppCompatActivity {
         this.setEventListener();
 
         this.checkAuthenticateType();
-
         NavigationMethod.setNavigationMenu(this.bnv_menu, R.id.item_home);
         readDataUserFromFireBase(FirebaseAuth.getInstance().getCurrentUser().getUid(), MainActivity.this);
         checkFragment();
+        checkBlock();
     }
 
     private void checkFragment() {
-        SharedPreferences sharedPreferences = getSharedPreferences("fragment", MODE_PRIVATE);
-        String fragment = sharedPreferences.getString("fragment", "home");
-        if (fragment.equals("userInfor")) {
+        String fragment = getIntent().getStringExtra("fragment");
+        if (fragment != null && fragment.equals("userInfor")) {
             replaceFragment(new UserInforFragment());
             NavigationMethod.setNavigationMenu(this.bnv_menu, R.id.item_account);
-            sharedPreferences.edit().clear().commit();
         } else {
             replaceFragment(new FoodFragment());
         }
@@ -268,11 +272,11 @@ public class MainActivity extends AppCompatActivity {
         dialog.setContentView(R.layout.dialog_change_pass);
         dialog.show();
 
-        EditText password= dialog.findViewById(R.id.passwordChange);
-        EditText passwordOld= dialog.findViewById(R.id.passwordOld);
-        EditText repassword= dialog.findViewById(R.id.repassword);
-        Button changePassBtn= dialog.findViewById(R.id.changePasswordBtn);
-        Button backBtn= dialog.findViewById(R.id.backbtn);
+        EditText password = dialog.findViewById(R.id.passwordChange);
+        EditText passwordOld = dialog.findViewById(R.id.passwordOld);
+        EditText repassword = dialog.findViewById(R.id.repassword);
+        Button changePassBtn = dialog.findViewById(R.id.changePasswordBtn);
+        Button backBtn = dialog.findViewById(R.id.backbtn);
 
         password.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -352,15 +356,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                if(password.getText().toString().trim().length()<6){
+                if (password.getText().toString().trim().length() < 6) {
                     password.setError("Mật khẩu phải có ít nhất 6 ký tự");
                     return;
                 }
 
-                if (password.getText().toString().trim().equals(repassword.getText().toString().trim())){
-                    if(Pass.equals(passwordOld.getText().toString().trim())){
-                        FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
-                        AuthCredential authCredential= EmailAuthProvider.getCredential(getUserInfor(getApplicationContext()).getEmail(),Pass);
+                if (password.getText().toString().trim().equals(repassword.getText().toString().trim())) {
+                    if (Pass.equals(passwordOld.getText().toString().trim())) {
+                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                        AuthCredential authCredential = EmailAuthProvider.getCredential(getUserInfor(getApplicationContext()).getEmail(), Pass);
                         user.reauthenticate(authCredential)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
@@ -368,13 +372,13 @@ public class MainActivity extends AppCompatActivity {
                                         user.updatePassword(password.getText().toString().trim()).addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void unused) {
-                                                Toast.makeText(getApplicationContext(),"Cập nhập thành công", Toast.LENGTH_LONG).show();
+                                                Toast.makeText(getApplicationContext(), "Cập nhập thành công", Toast.LENGTH_LONG).show();
                                                 dialog.dismiss();
                                             }
                                         }).addOnFailureListener(new OnFailureListener() {
                                             @Override
                                             public void onFailure(@NonNull Exception e) {
-                                                Toast.makeText(getApplicationContext(),"Cập nhập thất bại", Toast.LENGTH_LONG).show();
+                                                Toast.makeText(getApplicationContext(), "Cập nhập thất bại", Toast.LENGTH_LONG).show();
                                                 dialog.dismiss();
                                             }
                                         });
@@ -382,14 +386,14 @@ public class MainActivity extends AppCompatActivity {
                                 }).addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
-                                        Toast.makeText(getApplicationContext(),"Cập nhập thất bại", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getApplicationContext(), "Cập nhập thất bại", Toast.LENGTH_LONG).show();
                                         dialog.dismiss();
                                     }
                                 });
-                    }else{
+                    } else {
                         passwordOld.setError("Mật khẩu không đúng");
                     }
-                }else{
+                } else {
                     repassword.setError("Mật khẩu không trùng khớp, hãy nhập lại");
                 }
 
@@ -425,7 +429,36 @@ public class MainActivity extends AppCompatActivity {
         return super.dispatchTouchEvent(ev);
     }
 
+    private void checkBlock() {
+        final int[] countReportUser = {0};
+        final int[] countReportPost = {0};
+        Report.getFirebaseReference().addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    Report report = dataSnapshot.getValue(Report.class);
+                    if (report != null && report.getTargetId().equals(getUserInfor(MainActivity.this).getUid()) && report.getType().equals(TYPE_USER)) {
+                        countReportUser[0]++;
+                    }
+                    if (report != null && report.getTargetId().equals(getUserInfor(MainActivity.this).getUid()) && report.getType().equals(TYPE_POST)) {
+                        countReportPost[0]++;
+                    }
+                }
+                if (countReportUser[0] >= 2 && countReportPost[0] >= 2) {
+                    updateUserInfor(getUserInfor(MainActivity.this).getFullName(), getUserInfor(MainActivity.this).getPhoneNumber(),
+                            getUserInfor(MainActivity.this).getAddress(), getUserInfor(MainActivity.this).getEmail(), getUserInfor(MainActivity.this).getUid(),
+                            getUserInfor(MainActivity.this).getAvata(), getUserInfor(MainActivity.this).getIntroduce(), getUserInfor(MainActivity.this).getShowPhoneNumberPublic(),
+                            true, MainActivity.this);
+                    SharedPreferences.Editor editor = getSharedPreferences("userInfor", MODE_PRIVATE).edit();
+                    editor.putBoolean("Block", true);
+                    editor.apply();
+                }
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
 
-
+            }
+        });
+    }
 }

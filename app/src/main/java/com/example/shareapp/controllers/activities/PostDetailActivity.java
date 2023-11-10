@@ -1,15 +1,19 @@
 package com.example.shareapp.controllers.activities;
 
+import static com.example.shareapp.controllers.constant.ReportTypeConstant.TYPE_POST;
+import static com.example.shareapp.models.User.getUserInfor;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -21,15 +25,22 @@ import com.bumptech.glide.Glide;
 import com.example.shareapp.R;
 import com.example.shareapp.controllers.methods.DateTimeMethod;
 import com.example.shareapp.models.Post;
+import com.example.shareapp.models.Report;
 import com.example.shareapp.models.User;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.UUID;
 
 public class PostDetailActivity extends AppCompatActivity {
     private Toolbar toolbar;
-    private ImageButton imbBackPage;
+    private ImageButton imbBackPage, imbReport;
     private ImageView imvImagePost, cimvImagePoster;
     private TextView tvTitlePage, tvFullNamePoster, tvTitlePost, tvCreatedAt, tvQuantity, tvDescription;
     private Button btnRequestPost;
     private Post mPost;
+    private Boolean isReported = false;
 
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
@@ -40,6 +51,7 @@ public class PostDetailActivity extends AppCompatActivity {
         getViews();
         getDataIntent();
         setEventListener();
+        checkReportPost();
     }
 
     private void getViews() {
@@ -55,6 +67,7 @@ public class PostDetailActivity extends AppCompatActivity {
         tvQuantity = findViewById(R.id.tv_quantity_product);
         tvDescription = findViewById(R.id.tv_description);
         btnRequestPost = findViewById(R.id.btn_request_post);
+        imbReport = findViewById(R.id.imb_report);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
@@ -62,7 +75,7 @@ public class PostDetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mPost = (Post) intent.getSerializableExtra("item_post");
 
-        if(!TextUtils.isEmpty(mPost.getImage()))
+        if (!TextUtils.isEmpty(mPost.getImage()))
             Glide.with(PostDetailActivity.this).load(mPost.getImage()).into(imvImagePost);
         tvCreatedAt.setText("Từ " + DateTimeMethod.timeDifference(mPost.getCreatedAt()));
         tvTitlePost.setText(mPost.getTitle());
@@ -70,13 +83,14 @@ public class PostDetailActivity extends AppCompatActivity {
         tvDescription.setText(mPost.getDescription());
         new User().getUserById(mPost.getUserId(), new User.IUserDataReceivedListener() {
             @Override
-            public void onUserDataReceived(User user) {
-                if(user != null) {
-                    if(user.getAvata() != null) {
+            public Boolean onUserDataReceived(User user) {
+                if (user != null) {
+                    if (user.getAvata() != null) {
                         Glide.with(PostDetailActivity.this).load(user.getAvata()).into(cimvImagePoster);
                     }
                     tvFullNamePoster.setText(user.getFullName() + " đang cho đi");
                 }
+                return null;
             }
         });
     }
@@ -94,6 +108,69 @@ public class PostDetailActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Toast.makeText(PostDetailActivity.this, "Gửi yêu cầu thành công", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(PostDetailActivity.this, MainActivity.class));
+            }
+        });
+
+        cimvImagePoster.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = getIntent();
+                mPost = (Post) intent.getSerializableExtra("item_post");
+                Intent i = new Intent(getApplicationContext(), UserInforPublicActivity.class);
+                i.putExtra("uid", mPost.getUserId());
+                startActivity(i);
+            }
+        });
+
+        imbReport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(PostDetailActivity.this);
+                builder.setTitle("Thông báo");
+                builder.setMessage("Bạn có chắc chắn muốn báo cáo bài viết này không?");
+                builder.setPositiveButton("Có", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (!isReported) {
+                            Intent intent = getIntent();
+                            mPost = (Post) intent.getSerializableExtra("item_post");
+                            Report.CreateNewReport(UUID.randomUUID().toString(), getUserInfor(PostDetailActivity.this).getUid(), mPost.getUserId(), mPost.getPostId(), TYPE_POST);
+                            Toast.makeText(getApplicationContext(), "Báo cáo thành công", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Bạn đã báo cáo bài đăng này", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                builder.setNegativeButton("Không", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+        });
+    }
+
+    private void checkReportPost() {
+        Intent intent = getIntent();
+        mPost = (Post) intent.getSerializableExtra("item_post");
+        String postReportID = mPost.getPostId();
+        Report.getFirebaseReference().addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    Report report = dataSnapshot.getValue(Report.class);
+                    if (report != null && report.getReporterId().equals(getUserInfor(PostDetailActivity.this).getUid()) && report.getPostId().equals(postReportID) && report.getType().equals(TYPE_POST)) {
+                        isReported = true;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
     }

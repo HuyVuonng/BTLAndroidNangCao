@@ -1,72 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".controllers.activities.PostDetailActivity"
-    android:fillViewport="true">
-
+    android:fillViewport="true"
+    tools:context=".controllers.activities.PostDetailActivity">
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@color/white">
+        android:background="@color/white"
+        android:orientation="vertical">
 
-        <include
-            layout="@layout/toolbar_layout_post_detai"/>
+        <include layout="@layout/toolbar_layout_post_detai" />
 
         <ImageView
             android:id="@+id/iv_image_post"
             android:layout_width="match_parent"
             android:layout_height="350dp"
-            android:src="@drawable/no_img"/>
+            android:src="@drawable/no_img" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="20dp"
+            android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:padding="20dp">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/cimg_image_poster"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:src="@drawable/avatar_default"/>
+                android:src="@drawable/avatar_default" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginStart="14dp">
+                android:layout_marginStart="14dp"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/tv_full_name_poster"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:text="Ta Duc Hoan is giving away"/>
+                    android:text="Ta Duc Hoan is giving away"
+                    android:textColor="@color/grey_line_dark"
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/tv_title_post"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="26sp"
-                    android:textStyle="bold"
                     android:text="Loose bakery items"
-                    />
+                    android:textColor="@color/black"
+                    android:textSize="26sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tv_created_at"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="13sp"
                     android:text="Added 6 hours ago"
-                    android:textColor="@color/grey_line_dark"/>
+                    android:textColor="@color/grey_line_dark"
+                    android:textSize="13sp" />
             </LinearLayout>
         </LinearLayout>
 
@@ -74,27 +72,29 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="20dp"
-            android:paddingRight="20dp"
             android:paddingTop="10dp"
+            android:paddingRight="20dp"
             android:paddingBottom="10dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Số lượng sản phẩm còn"
+                android:textColor="@color/black"
                 android:textSize="16sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tv_quantity_product"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="10"
-                android:textSize="16sp"
-                android:padding="5dp"
                 android:layout_marginStart="12dp"
                 android:background="@color/grey_background_create_post"
-                android:textStyle="bold"/>
+                android:padding="5dp"
+                android:text="10"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <TextView
@@ -113,41 +113,43 @@
         ♨️Hồ lô trung hoa 25k/xiên\n
         ♨️combo 12 loại viên chiên 85k/xuất\n
         Mẹt đồ nướng trung hoa ăn từ 1-10 người ăn giá từ 50 - 550k"
+            android:textColor="@color/black"
             android:textSize="16sp" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/grey_background_create_post"
             android:paddingLeft="20dp"
             android:paddingTop="10dp"
             android:paddingRight="20dp"
             android:paddingBottom="10dp"
             android:text="Mọi thứ trong mục này đều được tặng miễn phí. Tuyệt đối không bán, không đổi, không quyên góp."
-            android:textSize="16sp"
-            android:background="@color/grey_background_create_post"/>
+            android:textColor="@color/black"
+            android:textSize="16sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
+            android:orientation="vertical"
             android:paddingLeft="20dp"
-            android:paddingRight="20dp"
             android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:orientation="vertical">
+            android:paddingRight="20dp"
+            android:paddingBottom="10dp">
 
             <Button
                 android:id="@+id/btn_update"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Chỉnh sửa bài viết"
-                android:textSize="16sp"
-                android:textStyle="bold"
                 android:layout_gravity="bottom"
+                android:layout_marginTop="20dp"
                 android:background="@drawable/round_button_corner"
                 android:backgroundTint="@color/black"
+                android:text="Chỉnh sửa bài viết"
                 android:textColor="@color/white"
-                android:layout_marginTop="20dp"/>
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/btn_delete"
