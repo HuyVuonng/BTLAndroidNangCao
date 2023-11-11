@@ -98,6 +98,26 @@ public class LoginActivity extends AppCompatActivity {
 
         client = GoogleSignIn.getClient(this, options);
 
+        setEventListener();
+
+        loginWithBiometric();
+
+        Boolean blocked= getIntent().getBooleanExtra("blocked",false);
+        if(blocked){
+            gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+            gsc = GoogleSignIn.getClient(LoginActivity.this, gso);
+            gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    FirebaseAuth.getInstance().signOut();
+                }
+            });
+            showBlockMessage();
+        }
+
+    }
+
+    private void setEventListener(){
         googlebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -179,6 +199,7 @@ public class LoginActivity extends AppCompatActivity {
                                                 sharedPreferences.edit().putString("password", Password.getText().toString().trim()).apply();
                                                 Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
                                                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                                                finish();
                                             } else {
                                                 SharedPreferences editor = getApplicationContext().getSharedPreferences("data", MODE_PRIVATE);
                                                 editor.edit().clear().apply();
@@ -193,7 +214,7 @@ public class LoginActivity extends AppCompatActivity {
                                                         FirebaseAuth.getInstance().signOut();
                                                     }
                                                 });
-                                                Toast.makeText(LoginActivity.this, "Tài khoản của bạn đã bị khóa", Toast.LENGTH_LONG).show();
+                                                showBlockMessage();
                                             }
                                         }
                                         return null;
@@ -234,13 +255,6 @@ public class LoginActivity extends AppCompatActivity {
                 });
             }
         });
-
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-//            this.loginWithBiometric();
-//        }
-
-        loginWithBiometric();
-
     }
 
     private void getViews() {
@@ -318,6 +332,7 @@ public class LoginActivity extends AppCompatActivity {
                                     if (!user.getBlock()) {
                                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                         startActivity(intent);
+                                        finish();
                                     } else {
                                         SharedPreferences editor = getApplicationContext().getSharedPreferences("data", MODE_PRIVATE);
                                         editor.edit().clear().apply();
@@ -332,7 +347,7 @@ public class LoginActivity extends AppCompatActivity {
                                                 FirebaseAuth.getInstance().signOut();
                                             }
                                         });
-                                        Toast.makeText(LoginActivity.this, "Tài khoản của bạn đã bị khóa", Toast.LENGTH_LONG).show();
+                                        showBlockMessage();
                                     }
                                 }
                                 return null;
@@ -359,6 +374,7 @@ public class LoginActivity extends AppCompatActivity {
                                             if (!user.getBlock()) {
                                                 Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT);
                                                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                                                finish();
                                             } else {
                                                 SharedPreferences editor = getApplicationContext().getSharedPreferences("data", MODE_PRIVATE);
                                                 editor.edit().clear().apply();
@@ -373,8 +389,7 @@ public class LoginActivity extends AppCompatActivity {
                                                         FirebaseAuth.getInstance().signOut();
                                                     }
                                                 });
-                                                Toast.makeText(LoginActivity.this, "Tài khoản của bạn đã bị khóa", Toast.LENGTH_LONG).show();
-                                            }
+                                                showBlockMessage();                                            }
                                         }
                                         return null;
                                     }
@@ -520,6 +535,7 @@ public class LoginActivity extends AppCompatActivity {
                                     if (!user.getBlock()) {
                                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                         startActivity(intent);
+                                        finish();
                                     } else {
                                         SharedPreferences editor = getApplicationContext().getSharedPreferences("data", MODE_PRIVATE);
                                         editor.edit().clear().apply();
@@ -534,8 +550,7 @@ public class LoginActivity extends AppCompatActivity {
                                                 FirebaseAuth.getInstance().signOut();
                                             }
                                         });
-                                        Toast.makeText(LoginActivity.this, "Tài khoản của bạn đã bị khóa", Toast.LENGTH_LONG).show();
-                                    }
+                                        showBlockMessage();                                    }
                                 }
                                 return null;
                             }
@@ -574,5 +589,19 @@ public class LoginActivity extends AppCompatActivity {
 
         }
         return super.dispatchTouchEvent(ev);
+    }
+
+    public void showBlockMessage(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+        builder.setTitle("Thông báo");
+        builder.setMessage("Tài khoản của bạn đã bị khóa");
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 }
