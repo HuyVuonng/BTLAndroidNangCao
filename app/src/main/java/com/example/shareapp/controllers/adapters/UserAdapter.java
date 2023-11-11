@@ -1,5 +1,7 @@
 package com.example.shareapp.controllers.adapters;
 
+import static com.example.shareapp.models.User.getUserInfor;
+
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
@@ -17,7 +19,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.shareapp.R;
+import com.example.shareapp.controllers.activities.MainActivity;
+import com.example.shareapp.controllers.activities.ManagerPost;
 import com.example.shareapp.controllers.activities.UserInforPublicActivity;
+import com.example.shareapp.controllers.fragments.UserInforFragment;
+import com.example.shareapp.controllers.methods.NavigationMethod;
 import com.example.shareapp.models.User;
 
 import java.util.List;
@@ -31,6 +37,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     public UserAdapter(Context _context, List<User> listUser) {
         this.listUser = listUser;
     }
+
+    MainActivity mainActivity;
 
     @NonNull
     @Override
@@ -47,13 +55,18 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             return;
         holder.tv_username.setText(user.getFullName());
         holder.tv_email.setText(user.getEmail());
-        if(!TextUtils.isEmpty(user.getAvata())){
+        if (!TextUtils.isEmpty(user.getAvata())) {
             Glide.with(this.view).load(user.getAvata()).into(holder.civ_avatar);
         }
         holder.btn_detail.setOnClickListener(v -> {
-            Intent intent = new Intent(this.view.getContext(), UserInforPublicActivity.class);
-            intent.putExtra("uid", user.getUid());
-            this.view.getContext().startActivity(intent);
+            if (!user.getUid().equals(getUserInfor(this.view.getContext()).getUid().toString())) {
+                Intent intent = new Intent(this.view.getContext(), UserInforPublicActivity.class);
+                intent.putExtra("uid", user.getUid());
+                this.view.getContext().startActivity(intent);
+            } else {
+                ((MainActivity) this.view.getContext()).replaceFragment(new UserInforFragment());
+                NavigationMethod.setNavigationMenu(((MainActivity) this.view.getContext()).bnv_menu, R.id.item_account);
+            }
         });
     }
 

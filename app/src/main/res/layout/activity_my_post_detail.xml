@@ -158,7 +158,19 @@
                 android:layout_gravity="bottom"
                 android:layout_marginTop="20dp"
                 android:background="@drawable/round_button_corner"
-                android:text="Xóa bài viết"
+                android:text="Ẩn bài viết"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+            <Button
+                android:id="@+id/btn_showPost"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/round_button_corner"
+                android:visibility="gone"
+                android:text="Hiện bài viết"
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold" />

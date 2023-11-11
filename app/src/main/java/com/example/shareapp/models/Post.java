@@ -27,6 +27,7 @@ public class Post implements Serializable {
     private boolean isDelete;
     private String location;
     private String description;
+
     public Post() {
     }
 
@@ -179,7 +180,11 @@ public class Post implements Serializable {
         return com.google.firebase.database.FirebaseDatabase.getInstance().getReference("Posts");
     }
 
-    public static void deletePost(String postId) {
+    public static void hidePost(String postId) {
         getFirebaseReference().child(postId).child("delete").setValue(true);
+    }
+
+    public static void showPost(String postId) {
+        getFirebaseReference().child(postId).child("delete").setValue(false);
     }
 }

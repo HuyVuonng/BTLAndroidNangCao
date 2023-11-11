@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ManagerPost extends AppCompatActivity {
-    Button AllBtn, FoodBtn, NonFoodBtn;
+    Button AllBtn, FoodBtn, NonFoodBtn, hiddenPostBtn;
     TextView emtyRcv;
     ProgressBar prgb;
     RecyclerView recyclerView;
@@ -45,6 +45,7 @@ public class ManagerPost extends AppCompatActivity {
         AllBtn = findViewById(R.id.btn_manage_all);
         FoodBtn = findViewById(R.id.btn_manage_food);
         NonFoodBtn = findViewById(R.id.btn_manage_non_food);
+        hiddenPostBtn = findViewById(R.id.btn_manage_hidden_post);
         prgb = findViewById(R.id.prgb_managePost);
         recyclerView = findViewById(R.id.rcv_list_managePost);
         imbBackPage = findViewById(R.id.imb_back_page);
@@ -72,7 +73,13 @@ public class ManagerPost extends AppCompatActivity {
                 AllBtn.setBackgroundTintList(getResources().getColorStateList(R.color.purple_main));
                 FoodBtn.setBackgroundTintList(getResources().getColorStateList(R.color.grey_main));
                 NonFoodBtn.setBackgroundTintList(getResources().getColorStateList(R.color.grey_main));
-                renderListViewAllPost(id);
+                hiddenPostBtn.setBackgroundTintList(getResources().getColorStateList(R.color.grey_main));
+
+                if(!id.equals(getUserInfor(ManagerPost.this).getUid().toString()))
+                    renderListViewAllPostNoHide(id);
+                else {
+                    renderListViewAllPost(id);
+                }
             }
         });
 
@@ -82,6 +89,7 @@ public class ManagerPost extends AppCompatActivity {
                 AllBtn.setBackgroundTintList(getResources().getColorStateList(R.color.grey_main));
                 FoodBtn.setBackgroundTintList(getResources().getColorStateList(R.color.purple_main));
                 NonFoodBtn.setBackgroundTintList(getResources().getColorStateList(R.color.grey_main));
+                hiddenPostBtn.setBackgroundTintList(getResources().getColorStateList(R.color.grey_main));
                 renderListViewAllFood(id);
             }
         });
@@ -92,11 +100,53 @@ public class ManagerPost extends AppCompatActivity {
                 AllBtn.setBackgroundTintList(getResources().getColorStateList(R.color.grey_main));
                 FoodBtn.setBackgroundTintList(getResources().getColorStateList(R.color.grey_main));
                 NonFoodBtn.setBackgroundTintList(getResources().getColorStateList(R.color.purple_main));
+                hiddenPostBtn.setBackgroundTintList(getResources().getColorStateList(R.color.grey_main));
                 renderListViewAllNonFood(id);
+            }
+        });
+
+        hiddenPostBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AllBtn.setBackgroundTintList(getResources().getColorStateList(R.color.grey_main));
+                FoodBtn.setBackgroundTintList(getResources().getColorStateList(R.color.grey_main));
+                NonFoodBtn.setBackgroundTintList(getResources().getColorStateList(R.color.grey_main));
+                hiddenPostBtn.setBackgroundTintList(getResources().getColorStateList(R.color.purple_main));
+                renderListViewAllHiddenPost(id);
             }
         });
     }
 
+    protected void renderListViewAllPostNoHide(String uid) {
+        this.prgb.setVisibility(View.VISIBLE);
+        Post.getFirebaseReference().addValueEventListener(new ValueEventListener() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                listPost.clear();
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    Post post = dataSnapshot.getValue(Post.class);
+                    if (post != null && post.getUserId().equals(uid) && !post.isDelete()) {
+                        listPost.add(post);
+                    }
+                }
+
+                postAdapter.notifyDataSetChanged();
+                prgb.setVisibility(View.GONE);
+                if (!listPost.isEmpty()) {
+                    recyclerView.smoothScrollToPosition(0);
+                    emtyRcv.setVisibility(View.INVISIBLE);
+                } else {
+                    emtyRcv.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("SearchFragment", error.getMessage());
+            }
+        });
+    }
     protected void renderListViewAllPost(String uid) {
         this.prgb.setVisibility(View.VISIBLE);
         Post.getFirebaseReference().addValueEventListener(new ValueEventListener() {
@@ -127,7 +177,6 @@ public class ManagerPost extends AppCompatActivity {
             }
         });
     }
-
     protected void renderListViewAllFood(String uid) {
         this.prgb.setVisibility(View.VISIBLE);
         Post.getFirebaseReference().addValueEventListener(new ValueEventListener() {
@@ -137,7 +186,7 @@ public class ManagerPost extends AppCompatActivity {
                 listPost.clear();
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Post post = dataSnapshot.getValue(Post.class);
-                    if (post != null && post.getUserId().equals(uid) && post.getType().equals(TYPE_FOOD)) {
+                    if (post != null && post.getUserId().equals(uid) && post.getType().equals(TYPE_FOOD) && !post.isDelete()) {
                         listPost.add(post);
                     }
                 }
@@ -168,7 +217,38 @@ public class ManagerPost extends AppCompatActivity {
                 listPost.clear();
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Post post = dataSnapshot.getValue(Post.class);
-                    if (post != null && post.getUserId().equals(uid) && post.getType().equals(TYPE_NON_FOOD)) {
+                    if (post != null && post.getUserId().equals(uid) && post.getType().equals(TYPE_NON_FOOD) && !post.isDelete()) {
+                        listPost.add(post);
+                    }
+                }
+
+                postAdapter.notifyDataSetChanged();
+                prgb.setVisibility(View.GONE);
+                if (!listPost.isEmpty()) {
+                    recyclerView.smoothScrollToPosition(0);
+                    emtyRcv.setVisibility(View.INVISIBLE);
+                } else {
+                    emtyRcv.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("SearchFragment", error.getMessage());
+            }
+        });
+    }
+
+    protected void renderListViewAllHiddenPost(String uid) {
+        this.prgb.setVisibility(View.VISIBLE);
+        Post.getFirebaseReference().addValueEventListener(new ValueEventListener() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                listPost.clear();
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    Post post = dataSnapshot.getValue(Post.class);
+                    if (post != null && post.getUserId().equals(uid) && post.isDelete()) {
                         listPost.add(post);
                     }
                 }
@@ -198,7 +278,8 @@ public class ManagerPost extends AppCompatActivity {
         initRecyclerView();
         String uid = getIntent().getStringExtra("uid");
         if (uid != null) {
-            renderListViewAllPost(uid);
+            hiddenPostBtn.setVisibility(View.GONE);
+            renderListViewAllPostNoHide(uid);
             id = uid;
         } else {
             renderListViewAllPost(getUserInfor(ManagerPost.this).getUid().toString());
