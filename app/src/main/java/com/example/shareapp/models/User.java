@@ -245,4 +245,8 @@ public class User {
     public static DatabaseReference getFirebaseReference() {
         return com.google.firebase.database.FirebaseDatabase.getInstance().getReference("Users");
     }
+
+    public static void blockUser(String userId) {
+        getFirebaseReference().child(userId).child("block").setValue(true);
+    }
 }

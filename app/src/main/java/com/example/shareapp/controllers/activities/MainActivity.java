@@ -2,6 +2,7 @@ package com.example.shareapp.controllers.activities;
 
 import static com.example.shareapp.controllers.constant.ReportTypeConstant.TYPE_POST;
 import static com.example.shareapp.controllers.constant.ReportTypeConstant.TYPE_USER;
+import static com.example.shareapp.models.User.blockUser;
 import static com.example.shareapp.models.User.getUserInfor;
 import static com.example.shareapp.models.User.readDataUserFromFireBase;
 import static com.example.shareapp.models.User.updateUserInfor;
@@ -85,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String ACTION_CREATE_POST = "create_post";
     public static final String ACTION_UPDATE_POST = "update_post";
     public static final String MY_POST = "myPost";
-    BottomNavigationView bnv_menu;
+    public BottomNavigationView bnv_menu;
     FloatingActionButton btn_add_post;
     ViewPager viewPager;
     FrameLayout frameLayout;
@@ -113,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
 //        viewPager= findViewById(R.id.mainViewPager);
     }
 
-    private void replaceFragment(Fragment fragment) {
+    public void replaceFragment(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.content_frame, fragment);
         transaction.commit();
@@ -446,10 +447,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 if (countReportUser[0] >= 2 && countReportPost[0] >= 2) {
-                    updateUserInfor(getUserInfor(MainActivity.this).getFullName(), getUserInfor(MainActivity.this).getPhoneNumber(),
-                            getUserInfor(MainActivity.this).getAddress(), getUserInfor(MainActivity.this).getEmail(), getUserInfor(MainActivity.this).getUid(),
-                            getUserInfor(MainActivity.this).getAvata(), getUserInfor(MainActivity.this).getIntroduce(), getUserInfor(MainActivity.this).getShowPhoneNumberPublic(),
-                            true, MainActivity.this);
+                    blockUser(getUserInfor(MainActivity.this).getUid());
                     SharedPreferences editor = getApplicationContext().getSharedPreferences("data", MODE_PRIVATE);
                     editor.edit().clear().apply();
 

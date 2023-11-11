@@ -49,6 +49,7 @@ public class SearchFragment extends Fragment {
     private ProgressBar pb_post;
     private TabLayout tl_result;
     private TabItem ti_result_post, ti_result_user;
+
     public SearchFragment() {
         // Required empty public constructor
     }
@@ -74,7 +75,7 @@ public class SearchFragment extends Fragment {
         listPost = new ArrayList<>();
         postAdapter = new FeedPostAdapter(getActivity(), listPost);
         rv_post.setAdapter(postAdapter);
-        rv_user.setLayoutManager( new LinearLayoutManager(getActivity()));
+        rv_user.setLayoutManager(new LinearLayoutManager(getActivity()));
         listUser = new ArrayList<>();
         userAdapter = new UserAdapter(getActivity(), listUser);
         rv_user.setAdapter(userAdapter);
@@ -165,14 +166,14 @@ public class SearchFragment extends Fragment {
         } else {
             this.tl_result.getTabAt(0).select();
         }
-        if(this.typeList.contains(R.id.search_filter_btn_product)) {
+        if (this.typeList.contains(R.id.search_filter_btn_product)) {
             Post.getFirebaseReference().addValueEventListener(new ValueEventListener() {
                 @SuppressLint("NotifyDataSetChanged")
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         Post post = dataSnapshot.getValue(Post.class);
-                        if (post != null && post.getTitle().toLowerCase().contains(search.toLowerCase())) {
+                        if (post != null && post.getTitle().toLowerCase().contains(search.toLowerCase()) && !post.isDelete()) {
                             if (!checkPostType(post)) {
                                 continue;
                             }
@@ -192,6 +193,7 @@ public class SearchFragment extends Fragment {
                         btn_clear.setVisibility(View.VISIBLE);
                     }
                 }
+
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
                     Log.e("SearchFragment - Post", error.getMessage());
@@ -206,15 +208,15 @@ public class SearchFragment extends Fragment {
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         User user = dataSnapshot.getValue(User.class);
-                        if (user != null && userFilterKeyList.contains(R.id.search_filter_btn_user_name) && user.getFullName().toLowerCase().contains(search.toLowerCase())) {
+                        if (user != null && userFilterKeyList.contains(R.id.search_filter_btn_user_name) && user.getFullName().toLowerCase().contains(search.toLowerCase()) && !user.getBlock()) {
                             listUser.add(user);
                             continue;
                         }
-                        if (user != null && userFilterKeyList.contains(R.id.search_filter_btn_user_email) && user.getEmail().toLowerCase().contains(search.toLowerCase())) {
+                        if (user != null && userFilterKeyList.contains(R.id.search_filter_btn_user_email) && user.getEmail().toLowerCase().contains(search.toLowerCase()) && !user.getBlock()) {
                             listUser.add(user);
                             continue;
                         }
-                        if (user != null && userFilterKeyList.contains(R.id.search_filter_btn_user_description)) {
+                        if (user != null && userFilterKeyList.contains(R.id.search_filter_btn_user_description) && !user.getBlock()) {
 //                            listUser.add(user);
 //                            @todo: add search by description
                         }
@@ -227,6 +229,7 @@ public class SearchFragment extends Fragment {
                         btn_clear.setVisibility(View.VISIBLE);
                     }
                 }
+
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
                     Log.e("SearchFragment - User", error.getMessage());
@@ -239,11 +242,9 @@ public class SearchFragment extends Fragment {
         this.displayFilterType();
         if (this.filter_type == R.id.search_filter_btn_type_all) {
             return true;
-        }
-        else if (this.filter_type == R.id.search_filter_btn_type_food && Objects.equals(post.getType(), PostTypeConstant.TYPE_FOOD)) {
+        } else if (this.filter_type == R.id.search_filter_btn_type_food && Objects.equals(post.getType(), PostTypeConstant.TYPE_FOOD)) {
             return true;
-        }
-        else if (this.filter_type == R.id.search_filter_btn_type_non_food && Objects.equals(post.getType(), PostTypeConstant.TYPE_NON_FOOD)) {
+        } else if (this.filter_type == R.id.search_filter_btn_type_non_food && Objects.equals(post.getType(), PostTypeConstant.TYPE_NON_FOOD)) {
             return true;
         }
         return false;
@@ -253,12 +254,10 @@ public class SearchFragment extends Fragment {
         if (this.filter_type == R.id.search_filter_btn_type_all) {
             this.btn_filter_type.setText(R.string.search_filter_type);
             this.btn_filter_type.setVisibility(View.GONE);
-        }
-        else if (this.filter_type == R.id.search_filter_btn_type_food) {
+        } else if (this.filter_type == R.id.search_filter_btn_type_food) {
             this.btn_filter_type.setText("Loại sản phẩm: " + PostTypeConstant.TYPE_FOOD);
             this.btn_filter_type.setVisibility(View.VISIBLE);
-        }
-        else if (this.filter_type == R.id.search_filter_btn_type_non_food) {
+        } else if (this.filter_type == R.id.search_filter_btn_type_non_food) {
             this.btn_filter_type.setText("Loại sản phẩm: " + PostTypeConstant.TYPE_NON_FOOD);
             this.btn_filter_type.setVisibility(View.VISIBLE);
         }
@@ -266,7 +265,7 @@ public class SearchFragment extends Fragment {
 
     protected boolean checkPostLocation(Post post) {
         this.displayFilterLocation();
-        if(this.filter_location == R.id.search_filter_btn_location_all) {
+        if (this.filter_location == R.id.search_filter_btn_location_all) {
             return true;
         }
 //        @todo: check post location
@@ -277,20 +276,16 @@ public class SearchFragment extends Fragment {
         if (this.filter_location == R.id.search_filter_btn_location_all) {
             this.btn_filter_location.setText(R.string.search_filter_location);
             this.btn_filter_location.setVisibility(View.GONE);
-        }
-        else if (this.filter_location == R.id.search_filter_btn_location_1) {
+        } else if (this.filter_location == R.id.search_filter_btn_location_1) {
             this.btn_filter_location.setText("Khoảng cách: 1km");
             this.btn_filter_location.setVisibility(View.VISIBLE);
-        }
-        else if (this.filter_location == R.id.search_filter_btn_location_3) {
+        } else if (this.filter_location == R.id.search_filter_btn_location_3) {
             this.btn_filter_location.setText("Khoảng cách: 3km");
             this.btn_filter_location.setVisibility(View.VISIBLE);
-        }
-        else if (this.filter_location == R.id.search_filter_btn_location_5) {
+        } else if (this.filter_location == R.id.search_filter_btn_location_5) {
             this.btn_filter_location.setText("Khoảng cách: 5km");
             this.btn_filter_location.setVisibility(View.VISIBLE);
-        }
-        else if (this.filter_location == R.id.search_filter_btn_location_10) {
+        } else if (this.filter_location == R.id.search_filter_btn_location_10) {
             this.btn_filter_location.setText("Khoảng cách: 10km");
             this.btn_filter_location.setVisibility(View.VISIBLE);
         }
@@ -300,8 +295,7 @@ public class SearchFragment extends Fragment {
         if (this.tl_result.getSelectedTabPosition() == 0) {
             this.rv_post.setVisibility(View.VISIBLE);
             this.rv_user.setVisibility(View.GONE);
-        }
-        else {
+        } else {
             this.rv_post.setVisibility(View.GONE);
             this.rv_user.setVisibility(View.VISIBLE);
         }

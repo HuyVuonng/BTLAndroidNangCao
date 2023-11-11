@@ -102,8 +102,8 @@ public class LoginActivity extends AppCompatActivity {
 
         loginWithBiometric();
 
-        Boolean blocked= getIntent().getBooleanExtra("blocked",false);
-        if(blocked){
+        Boolean blocked = getIntent().getBooleanExtra("blocked", false);
+        if (blocked) {
             gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
             gsc = GoogleSignIn.getClient(LoginActivity.this, gso);
             gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -117,7 +117,7 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private void setEventListener(){
+    private void setEventListener() {
         googlebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -389,7 +389,8 @@ public class LoginActivity extends AppCompatActivity {
                                                         FirebaseAuth.getInstance().signOut();
                                                     }
                                                 });
-                                                showBlockMessage();                                            }
+                                                showBlockMessage();
+                                            }
                                         }
                                         return null;
                                     }
@@ -398,6 +399,11 @@ public class LoginActivity extends AppCompatActivity {
                                 progressBar.setVisibility(View.INVISIBLE);
                                 Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT);
                             }
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getApplicationContext(), "Đăng nhập thất bại", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -550,7 +556,8 @@ public class LoginActivity extends AppCompatActivity {
                                                 FirebaseAuth.getInstance().signOut();
                                             }
                                         });
-                                        showBlockMessage();                                    }
+                                        showBlockMessage();
+                                    }
                                 }
                                 return null;
                             }
@@ -591,7 +598,7 @@ public class LoginActivity extends AppCompatActivity {
         return super.dispatchTouchEvent(ev);
     }
 
-    public void showBlockMessage(){
+    public void showBlockMessage() {
         AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
         builder.setTitle("Thông báo");
         builder.setMessage("Tài khoản của bạn đã bị khóa");

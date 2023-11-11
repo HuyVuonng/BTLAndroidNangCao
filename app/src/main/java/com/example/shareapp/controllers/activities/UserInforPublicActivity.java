@@ -105,9 +105,10 @@ public class UserInforPublicActivity extends AppCompatActivity {
         Post.getFirebaseReference().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                soBaiDang=0;
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Post post = dataSnapshot.getValue(Post.class);
-                    if (post.getUserId().equals(uid)) {
+                    if (post.getUserId().equals(uid) && !post.isDelete()) {
                         soBaiDang++;
                     }
                 }

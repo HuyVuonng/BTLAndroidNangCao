@@ -4,7 +4,8 @@ import static com.example.shareapp.controllers.activities.MainActivity.ACTION_NA
 import static com.example.shareapp.controllers.activities.MainActivity.ACTION_UPDATE_POST;
 import static com.example.shareapp.controllers.activities.MainActivity.MY_POST;
 import static com.example.shareapp.controllers.activities.MainActivity.NAME_TYPE;
-import static com.example.shareapp.models.Post.deletePost;
+import static com.example.shareapp.models.Post.hidePost;
+import static com.example.shareapp.models.Post.showPost;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -34,7 +35,7 @@ public class MyPostDetailActivity extends AppCompatActivity {
     private ImageButton imbBackPage;
     private ImageView imvImagePost, cimvImagePoster;
     private TextView tvTitlePage, tvFullNamePoster, tvTitlePost, tvCreatedAt, tvQuantity, tvDescription;
-    private Button btnUpdate, btnDelete;
+    private Button btnUpdate, btnDelete, btnShowPost;
     private Post mPost;
 
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
@@ -62,6 +63,7 @@ public class MyPostDetailActivity extends AppCompatActivity {
         tvDescription = findViewById(R.id.tv_description);
         btnUpdate = findViewById(R.id.btn_update);
         btnDelete = findViewById(R.id.btn_delete);
+        btnShowPost = findViewById(R.id.btn_showPost);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
@@ -69,17 +71,21 @@ public class MyPostDetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mPost = (Post) intent.getSerializableExtra("item_post");
 
-        if(!TextUtils.isEmpty(mPost.getImage()))
+        if (!TextUtils.isEmpty(mPost.getImage()))
             Glide.with(MyPostDetailActivity.this).load(mPost.getImage()).into(imvImagePost);
         tvCreatedAt.setText("Từ " + DateTimeMethod.timeDifference(mPost.getCreatedAt()));
         tvTitlePost.setText(mPost.getTitle());
         tvQuantity.setText(String.valueOf(mPost.getCount()));
         tvDescription.setText(mPost.getDescription());
+        if (mPost.isDelete()) {
+            btnShowPost.setVisibility(View.VISIBLE);
+            btnDelete.setVisibility(View.GONE);
+        }
         new User().getUserById(mPost.getUserId(), new User.IUserDataReceivedListener() {
             @Override
             public Boolean onUserDataReceived(User user) {
-                if(user != null) {
-                    if(user.getAvata() != null) {
+                if (user != null) {
+                    if (user.getAvata() != null) {
                         Glide.with(MyPostDetailActivity.this).load(user.getAvata()).into(cimvImagePoster);
                     }
                     tvFullNamePoster.setText(user.getFullName() + " đang cho đi");
@@ -113,13 +119,34 @@ public class MyPostDetailActivity extends AppCompatActivity {
                 new AlertDialog.Builder(MyPostDetailActivity.this)
                         .setTitle("Thông báo")
                         .setIcon(R.drawable.ic_warning)
-                        .setMessage("Bạn có chắc muốn xóa bài viết này không?\nChú ý sau khi xóa sẽ không khôi phục được dữ liệu!")
+                        .setMessage("Bạn có chắc muốn ẩn bài viết này không?")
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                deletePost(mPost.getPostId());
-                                Toast.makeText(MyPostDetailActivity.this, "Đã xóa bài viết.", Toast.LENGTH_SHORT).show();
+                                hidePost(mPost.getPostId());
+                                Toast.makeText(MyPostDetailActivity.this, "Đã ẩn bài viết.", Toast.LENGTH_SHORT).show();
                                 startActivity(new Intent(MyPostDetailActivity.this, MainActivity.class));
+                                finish();
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, null)
+                        .show();
+            }
+        });
+
+        btnShowPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new AlertDialog.Builder(MyPostDetailActivity.this)
+                        .setTitle("Thông báo")
+                        .setMessage("Bạn có chắc muốn hiện lại bài viết này không?")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                showPost(mPost.getPostId());
+                                Toast.makeText(MyPostDetailActivity.this, "Đã hiện bài viết.", Toast.LENGTH_SHORT).show();
+                                startActivity(new Intent(MyPostDetailActivity.this, MainActivity.class));
+                                finish();
                             }
                         })
                         .setNegativeButton(android.R.string.no, null)
