@@ -53,6 +53,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shareapp.R;
+import com.example.shareapp.models.Post;
 import com.example.shareapp.models.Report;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -195,6 +196,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        checkBlock();
         this.getViews();
 
         this.setEventListener();
@@ -203,7 +205,6 @@ public class MainActivity extends AppCompatActivity {
         NavigationMethod.setNavigationMenu(this.bnv_menu, R.id.item_home);
         readDataUserFromFireBase(FirebaseAuth.getInstance().getCurrentUser().getUid(), MainActivity.this);
         checkFragment();
-        checkBlock();
     }
 
     private void checkFragment() {
@@ -449,9 +450,15 @@ public class MainActivity extends AppCompatActivity {
                             getUserInfor(MainActivity.this).getAddress(), getUserInfor(MainActivity.this).getEmail(), getUserInfor(MainActivity.this).getUid(),
                             getUserInfor(MainActivity.this).getAvata(), getUserInfor(MainActivity.this).getIntroduce(), getUserInfor(MainActivity.this).getShowPhoneNumberPublic(),
                             true, MainActivity.this);
-                    SharedPreferences.Editor editor = getSharedPreferences("userInfor", MODE_PRIVATE).edit();
-                    editor.putBoolean("Block", true);
-                    editor.apply();
+                    SharedPreferences editor = getApplicationContext().getSharedPreferences("data", MODE_PRIVATE);
+                    editor.edit().clear().apply();
+
+                    SharedPreferences editor1 = getApplicationContext().getSharedPreferences("dataPass", MODE_PRIVATE);
+                    editor1.edit().clear().apply();
+                    Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                    intent.putExtra("blocked", true);
+                    startActivity(intent);
+                    finish();
                 }
             }
 
