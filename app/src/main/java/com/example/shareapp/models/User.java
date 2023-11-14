@@ -25,6 +25,8 @@ public class User {
     public String avata;
     public Boolean block, showPhoneNumberPublic;
     public String introduce;
+
+    public Location location;
     private static DatabaseReference mDatabase;
 
     public interface IUserDataReceivedListener {
@@ -72,6 +74,29 @@ public class User {
         this.block = block;
         this.showPhoneNumberPublic = showPhoneNumberPublic;
         this.introduce = introduce;
+    }
+
+    public User(
+            String fullName,
+            String phoneNumber,
+            String address,
+            String email,
+            String uid,
+            String avata,
+            Boolean block,
+            Boolean showPhoneNumberPublic,
+            String introduce,
+            Location location) {
+        this.fullName = fullName;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+        this.email = email;
+        this.uid = uid;
+        this.avata = avata;
+        this.block = block;
+        this.showPhoneNumberPublic = showPhoneNumberPublic;
+        this.introduce = introduce;
+        this.location = location;
     }
 
     public Boolean getShowPhoneNumberPublic() {
@@ -146,7 +171,8 @@ public class User {
         this.uid = uid;
     }
 
-
+    public void setLocation(Location location) { this.location = location; }
+    public Location getLocation() { return this.location; }
     public static void setUserInfor(String fullName, String phoneNumber, String address, String email, String uid, String avata, Boolean block, Boolean showPhoneNumberPublic, String introduce, Context context) {
         SharedPreferences.Editor editor = context.getSharedPreferences("userInfor", MODE_PRIVATE).edit();
         editor.putString("email", email);
@@ -172,8 +198,9 @@ public class User {
         Boolean block = sharedPreferences.getBoolean("block", false);
         String introduce = sharedPreferences.getString("introduce", "");
         Boolean showPhoneNumberPublic = sharedPreferences.getBoolean("showPhoneNumberPublic", false);
-
-        return new User(fullName, phoneNumber, address, email, uid, avata, block, showPhoneNumberPublic, introduce);
+        double longitude = Double.parseDouble(sharedPreferences.getString("longitude", "0")) ;
+        double latitude =  Double.parseDouble(sharedPreferences.getString("latitude", "0"));
+        return new User(fullName, phoneNumber, address, email, uid, avata, block, showPhoneNumberPublic, introduce, new Location(longitude, latitude));
     }
 
     public static void CreateNewUser(String fullName, String phoneNumber, String address, String email, String uid, String avata, String introduce, Boolean showPhoneNumberPublic, Boolean block) {
@@ -215,6 +242,11 @@ public class User {
                 }
             }
         });
+    }
+
+    public static void updateUserLocale(User user,Location location, Context context) {
+        mDatabase.child(user.getUid()).child("location").setValue(location);
+        Location.setUserLocaleShared(location, context);
     }
 
     public static void updateUserInfor(String fullName, String phoneNumber, String address, String email, String uid, String avata, String introduce, Boolean showPhoneNumberPublic, Boolean block, Context context) {
