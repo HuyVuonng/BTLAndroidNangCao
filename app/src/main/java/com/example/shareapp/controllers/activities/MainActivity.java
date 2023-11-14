@@ -437,6 +437,8 @@ public class MainActivity extends AppCompatActivity {
         Report.getFirebaseReference().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                countReportUser[0] = 0;
+                countReportPost[0] = 0;
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Report report = dataSnapshot.getValue(Report.class);
                     if (report != null && report.getTargetId().equals(getUserInfor(MainActivity.this).getUid()) && report.getType().equals(TYPE_USER)) {
@@ -446,7 +448,7 @@ public class MainActivity extends AppCompatActivity {
                         countReportPost[0]++;
                     }
                 }
-                if (countReportUser[0] >= 2 && countReportPost[0] >= 2) {
+                if (countReportUser[0] >= 1 && countReportPost[0] >= 1) {
                     blockUser(getUserInfor(MainActivity.this).getUid());
                     SharedPreferences editor = getApplicationContext().getSharedPreferences("data", MODE_PRIVATE);
                     editor.edit().clear().apply();

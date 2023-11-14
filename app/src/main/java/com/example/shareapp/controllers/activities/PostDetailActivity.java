@@ -1,6 +1,7 @@
 package com.example.shareapp.controllers.activities;
 
 import static com.example.shareapp.controllers.constant.ReportTypeConstant.TYPE_POST;
+import static com.example.shareapp.models.Notification.createNotification;
 import static com.example.shareapp.models.User.getUserInfor;
 
 import androidx.annotation.NonNull;
@@ -9,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
@@ -23,9 +25,12 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.shareapp.R;
+import com.example.shareapp.controllers.constant.NotifiTypeConstant;
 import com.example.shareapp.controllers.methods.DateTimeMethod;
+import com.example.shareapp.models.Notification;
 import com.example.shareapp.models.Post;
 import com.example.shareapp.models.Report;
+import com.example.shareapp.models.Request;
 import com.example.shareapp.models.User;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -41,6 +46,7 @@ public class PostDetailActivity extends AppCompatActivity {
     private Button btnRequestPost;
     private Post mPost;
     private Boolean isReported = false;
+    private ProgressDialog progressDialog;
 
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
@@ -68,6 +74,7 @@ public class PostDetailActivity extends AppCompatActivity {
         tvDescription = findViewById(R.id.tv_description);
         btnRequestPost = findViewById(R.id.btn_request_post);
         imbReport = findViewById(R.id.imb_report);
+        progressDialog = new ProgressDialog(PostDetailActivity.this);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
@@ -106,6 +113,25 @@ public class PostDetailActivity extends AppCompatActivity {
         btnRequestPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                progressDialog.show();
+                // Add thông báo
+                Notification notifi = new Notification();
+                notifi.setNotifiId(UUID.randomUUID().toString());
+                notifi.setType(NotifiTypeConstant.TYPE_REQUEST);
+                notifi.setTitle(getUserInfor(PostDetailActivity.this).fullName + " đang gửi yêu cầu cho món đồ này!");
+                notifi.setContent("Bạn có muốn chấp nhận yêu cầu này không?");
+                createNotification(notifi);
+
+                // Add request
+                Request request = new Request();
+                request.setRequestId(UUID.randomUUID().toString());
+                request.setNotificationId(notifi.getNotifiId());
+                request.setPostId(mPost.getPostId());
+                request.setUserId(getUserInfor(PostDetailActivity.this).getUid());
+                request.setStatus(false);
+
+                progressDialog.dismiss();
+
                 Toast.makeText(PostDetailActivity.this, "Gửi yêu cầu thành công", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(PostDetailActivity.this, MainActivity.class));
             }

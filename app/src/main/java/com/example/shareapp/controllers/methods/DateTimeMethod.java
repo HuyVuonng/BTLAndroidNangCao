@@ -20,8 +20,9 @@ public class DateTimeMethod {
         long hourDiff = timeDiff / (60 * 60 * 1000);
         long dayDiff = timeDiff / (60 * 60 * 24 * 1000);
 
-        if(minuteDif < 60)
+        if(minuteDif < 60) {
             return minuteDif + " phút trước";
+        }
         else if(hourDiff < 24)
         {
             return hourDiff + " giờ trước";
