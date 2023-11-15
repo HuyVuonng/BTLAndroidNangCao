@@ -5,46 +5,63 @@ import static com.example.shareapp.controllers.activities.MainActivity.ACTION_NA
 import static com.example.shareapp.controllers.activities.MainActivity.MY_POST;
 import static com.example.shareapp.controllers.activities.MainActivity.NAME_TYPE;
 import static com.example.shareapp.controllers.activities.MainActivity.TYPE_FOOD;
+import static com.example.shareapp.controllers.activities.MapsActivity.REQUEST_LOCATION_PERMISSION;
 import static com.example.shareapp.models.User.getUserInfor;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 
 import com.bumptech.glide.Glide;
 import com.example.shareapp.R;
-import com.example.shareapp.controllers.fragments.NonFoodFragment;
+import com.example.shareapp.controllers.constant.LocationConstant;
+import com.example.shareapp.models.Location;
 import com.example.shareapp.models.Post;
+import com.example.shareapp.models.User;
 import com.github.dhaval2404.imagepicker.ImagePicker;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.UUID;
 
-public class CreatePostActivity extends AppCompatActivity {
+public class CreatePostActivity extends AppCompatActivity implements OnMapReadyCallback {
     private Toolbar toolbar;
     private ImageButton imbBackPage;
     private TextView tvTitlePage;
@@ -56,15 +73,126 @@ public class CreatePostActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
     private Uri uriImage;
     private Post mPost;
+    private SupportMapFragment mapFragment;
     private String mAction;
+
+    private GoogleMap mMap;
+    FusedLocationProviderClient mFusedLocationClient;
+    private double latitude, longitude;
+
+    ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == LocationConstant.REQUEST_GET_MAP_LOCATION) {
+                    Intent data = result.getData();
+                    if (data != null) {
+                        Double longitude = data.getDoubleExtra("longitude", 0);
+                        Double latitude = data.getDoubleExtra("latitude", 0);
+                        this.longitude = longitude;
+                        this.latitude = latitude;
+                        LatLng current_locale = new LatLng(this.latitude, this.longitude);
+                        mMap.clear();
+                        mMap.getUiSettings().setScrollGesturesEnabled(false);
+                        mMap.addMarker(new MarkerOptions().position(current_locale).title("You set location here!"));
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(current_locale, 16.0f));
+
+                    }
+                }
+            });
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_post);
 
-        getViews();
-        getDataIntent();
-        setEventListener();
+        this.getViews();
+        this.getDataIntent();
+        this.initService();
+    }
+
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+        mMap = googleMap;
+        mMap.clear();
+        if (this.mPost != null) {
+            this.longitude = mPost.getLocation().getLongitude();
+            this.latitude = mPost.getLocation().getLatitude();
+        } else if (User.getUserInfor(this).location.getLatitude() != 0 && User.getUserInfor(this).location.getLongitude() != 0){
+            this.longitude = User.getUserInfor(this).location.getLongitude();
+            this.latitude = User.getUserInfor(this).location.getLatitude();
+        } else  {
+            this.mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+            this.getLastLocation();
+        }
+        LatLng current_locale = new LatLng(this.latitude, this.longitude);
+        mMap.getUiSettings().setScrollGesturesEnabled(false);
+        mMap.addMarker(new MarkerOptions().position(current_locale).title("You set location here!"));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(current_locale, 16.0f));
+        this.setEventListener();
+    }
+
+    @SuppressLint("MissingPermission")
+    private void getLastLocation() {
+        if (checkPermissions()) {
+            mFusedLocationClient.getLastLocation().addOnCompleteListener(task -> {
+                android.location.Location location = task.getResult();
+                if (location == null) {
+                    requestNewLocationData();
+                } else {
+                    this.latitude =  location.getLatitude();
+                    this.longitude = location.getLongitude();
+                    this.initService();
+                }
+            });
+        }
+        else {
+            this.requestPermissions();
+        }
+    }
+
+    private boolean checkPermissions() {
+        return ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    @SuppressLint("MissingPermission")
+    private void requestNewLocationData() {
+        LocationRequest mLocationRequest = new LocationRequest();
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setInterval(5);
+        mLocationRequest.setFastestInterval(0);
+        mLocationRequest.setNumUpdates(1);
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        mFusedLocationClient.requestLocationUpdates(mLocationRequest, new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                android.location.Location mLastLocation = locationResult.getLastLocation();
+                latitude =  mLastLocation.getLatitude();
+                longitude = mLastLocation.getLongitude();
+            }
+        }, Looper.myLooper());
+    }
+
+    private void requestPermissions() {
+        requestPermissions(new String[]{
+                Manifest.permission.ACCESS_FINE_LOCATION
+        }, REQUEST_LOCATION_PERMISSION);
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (checkPermissions() && this.longitude == 0 && this.latitude == 0) {
+            getLastLocation();
+        }
+    }
+
+    protected void initService() {
+        this.mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        this.mapFragment.getMapAsync(this);
     }
 
     private void getViews() {
@@ -79,6 +207,8 @@ public class CreatePostActivity extends AppCompatActivity {
         edtQuantity = findViewById(R.id.edt_quantity);
         btnSubmit = findViewById(R.id.btn_submit);
         progressDialog = new ProgressDialog(this);
+        this.mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.create_post_f_map);
     }
 
     private void getDataIntent() {
@@ -109,54 +239,47 @@ public class CreatePostActivity extends AppCompatActivity {
             edtDescription.setText(mPost.getDescription());
         }
 
-        imbBackPage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        });
-        imbImagePost.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ImagePicker.with(CreatePostActivity.this)
-                        .cropSquare()
-                        .compress(1024)
-                        .maxResultSize(1080, 1080)
-                        .start();
-            }
-        });
+        imbBackPage.setOnClickListener(view -> finish());
+        imbImagePost.setOnClickListener(view -> ImagePicker.with(CreatePostActivity.this)
+                .cropSquare()
+                .compress(1024)
+                .maxResultSize(1080, 1080)
+                .start());
 
-        btnSubmit.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.O)
-            @Override
-            public void onClick(View view) {
-                if(validateData()) {
-                    if (mPost == null) {
-                        Post post = new Post();
-                        post.setPostId(UUID.randomUUID().toString());
-                        post.setUserId(getUserInfor(CreatePostActivity.this).getUid());
-                        post.setTitle(edtTitle.getText().toString());
-                        post.setType(typePost);
-                        post.setCount(Integer.parseInt(edtQuantity.getText().toString()));
-                        post.setCreatedAt(System.currentTimeMillis());
-                        post.setUpdatedAt(System.currentTimeMillis());
-                        post.setDelete(false);
-                        post.setLocation("");
-                        post.setDescription(edtDescription.getText().toString());
+        btnSubmit.setOnClickListener(view -> {
+            if(validateData()) {
+                if (mPost == null) {
+                    Post post = new Post();
+                    post.setPostId(UUID.randomUUID().toString());
+                    post.setUserId(getUserInfor(CreatePostActivity.this).getUid());
+                    post.setTitle(edtTitle.getText().toString());
+                    post.setType(typePost);
+                    post.setCount(Integer.parseInt(edtQuantity.getText().toString()));
+                    post.setCreatedAt(System.currentTimeMillis());
+                    post.setUpdatedAt(System.currentTimeMillis());
+                    post.setDelete(false);
+                    post.setLocation(new Location(this.longitude, this.latitude));
+                    post.setDescription(edtDescription.getText().toString());
 
-                        createPost(post);
-                    } else {
-                        mPost.setTitle(edtTitle.getText().toString());
-                        mPost.setCount(Integer.parseInt(edtQuantity.getText().toString()));
-                        mPost.setUpdatedAt(System.currentTimeMillis());
-                        mPost.setLocation("");
-                        mPost.setDescription(edtDescription.getText().toString());
+                    createPost(post);
+                } else {
+                    mPost.setTitle(edtTitle.getText().toString());
+                    mPost.setCount(Integer.parseInt(edtQuantity.getText().toString()));
+                    mPost.setUpdatedAt(System.currentTimeMillis());
+                    mPost.setLocation(new Location(this.longitude, this.latitude));
+                    mPost.setDescription(edtDescription.getText().toString());
 
-                        updatePost(mPost);
-                    }
+                    updatePost(mPost);
                 }
-
             }
+
+        });
+
+        this.mMap.setOnMapClickListener(latLng -> {
+            Intent intent = new Intent(this, MapsActivity.class);
+            intent.putExtra("latitude", this.latitude);
+            intent.putExtra("longitude", this.longitude);
+            this.activityResultLauncher.launch(intent);
         });
     }
 
@@ -177,6 +300,11 @@ public class CreatePostActivity extends AppCompatActivity {
 
         if(TextUtils.isEmpty(edtDescription.getText().toString())) {
             edtDescription.setError("Mô tả không được để trống");
+            isOk = false;
+        }
+
+        if (this.longitude == 0 && this.latitude == 0) {
+            Toast.makeText(this, "Vui lòng chọn địa điểm", Toast.LENGTH_SHORT).show();
             isOk = false;
         }
 

@@ -1,7 +1,6 @@
 package com.example.shareapp.controllers.activities;
 
 import static com.example.shareapp.controllers.constant.ReportTypeConstant.TYPE_POST;
-import static com.example.shareapp.models.Notification.createNotification;
 import static com.example.shareapp.models.User.getUserInfor;
 
 import androidx.annotation.NonNull;
@@ -10,12 +9,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -25,20 +24,25 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.shareapp.R;
-import com.example.shareapp.controllers.constant.NotifiTypeConstant;
 import com.example.shareapp.controllers.methods.DateTimeMethod;
-import com.example.shareapp.models.Notification;
 import com.example.shareapp.models.Post;
 import com.example.shareapp.models.Report;
-import com.example.shareapp.models.Request;
 import com.example.shareapp.models.User;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.UUID;
 
-public class PostDetailActivity extends AppCompatActivity {
+public class PostDetailActivity extends AppCompatActivity implements OnMapReadyCallback {
     private Toolbar toolbar;
     private ImageButton imbBackPage, imbReport;
     private ImageView imvImagePost, cimvImagePoster;
@@ -46,7 +50,10 @@ public class PostDetailActivity extends AppCompatActivity {
     private Button btnRequestPost;
     private Post mPost;
     private Boolean isReported = false;
-    private ProgressDialog progressDialog;
+
+    private GoogleMap mMap;
+    private SupportMapFragment f_map;
+    FusedLocationProviderClient mFusedLocationClient;
 
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
@@ -56,8 +63,24 @@ public class PostDetailActivity extends AppCompatActivity {
 
         getViews();
         getDataIntent();
-        setEventListener();
         checkReportPost();
+        initService();
+    }
+
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+        mMap = googleMap;
+        mMap.clear();
+        LatLng current_locale = new LatLng(this.mPost.getLocation().getLatitude(), this.mPost.getLocation().getLongitude());
+        mMap.getUiSettings().setScrollGesturesEnabled(false);
+        mMap.addMarker(new MarkerOptions().position(current_locale).title("At here!"));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(current_locale, 16.0f));
+        this.setEventListener();
+    }
+
+    protected void initService() {
+        this.mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        this.f_map.getMapAsync(this);
     }
 
     private void getViews() {
@@ -74,7 +97,8 @@ public class PostDetailActivity extends AppCompatActivity {
         tvDescription = findViewById(R.id.tv_description);
         btnRequestPost = findViewById(R.id.btn_request_post);
         imbReport = findViewById(R.id.imb_report);
-        progressDialog = new ProgressDialog(PostDetailActivity.this);
+        f_map = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.post_detail_f_map);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
@@ -113,25 +137,6 @@ public class PostDetailActivity extends AppCompatActivity {
         btnRequestPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                progressDialog.show();
-                // Add thông báo
-                Notification notifi = new Notification();
-                notifi.setNotifiId(UUID.randomUUID().toString());
-                notifi.setType(NotifiTypeConstant.TYPE_REQUEST);
-                notifi.setTitle(getUserInfor(PostDetailActivity.this).fullName + " đang gửi yêu cầu cho món đồ này!");
-                notifi.setContent("Bạn có muốn chấp nhận yêu cầu này không?");
-                createNotification(notifi);
-
-                // Add request
-                Request request = new Request();
-                request.setRequestId(UUID.randomUUID().toString());
-                request.setNotificationId(notifi.getNotifiId());
-                request.setPostId(mPost.getPostId());
-                request.setUserId(getUserInfor(PostDetailActivity.this).getUid());
-                request.setStatus(false);
-
-                progressDialog.dismiss();
-
                 Toast.makeText(PostDetailActivity.this, "Gửi yêu cầu thành công", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(PostDetailActivity.this, MainActivity.class));
             }

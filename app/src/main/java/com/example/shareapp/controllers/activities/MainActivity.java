@@ -8,6 +8,8 @@ import static com.example.shareapp.models.User.readDataUserFromFireBase;
 import static com.example.shareapp.models.User.updateUserInfor;
 
 import com.bumptech.glide.Glide;
+import com.example.shareapp.controllers.constant.LocationConstant;
+import com.example.shareapp.controllers.Services.BackgroundService;
 import com.example.shareapp.controllers.fragments.FoodFragment;
 import com.example.shareapp.controllers.fragments.NonFoodFragment;
 import com.example.shareapp.controllers.fragments.PostAddSelectTypeBottomSheetDialog;
@@ -16,6 +18,10 @@ import com.example.shareapp.controllers.fragments.UserInforFragment;
 import com.example.shareapp.controllers.methods.KeyBoardMethod;
 import com.example.shareapp.controllers.methods.NavigationMethod;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -54,8 +60,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shareapp.R;
+import com.example.shareapp.models.Location;
 import com.example.shareapp.models.Post;
 import com.example.shareapp.models.Report;
+import com.example.shareapp.models.User;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -101,6 +109,21 @@ public class MainActivity extends AppCompatActivity {
     ImageView avatarNav;
     TextView nameUserNav;
     NavigationView navView;
+
+    ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == LocationConstant.REQUEST_GET_MAP_LOCATION) {
+                    Intent data = result.getData();
+                    if (data != null) {
+                        User.updateUserLocale(User.getUserInfor(this),
+                            new Location(
+                                 data.getDoubleExtra("longitude", 0),
+                                 data.getDoubleExtra("latitude", 0)
+                            ), this);
+                    }
+                }
+            });
 
     private void getViews() {
         this.bnv_menu = findViewById(R.id.main_bnv_menu);
@@ -169,8 +192,12 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "test", Toast.LENGTH_LONG).show();
             }
             if (id == R.id.nav_location) {
-                replaceFragment(new UserInforFragment());
+                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+                intent.putExtra(LocationConstant.LONGITUDE, getUserInfor(getApplicationContext()).getLocation().getLongitude());
+                intent.putExtra(LocationConstant.LATITUDE, getUserInfor(getApplicationContext()).getLocation().getLatitude());
+                activityResultLauncher.launch(intent);
             }
+
             if (id == R.id.nav_edit_profile) {
                 startActivity(new Intent(getApplicationContext(), UserInforUpdateActivity.class));
                 finish();
@@ -197,7 +224,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        checkBlock();
+        Intent serviceIntent = new Intent(this, BackgroundService.class);
+        startService(serviceIntent);
         this.getViews();
 
         this.setEventListener();
