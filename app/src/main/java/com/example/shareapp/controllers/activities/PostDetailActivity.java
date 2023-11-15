@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -27,13 +28,21 @@ import com.example.shareapp.controllers.methods.DateTimeMethod;
 import com.example.shareapp.models.Post;
 import com.example.shareapp.models.Report;
 import com.example.shareapp.models.User;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.UUID;
 
-public class PostDetailActivity extends AppCompatActivity {
+public class PostDetailActivity extends AppCompatActivity implements OnMapReadyCallback {
     private Toolbar toolbar;
     private ImageButton imbBackPage, imbReport;
     private ImageView imvImagePost, cimvImagePoster;
@@ -41,6 +50,10 @@ public class PostDetailActivity extends AppCompatActivity {
     private Button btnRequestPost;
     private Post mPost;
     private Boolean isReported = false;
+
+    private GoogleMap mMap;
+    private SupportMapFragment f_map;
+    FusedLocationProviderClient mFusedLocationClient;
 
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
@@ -50,8 +63,24 @@ public class PostDetailActivity extends AppCompatActivity {
 
         getViews();
         getDataIntent();
-        setEventListener();
         checkReportPost();
+        initService();
+    }
+
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+        mMap = googleMap;
+        mMap.clear();
+        LatLng current_locale = new LatLng(this.mPost.getLocation().getLatitude(), this.mPost.getLocation().getLongitude());
+        mMap.getUiSettings().setScrollGesturesEnabled(false);
+        mMap.addMarker(new MarkerOptions().position(current_locale).title("At here!"));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(current_locale, 16.0f));
+        this.setEventListener();
+    }
+
+    protected void initService() {
+        this.mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        this.f_map.getMapAsync(this);
     }
 
     private void getViews() {
@@ -68,6 +97,8 @@ public class PostDetailActivity extends AppCompatActivity {
         tvDescription = findViewById(R.id.tv_description);
         btnRequestPost = findViewById(R.id.btn_request_post);
         imbReport = findViewById(R.id.imb_report);
+        f_map = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.post_detail_f_map);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)

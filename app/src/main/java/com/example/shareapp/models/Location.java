@@ -8,7 +8,9 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-public class Location {
+import java.io.Serializable;
+
+public class Location implements Serializable {
     private double longitude;
     private double latitude;
 

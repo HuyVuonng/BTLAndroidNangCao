@@ -25,13 +25,13 @@ public class Post implements Serializable {
     private long createdAt;
     private long updatedAt;
     private boolean isDelete;
-    private String location;
+    private Location location;
     private String description;
 
     public Post() {
     }
 
-    public Post(String postId, String userId, String title, String type, int count, String image, String status, long createdAt, long updatedAt, boolean isDelete, String location, String description) {
+    public Post(String postId, String userId, String title, String type, int count, String image, String status, long createdAt, long updatedAt, boolean isDelete, Location location, String description) {
         this.postId = postId;
         this.userId = userId;
         this.title = title;
@@ -126,11 +126,11 @@ public class Post implements Serializable {
         isDelete = delete;
     }
 
-    public String getLocation() {
+    public Location getLocation() {
         return location;
     }
 
-    public void setLocation(String location) {
+    public void setLocation(Location location) {
         this.location = location;
     }
 

@@ -116,9 +116,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @SuppressLint("MissingPermission")
     private void getLastLocation() {
-        // Kiểm tra đã có quyền chưa
         if (checkPermissions()) {
-            // Nhận location từ FusedLocationClient
             mFusedLocationClient.getLastLocation().addOnCompleteListener(task -> {
                 Location location = task.getResult();
                 if (location == null) {
@@ -131,34 +129,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             });
         }
         else {
-            // Nếu chưa có quyền thì xin cấp quyền
             this.requestPermissions();
         }
     }
 
     @SuppressLint("MissingPermission")
     private void requestNewLocationData() {
-        // Tạo LocationRequest
         LocationRequest mLocationRequest = new LocationRequest();
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationRequest.setInterval(5);
         mLocationRequest.setFastestInterval(0);
         mLocationRequest.setNumUpdates(1);
 
-        // set LocationRequest
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
+        mFusedLocationClient.requestLocationUpdates(mLocationRequest, new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                Location mLastLocation = locationResult.getLastLocation();
+                latitude =  mLastLocation.getLatitude();
+                longitude = mLastLocation.getLongitude();
+            }
+        }, Looper.myLooper());
     }
-
-    private LocationCallback mLocationCallback = new LocationCallback() {
-
-        @Override
-        public void onLocationResult(LocationResult locationResult) {
-            Location mLastLocation = locationResult.getLastLocation();
-            latitude =  mLastLocation.getLatitude();
-            longitude = mLastLocation.getLongitude();
-        }
-    };
 
     private void requestPermissions() {
         requestPermissions(new String[]{
@@ -170,7 +162,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onResume() {
         super.onResume();
-        if (checkPermissions() && User.getUserInfor(this).location.getLatitude() == 0 && User.getUserInfor(this).location.getLongitude() == 0) {
+        if (checkPermissions() && this.longitude == 0 && this.latitude == 0) {
             getLastLocation();
         }
     }
@@ -184,7 +176,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * installed Google Play services and returned to the app.
      */
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
         mMap.clear();
         LatLng current_locale = new LatLng(this.latitude, this.longitude);

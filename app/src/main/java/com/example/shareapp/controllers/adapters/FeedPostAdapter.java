@@ -75,8 +75,8 @@ public class FeedPostAdapter extends RecyclerView.Adapter<FeedPostAdapter.FeedPo
                     intent = new Intent(_context, MyPostDetailActivity.class);
                 else
                     intent = new Intent(_context, PostDetailActivity.class);
-                intent.putExtra("item_post", (Serializable) post);
-                _context.startActivity(intent);
+                    intent.putExtra("item_post", (Serializable) post);
+                 _context.startActivity(intent);
             }
         });
 
