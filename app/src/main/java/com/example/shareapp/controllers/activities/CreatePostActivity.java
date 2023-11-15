@@ -123,10 +123,12 @@ public class CreatePostActivity extends AppCompatActivity implements OnMapReadyC
             this.mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
             this.getLastLocation();
         }
-        LatLng current_locale = new LatLng(this.latitude, this.longitude);
-        mMap.getUiSettings().setScrollGesturesEnabled(false);
-        mMap.addMarker(new MarkerOptions().position(current_locale).title("You set location here!"));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(current_locale, 16.0f));
+        if(this.latitude != 0 && this.longitude != 0) {
+            LatLng current_locale = new LatLng(this.latitude, this.longitude);
+            mMap.getUiSettings().setScrollGesturesEnabled(false);
+            mMap.addMarker(new MarkerOptions().position(current_locale).title("You set location here!"));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(current_locale, 16.0f));
+        }
         this.setEventListener();
     }
 
