@@ -9,6 +9,7 @@ import static com.example.shareapp.models.User.updateUserInfor;
 
 import com.bumptech.glide.Glide;
 import com.example.shareapp.controllers.constant.LocationConstant;
+import com.example.shareapp.controllers.Services.BackgroundService;
 import com.example.shareapp.controllers.fragments.FoodFragment;
 import com.example.shareapp.controllers.fragments.NonFoodFragment;
 import com.example.shareapp.controllers.fragments.PostAddSelectTypeBottomSheetDialog;
@@ -223,7 +224,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        checkBlock();
+        Intent serviceIntent = new Intent(this, BackgroundService.class);
+        startService(serviceIntent);
         this.getViews();
 
         this.setEventListener();
