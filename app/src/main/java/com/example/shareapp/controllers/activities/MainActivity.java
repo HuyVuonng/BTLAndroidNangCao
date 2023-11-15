@@ -8,6 +8,7 @@ import static com.example.shareapp.models.User.readDataUserFromFireBase;
 import static com.example.shareapp.models.User.updateUserInfor;
 
 import com.bumptech.glide.Glide;
+import com.example.shareapp.controllers.Services.BackgroundService;
 import com.example.shareapp.controllers.fragments.FoodFragment;
 import com.example.shareapp.controllers.fragments.NonFoodFragment;
 import com.example.shareapp.controllers.fragments.PostAddSelectTypeBottomSheetDialog;
@@ -197,7 +198,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        checkBlock();
+        Intent serviceIntent = new Intent(this, BackgroundService.class);
+        startService(serviceIntent);
         this.getViews();
 
         this.setEventListener();
@@ -429,41 +431,5 @@ public class MainActivity extends AppCompatActivity {
 
         }
         return super.dispatchTouchEvent(ev);
-    }
-
-    private void checkBlock() {
-        final int[] countReportUser = {0};
-        final int[] countReportPost = {0};
-        Report.getFirebaseReference().addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    Report report = dataSnapshot.getValue(Report.class);
-                    if (report != null && report.getTargetId().equals(getUserInfor(MainActivity.this).getUid()) && report.getType().equals(TYPE_USER)) {
-                        countReportUser[0]++;
-                    }
-                    if (report != null && report.getTargetId().equals(getUserInfor(MainActivity.this).getUid()) && report.getType().equals(TYPE_POST)) {
-                        countReportPost[0]++;
-                    }
-                }
-                if (countReportUser[0] >= 2 && countReportPost[0] >= 2) {
-                    blockUser(getUserInfor(MainActivity.this).getUid());
-                    SharedPreferences editor = getApplicationContext().getSharedPreferences("data", MODE_PRIVATE);
-                    editor.edit().clear().apply();
-
-                    SharedPreferences editor1 = getApplicationContext().getSharedPreferences("dataPass", MODE_PRIVATE);
-                    editor1.edit().clear().apply();
-                    Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                    intent.putExtra("blocked", true);
-                    startActivity(intent);
-                    finish();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
     }
 }

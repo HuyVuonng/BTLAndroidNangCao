@@ -67,6 +67,8 @@
         <meta-data
             android:name="com.google.android.gms.wallet.api.enabled"
             android:value="true" />
+
+        <service android:name=".controllers.Services.BackgroundService" />
     </application>
 
 </manifest>
