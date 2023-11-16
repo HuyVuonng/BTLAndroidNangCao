@@ -85,8 +85,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(binding.getRoot());
         this.getView(binding.getRoot());
         Intent getIntent = getIntent();
-        if (getIntent.getStringExtra(LocationConstant.LONGITUDE) != null
-                && getIntent.getStringExtra(LocationConstant.LATITUDE) != null) {
+        if (getIntent.getDoubleExtra(LocationConstant.LONGITUDE, 0) != 0
+                && getIntent.getDoubleExtra(LocationConstant.LATITUDE, 0) != 0) {
             this.latitude =getIntent.getDoubleExtra(LocationConstant.LATITUDE, 0);
             this.longitude =getIntent.getDoubleExtra(LocationConstant.LONGITUDE, 0);
             this.mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);

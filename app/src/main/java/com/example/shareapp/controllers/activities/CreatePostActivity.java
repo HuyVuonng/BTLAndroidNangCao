@@ -284,8 +284,8 @@ public class CreatePostActivity extends AppCompatActivity implements OnMapReadyC
 
         this.mMap.setOnMapClickListener(latLng -> {
             Intent intent = new Intent(this, MapsActivity.class);
-            intent.putExtra("latitude", this.latitude);
-            intent.putExtra("longitude", this.longitude);
+            intent.putExtra(LocationConstant.LATITUDE, this.latitude);
+            intent.putExtra(LocationConstant.LONGITUDE, this.longitude);
             this.activityResultLauncher.launch(intent);
         });
     }
