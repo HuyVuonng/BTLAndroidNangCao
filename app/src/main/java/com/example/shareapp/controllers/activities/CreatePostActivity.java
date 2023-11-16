@@ -18,6 +18,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -88,13 +89,7 @@ public class CreatePostActivity extends AppCompatActivity implements OnMapReadyC
                     if (data != null) {
                         Double longitude = data.getDoubleExtra("longitude", 0);
                         Double latitude = data.getDoubleExtra("latitude", 0);
-                        this.longitude = longitude;
-                        this.latitude = latitude;
-                        LatLng current_locale = new LatLng(this.latitude, this.longitude);
-                        mMap.clear();
-                        mMap.getUiSettings().setScrollGesturesEnabled(false);
-                        mMap.addMarker(new MarkerOptions().position(current_locale).title("You set location here!"));
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(current_locale, 16.0f));
+                        this.setCurrentLocation(longitude, latitude);
 
                     }
                 }
@@ -119,15 +114,15 @@ public class CreatePostActivity extends AppCompatActivity implements OnMapReadyC
         } else if (User.getUserInfor(this).location.getLatitude() != 0 && User.getUserInfor(this).location.getLongitude() != 0){
             this.longitude = User.getUserInfor(this).location.getLongitude();
             this.latitude = User.getUserInfor(this).location.getLatitude();
+
         } else  {
             this.mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
             this.getLastLocation();
+
         }
+        mMap.getUiSettings().setScrollGesturesEnabled(false);
         if(this.latitude != 0 && this.longitude != 0) {
-            LatLng current_locale = new LatLng(this.latitude, this.longitude);
-            mMap.getUiSettings().setScrollGesturesEnabled(false);
-            mMap.addMarker(new MarkerOptions().position(current_locale).title("You set location here!"));
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(current_locale, 16.0f));
+           this.setCurrentLocation(this.longitude, this.latitude);
         }
         this.setEventListener();
     }
@@ -140,9 +135,7 @@ public class CreatePostActivity extends AppCompatActivity implements OnMapReadyC
                 if (location == null) {
                     requestNewLocationData();
                 } else {
-                    this.latitude =  location.getLatitude();
-                    this.longitude = location.getLongitude();
-                    this.initService();
+                    this.setCurrentLocation( location.getLongitude(), location.getLatitude());
                 }
             });
         }
@@ -171,8 +164,10 @@ public class CreatePostActivity extends AppCompatActivity implements OnMapReadyC
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 android.location.Location mLastLocation = locationResult.getLastLocation();
-                latitude =  mLastLocation.getLatitude();
-                longitude = mLastLocation.getLongitude();
+                if(latitude == 0 && longitude == 0) {
+                    latitude =  mLastLocation.getLatitude();
+                    longitude = mLastLocation.getLongitude();
+                }
             }
         }, Looper.myLooper());
     }
@@ -183,6 +178,16 @@ public class CreatePostActivity extends AppCompatActivity implements OnMapReadyC
         }, REQUEST_LOCATION_PERMISSION);
     }
 
+    protected void setCurrentLocation(Double longitude, Double latitude) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+        if(this.mMap != null) {
+            mMap.clear();
+            LatLng current_locale = new LatLng(this.latitude, this.longitude);
+            mMap.addMarker(new MarkerOptions().position(current_locale).title("You set location here!"));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(current_locale, 16.0f));
+        }
+    }
 
     @Override
     public void onResume() {
