@@ -16,17 +16,26 @@ public class DateTimeMethod {
         long currentMillis = System.currentTimeMillis();
         long timeDiff = currentMillis - timestamp;
 
-        long minuteDif = timeDiff / (60 * 1000);
-        long hourDiff = timeDiff / (60 * 60 * 1000);
-        long dayDiff = timeDiff / (60 * 60 * 24 * 1000);
+        long second = timeDiff / 1000;
+        long minuteDif = second / 60;
+        long hourDiff = minuteDif / 60;
+        long dayDiff = hourDiff / 24;
 
-        if(minuteDif < 60)
-            return minuteDif + " phút trước";
-        else if(hourDiff < 24)
-        {
-            return hourDiff + " giờ trước";
-        } else {
+        if(dayDiff >= 1) {
             return dayDiff + " ngày trước";
+        } else if(hourDiff >= 1) {
+            return hourDiff + " tiếng trước";
+        } else if(minuteDif >= 1) {
+            return minuteDif + " phút trước";
+        } else {
+            return "1 phút trước";
         }
+    }
+
+        public static int minutesDifference(long timestamp) {
+        long currentMillis = System.currentTimeMillis();
+        long timeDiff = currentMillis - timestamp;
+
+        return Math.round(timeDiff / (1000 * 60));
     }
 }

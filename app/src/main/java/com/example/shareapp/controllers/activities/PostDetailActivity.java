@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
@@ -24,9 +25,12 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.shareapp.R;
+import com.example.shareapp.controllers.constant.NotifiTypeConstant;
 import com.example.shareapp.controllers.methods.DateTimeMethod;
+import com.example.shareapp.models.Notification;
 import com.example.shareapp.models.Post;
 import com.example.shareapp.models.Report;
+import com.example.shareapp.models.Request;
 import com.example.shareapp.models.User;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -54,6 +58,7 @@ public class PostDetailActivity extends AppCompatActivity implements OnMapReadyC
     private GoogleMap mMap;
     private SupportMapFragment f_map;
     FusedLocationProviderClient mFusedLocationClient;
+    private ProgressDialog progressDialog;
 
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
@@ -99,6 +104,7 @@ public class PostDetailActivity extends AppCompatActivity implements OnMapReadyC
         imbReport = findViewById(R.id.imb_report);
         f_map = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.post_detail_f_map);
+        progressDialog = new ProgressDialog(PostDetailActivity.this);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
@@ -134,11 +140,46 @@ public class PostDetailActivity extends AppCompatActivity implements OnMapReadyC
                 onBackPressed();
             }
         });
+
         btnRequestPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(PostDetailActivity.this, "Gửi yêu cầu thành công", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(PostDetailActivity.this, MainActivity.class));
+                // check time: 10p mới được request 1 lần
+                Request.getRequestLast(User.getUserInfor(PostDetailActivity.this).getUid(),
+                        mPost.getPostId(),
+                        new Request.IRequestReceivedListener() {
+                            @Override
+                            public void onRequestDataReceived(Request request) {
+                                boolean isCreate = false;
+                                int minuteRequest = 10;
+                                if(request == null) {
+                                    isCreate = true;
+                                } else {
+                                    if(DateTimeMethod.minutesDifference(request.getCreatedAt()) >= minuteRequest) {
+                                        isCreate = true;
+                                    } else {
+                                        isCreate = false;
+                                    }
+                                }
+
+                                if(isCreate) {
+                                    createRequestNotifi();
+                                } else {
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(PostDetailActivity.this);
+                                    builder.setTitle("Thông báo");
+                                    builder.setMessage("Bạn không thể gửi yêu cầu trong " + (minuteRequest - DateTimeMethod.minutesDifference(request.getUpdatedAt())) + " phút nữa");
+                                    builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                        }
+                                    });
+                                    AlertDialog alert = builder.create();
+                                    alert.show();
+                                }
+                            }
+                        });
+
+
             }
         });
 
@@ -204,5 +245,34 @@ public class PostDetailActivity extends AppCompatActivity implements OnMapReadyC
 
             }
         });
+    }
+
+    private void createRequestNotifi() {
+        Notification notification = new Notification();
+        notification.setNotifiId(UUID.randomUUID().toString());
+        notification.setTargetId(mPost.getUserId());
+        notification.setType(NotifiTypeConstant.TYPE_REQUEST);
+        notification.setTitle(getUserInfor(PostDetailActivity.this).getFullName() + " đang yêu cầu nhận '" + mPost.getTitle() + "'.");
+        notification.setContent("Bạn có đồng ý cho đi không?");
+        notification.setStatus(false);
+        notification.setCreatedAt(System.currentTimeMillis());
+
+        // add vao db
+        Notification.createNotification(notification);
+
+        Request request = new Request();
+        request.setRequestId(UUID.randomUUID().toString());
+        request.setNotificationId(notification.getNotifiId());
+        request.setPostId(mPost.getPostId());
+        request.setUserId(getUserInfor(PostDetailActivity.this).getUid());
+        request.setStatus(false);
+        request.setCreatedAt(System.currentTimeMillis());
+        request.setUpdatedAt(System.currentTimeMillis());
+
+        // add vao db
+        Request.createRequest(request);
+
+        Toast.makeText(PostDetailActivity.this, "Gửi yêu cầu thành công", Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(PostDetailActivity.this, MainActivity.class));
     }
 }

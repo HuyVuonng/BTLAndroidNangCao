@@ -101,7 +101,7 @@ public class MyPostDetailActivity extends AppCompatActivity implements OnMapRead
         Intent intent = getIntent();
         mPost = (Post) intent.getSerializableExtra("item_post");
 
-        if (!TextUtils.isEmpty(mPost.getImage()))
+        if (mPost != null && !TextUtils.isEmpty(mPost.getImage()))
             Glide.with(MyPostDetailActivity.this).load(mPost.getImage()).into(imvImagePost);
         tvCreatedAt.setText("Từ " + DateTimeMethod.timeDifference(mPost.getCreatedAt()));
         tvTitlePost.setText(mPost.getTitle());

@@ -18,6 +18,10 @@
                     android:id="@+id/nav_location"
                     android:icon="@drawable/baseline_location_on_24"
                     android:title="Vị trí" />
+                <item
+                    android:id="@+id/nav_request"
+                    android:icon="@drawable/ic_request"
+                    android:title="Quản lý yêu cầu"/>
             </group>
         </menu>
 

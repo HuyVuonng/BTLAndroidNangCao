@@ -7,16 +7,15 @@
         android:required="false" />
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.USE_FINGERPRINT" />
-    <uses-permission android:name="android.permission.CALL_PHONE" />
-
-    <!--Android < 10-->
+    <uses-permission android:name="android.permission.CALL_PHONE" /> <!-- Android < 10 -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <!--Android > 10-->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- Android > 10 -->
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
     <application
+        android:name=".controllers.application.MyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -26,7 +25,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ShareApp"
         tools:targetApi="31">
-
+        <activity
+            android:name=".controllers.activities.RequestActivity"
+            android:exported="false" />
+        <activity
+            android:name=".controllers.activities.NotificationActivity"
+            android:exported="false" />
         <!--
              TODO: Before you run your application, you need a Google Maps API key.
 
@@ -95,6 +99,7 @@
             android:value="true" />
 
         <service android:name=".controllers.Services.BackgroundService" />
+        <service android:name=".controllers.Services.NotificationService" />
     </application>
 
 </manifest>
