@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/tv_title_notifi"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tạ Đức Hoàn đang yêu cầu nhận nhu yếu phẩm"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:textSize="22sp"/>
+
+    <TextView
+        android:id="@+id/tv_message_notifi"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Bạn có chấp nhận lời đề nghị này không?"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:layout_marginTop="8dp"/>
+
+    <TextView
+        android:id="@+id/tv_created_at"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="3 phút trước"
+        android:textColor="@color/blue_text"
+        android:textSize="14sp"
+        android:layout_marginTop="7dp"
+        android:textStyle="bold"
+        android:gravity="end"/>
+
+    <LinearLayout
+        android:id="@+id/handle_request"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:orientation="horizontal"
+        android:layout_marginTop="17dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tv_message_request"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Bạn đã chấp thuận đề nghị này"
+            android:textSize="16sp"
+            android:textStyle="italic"
+            android:visibility="gone"/>
+        <Button
+            android:id="@+id/btn_deny"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Từ chối"
+            android:textSize="18sp"
+            android:backgroundTint="@color/grey_line_dark"
+            android:layout_marginRight="20dp"
+            android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/btn_accept"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Chấp nhận"
+            android:textSize="18sp"
+            android:visibility="gone"/>
+    </LinearLayout>
+</LinearLayout>

@@ -77,7 +77,7 @@ public class FoodFragment extends Fragment {
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 prgbFood.setVisibility(View.INVISIBLE);
                 Post post = snapshot.getValue(Post.class);
-                if(post != null && post.getType().equals(TYPE_FOOD) && !post.isDelete()) {
+                if(post != null && post.getType().equals(TYPE_FOOD) && !post.isDelete() && post.getCount() > 0) {
                     mListPost.add(0, post);
                     mPostAdapter.notifyDataSetChanged();
                 }
@@ -91,12 +91,16 @@ public class FoodFragment extends Fragment {
                 }
                 for (Post p : mListPost) {
                     if(p.getPostId().equals(post.getPostId())) {
-                        post.setUserId(post.getUserId());
-                        post.setTitle(post.getTitle());
-                        post.setCount(post.getCount());
-                        post.setUpdatedAt(post.getUpdatedAt());
-                        post.setDelete(post.isDelete());
-                        post.setLocation(post.getLocation());
+                        if(post.getCount() <= 0) {
+                            mListPost.remove(p);
+                        } else {
+                            post.setUserId(post.getUserId());
+                            post.setTitle(post.getTitle());
+                            post.setCount(post.getCount());
+                            post.setUpdatedAt(post.getUpdatedAt());
+                            post.setDelete(post.isDelete());
+                            post.setLocation(post.getLocation());
+                        }
                         break;
                     }
                 }

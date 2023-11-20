@@ -255,8 +255,7 @@ public class User {
     }
 
     public static void getUserById(String id, IUserDataReceivedListener listener) {
-        mDatabase = FirebaseDatabase.getInstance().getReference("Users");
-        mDatabase.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+        getFirebaseReference().child(id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {

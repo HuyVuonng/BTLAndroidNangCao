@@ -1,6 +1,11 @@
 package com.example.shareapp.models;
 
+import androidx.annotation.NonNull;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -28,6 +33,9 @@ public class Post implements Serializable {
     private Location location;
     private String description;
 
+    public interface IPostDataReceivedListener {
+        void onPostDataReceived(Post post);
+    }
     public Post() {
     }
 
@@ -186,5 +194,42 @@ public class Post implements Serializable {
 
     public static void showPost(String postId) {
         getFirebaseReference().child(postId).child("delete").setValue(false);
+    }
+
+    public static void getPostById(String postId, IPostDataReceivedListener listener) {
+        getFirebaseReference().child(postId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists()) {
+                    Post post = snapshot.getValue(Post.class);
+                    listener.onPostDataReceived(post);
+                } else {
+                    listener.onPostDataReceived(null);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                listener.onPostDataReceived(null);
+            }
+        });
+    }
+
+    public static void reduceCountProduct(String postId) {
+        getPostById(postId, new IPostDataReceivedListener() {
+            @Override
+            public void onPostDataReceived(Post post) {
+                if(post != null) {
+                    if(post.getCount() > 0) {
+                        int count = post.getCount() - 1;
+                        getFirebaseReference().child(postId).child("count").setValue(count);
+
+                        if(count <= 0) {
+                            hidePost(postId);
+                        }
+                    }
+                }
+            }
+        });
     }
 }

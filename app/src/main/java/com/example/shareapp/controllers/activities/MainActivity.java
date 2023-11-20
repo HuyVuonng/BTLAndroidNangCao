@@ -8,8 +8,10 @@ import static com.example.shareapp.models.User.readDataUserFromFireBase;
 import static com.example.shareapp.models.User.updateUserInfor;
 
 import com.bumptech.glide.Glide;
-import com.example.shareapp.controllers.constant.LocationConstant;
 import com.example.shareapp.controllers.Services.BackgroundService;
+import com.example.shareapp.controllers.Services.NotificationService;
+import com.example.shareapp.controllers.constant.FragmentConstant;
+import com.example.shareapp.controllers.constant.LocationConstant;
 import com.example.shareapp.controllers.fragments.FoodFragment;
 import com.example.shareapp.controllers.fragments.NonFoodFragment;
 import com.example.shareapp.controllers.fragments.PostAddSelectTypeBottomSheetDialog;
@@ -109,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
     ImageView avatarNav;
     TextView nameUserNav;
     NavigationView navView;
+    private int currentFragment = FragmentConstant.FRAGMENT_FOOD;
 
     ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -147,18 +150,29 @@ public class MainActivity extends AppCompatActivity {
         bnv_menu.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.item_home) {
-                replaceFragment(new FoodFragment());
+                if(currentFragment != FragmentConstant.FRAGMENT_FOOD) {
+                    replaceFragment(new FoodFragment());
+                    currentFragment = FragmentConstant.FRAGMENT_FOOD;
+                }
             }
-            if (id == R.id.item_non_food) {
-                replaceFragment(new NonFoodFragment());
+            else if (id == R.id.item_non_food) {
+                if(currentFragment != FragmentConstant.FRAGMENT_NON_FOOD) {
+                    replaceFragment(new NonFoodFragment());
+                    currentFragment = FragmentConstant.FRAGMENT_NON_FOOD;
+                }
             }
-            if (id == R.id.item_account) {
-                replaceFragment(new UserInforFragment());
+            else if (id == R.id.item_account) {
+                if(currentFragment != FragmentConstant.FRAGMENT_ACCOUNT) {
+                    replaceFragment(new UserInforFragment());
+                    currentFragment = FragmentConstant.FRAGMENT_ACCOUNT;
+                }
 
             }
-            if (id == R.id.item_search) {
-                replaceFragment(new SearchFragment());
-
+            else if (id == R.id.item_search) {
+                if(currentFragment != FragmentConstant.FRAGMENT_SEARCH) {
+                    replaceFragment(new SearchFragment());
+                    currentFragment = FragmentConstant.FRAGMENT_SEARCH;
+                }
             }
             return true;
         });
@@ -186,23 +200,24 @@ public class MainActivity extends AppCompatActivity {
             if (id == R.id.nav_manager_post) {
                 startActivity(new Intent(getApplicationContext(), ManagerPost.class));
             }
-            if (id == R.id.nav_notify) {
-                navView.getMenu().findItem(R.id.nav_notify).setChecked(true);
-                replaceFragment(new NonFoodFragment());
-                Toast.makeText(getApplicationContext(), "test", Toast.LENGTH_LONG).show();
+            else if (id == R.id.nav_notify) {
+                startActivity(new Intent(this, NotificationActivity.class));
             }
-            if (id == R.id.nav_location) {
+            else if (id == R.id.nav_location) {
                 Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
                 intent.putExtra(LocationConstant.LONGITUDE, getUserInfor(getApplicationContext()).getLocation().getLongitude());
                 intent.putExtra(LocationConstant.LATITUDE, getUserInfor(getApplicationContext()).getLocation().getLatitude());
                 activityResultLauncher.launch(intent);
             }
+            else if(id == R.id.nav_request) {
+                startActivity(new Intent(this, RequestActivity.class));
+            }
 
-            if (id == R.id.nav_edit_profile) {
+            else if (id == R.id.nav_edit_profile) {
                 startActivity(new Intent(getApplicationContext(), UserInforUpdateActivity.class));
                 finish();
             }
-            if (id == R.id.nav_change_password) {
+            else if (id == R.id.nav_change_password) {
                 SharedPreferences sharedPreferences = getSharedPreferences("dataPass", MODE_PRIVATE);
                 String Pass = sharedPreferences.getString("password", "");
                 if (Pass.length() >= 6) {
@@ -211,9 +226,11 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Bạn đang đăng nhập bằng tài khoản Google nên không dùng được chức năng này", Toast.LENGTH_LONG).show();
                 }
             }
+
             if (id == R.id.nav_logout) {
                 LogOut();
             }
+
             drawerLayout.closeDrawer(GravityCompat.END);
             return true;
         });
@@ -226,6 +243,7 @@ public class MainActivity extends AppCompatActivity {
 
         Intent serviceIntent = new Intent(this, BackgroundService.class);
         startService(serviceIntent);
+        startNotificationService();
         this.getViews();
 
         this.setEventListener();
@@ -234,6 +252,11 @@ public class MainActivity extends AppCompatActivity {
         NavigationMethod.setNavigationMenu(this.bnv_menu, R.id.item_home);
         readDataUserFromFireBase(FirebaseAuth.getInstance().getCurrentUser().getUid(), MainActivity.this);
         checkFragment();
+    }
+
+    private void startNotificationService() {
+        Intent notifiIntent = new Intent(this, NotificationService.class);
+        startService(notifiIntent);
     }
 
     private void checkFragment() {
