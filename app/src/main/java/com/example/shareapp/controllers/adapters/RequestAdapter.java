@@ -108,6 +108,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
         } else {
             result = "Bạn đã chấp thuận đề nghị này.";
         }
+
         holder.tvMsgResult.setVisibility(View.VISIBLE);
         holder.btnDeny.setVisibility(View.GONE);
         holder.btnAccept.setVisibility(View.GONE);

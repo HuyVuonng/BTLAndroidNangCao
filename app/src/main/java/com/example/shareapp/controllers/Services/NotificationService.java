@@ -20,6 +20,7 @@ import androidx.core.app.NotificationManagerCompat;
 
 import com.example.shareapp.R;
 import com.example.shareapp.controllers.activities.MainActivity;
+import com.example.shareapp.controllers.activities.NotificationActivity;
 import com.example.shareapp.models.Post;
 import com.example.shareapp.models.Request;
 import com.example.shareapp.models.User;
@@ -79,10 +80,11 @@ public class NotificationService extends Service {
 
             }
         });
+
     }
 
     private void sendNotification(com.example.shareapp.models.Notification notifi) {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, NotificationActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
@@ -98,17 +100,6 @@ public class NotificationService extends Service {
         if (notificationManager != null) {
             notificationManager.notify(getNotificationId(), notification);
         }
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        NotificationManagerCompat.from(getApplicationContext()).notify(getNotificationId(), notification);
     }
     private int getNotificationId() {
         return (int) new Date().getTime();

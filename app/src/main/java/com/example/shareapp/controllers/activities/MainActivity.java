@@ -241,9 +241,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Intent serviceIntent = new Intent(this, BackgroundService.class);
-        startService(serviceIntent);
-        startNotificationService();
+
         this.getViews();
 
         this.setEventListener();
@@ -251,10 +249,16 @@ public class MainActivity extends AppCompatActivity {
         this.checkAuthenticateType();
         NavigationMethod.setNavigationMenu(this.bnv_menu, R.id.item_home);
         readDataUserFromFireBase(FirebaseAuth.getInstance().getCurrentUser().getUid(), MainActivity.this);
+
+        startService();
         checkFragment();
     }
 
-    private void startNotificationService() {
+    private void startService() {
+        // block user
+        Intent serviceIntent = new Intent(this, BackgroundService.class);
+        startService(serviceIntent);
+        // Notification
         Intent notifiIntent = new Intent(this, NotificationService.class);
         startService(notifiIntent);
     }
@@ -307,6 +311,9 @@ public class MainActivity extends AppCompatActivity {
 
                 SharedPreferences editor1 = getApplicationContext().getSharedPreferences("dataPass", MODE_PRIVATE);
                 editor1.edit().clear().apply();
+
+                SharedPreferences editor3 = getApplicationContext().getSharedPreferences("userInfor", MODE_PRIVATE);
+                editor3.edit().clear().apply();
 
                 Intent i = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(i);
