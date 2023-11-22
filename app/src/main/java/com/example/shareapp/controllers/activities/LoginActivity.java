@@ -303,6 +303,9 @@ public class LoginActivity extends AppCompatActivity {
 
                 SharedPreferences editor1 = getApplicationContext().getSharedPreferences("dataPass", MODE_PRIVATE);
                 editor1.edit().clear().apply();
+
+                SharedPreferences editor2 = getApplicationContext().getSharedPreferences("userInfor", MODE_PRIVATE);
+                editor2.edit().clear().apply();
                 gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
                 gsc = GoogleSignIn.getClient(LoginActivity.this, gso);
                 gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {

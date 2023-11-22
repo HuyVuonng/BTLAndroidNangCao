@@ -60,6 +60,10 @@ public class BackgroundService extends Service {
 
                     SharedPreferences editor1 = getApplicationContext().getSharedPreferences("dataPass", MODE_PRIVATE);
                     editor1.edit().clear().apply();
+
+                    SharedPreferences editor2 = getApplicationContext().getSharedPreferences("userInfor", MODE_PRIVATE);
+                    editor2.edit().clear().apply();
+
                     Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                     intent.putExtra("blocked", true);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
