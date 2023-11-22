@@ -41,6 +41,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
@@ -248,17 +249,13 @@ public class MainActivity extends AppCompatActivity {
 
         this.checkAuthenticateType();
         NavigationMethod.setNavigationMenu(this.bnv_menu, R.id.item_home);
-        readDataUserFromFireBase(FirebaseAuth.getInstance().getCurrentUser().getUid(), MainActivity.this);
-
-        startService();
+        new AsyncTask().execute();
         checkFragment();
     }
 
-    private void startService() {
-        // block user
+    private void startServices() {
         Intent serviceIntent = new Intent(this, BackgroundService.class);
         startService(serviceIntent);
-        // Notification
         Intent notifiIntent = new Intent(this, NotificationService.class);
         startService(notifiIntent);
     }
@@ -312,8 +309,8 @@ public class MainActivity extends AppCompatActivity {
                 SharedPreferences editor1 = getApplicationContext().getSharedPreferences("dataPass", MODE_PRIVATE);
                 editor1.edit().clear().apply();
 
-                SharedPreferences editor3 = getApplicationContext().getSharedPreferences("userInfor", MODE_PRIVATE);
-                editor3.edit().clear().apply();
+                SharedPreferences editor2 = getApplicationContext().getSharedPreferences("userInfor", MODE_PRIVATE);
+                editor2.edit().clear().apply();
 
                 Intent i = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(i);
@@ -525,5 +522,24 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private class AsyncTask extends android.os.AsyncTask<Void,String,String>{
+
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            readDataUserFromFireBase(FirebaseAuth.getInstance().getCurrentUser().getUid(), MainActivity.this);
+            while (getUserInfor(getApplicationContext()).getUid()==""){
+
+            }
+            return "Done";
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            startServices();
+        }
     }
 }

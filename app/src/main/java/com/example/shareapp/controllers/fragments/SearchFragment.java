@@ -1,7 +1,13 @@
 package com.example.shareapp.controllers.fragments;
 
+import static com.example.shareapp.controllers.activities.MapsActivity.REQUEST_LOCATION_PERMISSION;
+
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,8 +27,18 @@ import com.example.shareapp.R;
 import com.example.shareapp.controllers.adapters.FeedPostAdapter;
 import com.example.shareapp.controllers.adapters.UserAdapter;
 import com.example.shareapp.controllers.constant.PostTypeConstant;
+import com.example.shareapp.models.Location;
 import com.example.shareapp.models.Post;
 import com.example.shareapp.models.User;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.Priority;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.tabs.TabItem;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.database.DataSnapshot;
@@ -48,10 +65,13 @@ public class SearchFragment extends Fragment {
     private Button btn_search, btn_sort, btn_filter_location, btn_filter_type, btn_clear;
     private ProgressBar pb_post;
     private TabLayout tl_result;
-    private TabItem ti_result_post, ti_result_user;
+    private  Location user_location;
+    private FusedLocationProviderClient mFusedLocationClient;
+    private Context mContext;
 
     public SearchFragment() {
         // Required empty public constructor
+
     }
 
     protected void getViews(View view) {
@@ -65,8 +85,6 @@ public class SearchFragment extends Fragment {
         this.pb_post = view.findViewById(R.id.search_pb_post);
         this.btn_clear = view.findViewById(R.id.search_btn_clear);
         this.tl_result = view.findViewById(R.id.search_tl_result);
-        this.ti_result_post = view.findViewById(R.id.search_ti_result_post);
-        this.ti_result_user = view.findViewById(R.id.search_ti_result_user);
     }
 
     private void initRecyclerView() {
@@ -202,7 +220,6 @@ public class SearchFragment extends Fragment {
         }
 
         if (this.typeList.contains(R.id.search_filter_btn_user)) {
-            Log.d("SearchFragment", "renderListView: " + this.userFilterKeyList);
             User.getFirebaseReference().addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -265,10 +282,24 @@ public class SearchFragment extends Fragment {
 
     protected boolean checkPostLocation(Post post) {
         this.displayFilterLocation();
+        if (this.filter_location != R.id.search_filter_btn_location_all) {
+            this.getLastLocation();
+        }
         if (this.filter_location == R.id.search_filter_btn_location_all) {
             return true;
+        } else if (this.user_location == null) {
+            this.filter_location = R.id.search_filter_btn_location_all;
+            Toast.makeText(mContext, "Please turn on location or set your default location!", Toast.LENGTH_SHORT).show();
+            return true;
+        } else if (this.filter_location == R.id.search_filter_btn_location_1) {
+            return this.checkHaversineDistance(post.getLocation(), user_location, 1.0);
+        } else if (this.filter_location == R.id.search_filter_btn_location_3) {
+            return this.checkHaversineDistance(post.getLocation(), user_location, 3.0);
+        } else if (this.filter_location == R.id.search_filter_btn_location_5) {
+            return this.checkHaversineDistance(post.getLocation(), user_location, 5.0);
+        } else if (this.filter_location == R.id.search_filter_btn_location_10) {
+            return this.checkHaversineDistance(post.getLocation(), user_location, 10.0);
         }
-//        @todo: check post location
         return false;
     }
 
@@ -291,6 +322,76 @@ public class SearchFragment extends Fragment {
         }
     }
 
+    private boolean checkHaversineDistance(Location a, Location b, Double distance) {
+        double lat1 = a.getLatitude();
+        double lon1 = a.getLongitude();
+        double lat2 = b.getLatitude();
+        double lon2 = b.getLongitude();
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        lat1 = Math.toRadians(lat1);
+        lat2 = Math.toRadians(lat2);
+        double c = Math.pow(Math.sin(dLat / 2), 2) +
+                Math.pow(Math.sin(dLon / 2), 2) *
+                        Math.cos(lat1) *
+                        Math.cos(lat2);
+        double rad = 6371.0;
+        double distance1 = 2 * Math.asin(Math.sqrt(c)) * rad;
+        return distance1 <= distance;
+    }
+
+    @SuppressLint("MissingPermission")
+    private void getLastLocation() {
+        if (checkPermissions()) {
+            mFusedLocationClient.getLastLocation().addOnCompleteListener(task -> {
+                android.location.Location location = task.getResult();
+                if (location == null) {
+                    requestNewLocationData();
+                } else {
+                    this.user_location = new Location(location.getLongitude(), location.getLatitude());
+                }
+            });
+        }
+        else {
+            this.requestPermissions();
+        }
+    }
+
+    private boolean checkPermissions() {
+        return ActivityCompat.checkSelfPermission(
+                this.mContext,
+                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this.mContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    @SuppressLint("MissingPermission")
+    private void requestNewLocationData() {
+        LocationRequest mLocationRequest = new LocationRequest();
+        mLocationRequest.setPriority(Priority.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setInterval(5);
+        mLocationRequest.setFastestInterval(0);
+        mLocationRequest.setNumUpdates(1);
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this.mContext);
+        mFusedLocationClient.requestLocationUpdates(mLocationRequest, new LocationCallback() {
+            @Override
+            public void onLocationResult(@NonNull LocationResult locationResult) {
+                android.location.Location mLastLocation = locationResult.getLastLocation();
+                if (mLastLocation != null) {
+                    user_location = new Location(mLastLocation.getLongitude(), mLastLocation.getLatitude());
+                    return;
+                }
+                Toast.makeText(getContext(), "Please turn on location", Toast.LENGTH_SHORT).show();
+            }
+        }, Looper.myLooper());
+    }
+
+    private void requestPermissions() {
+        requestPermissions(new String[]{
+                Manifest.permission.ACCESS_FINE_LOCATION
+        }, REQUEST_LOCATION_PERMISSION);
+    }
+
     private void setActiveTab() {
         if (this.tl_result.getSelectedTabPosition() == 0) {
             this.rv_post.setVisibility(View.VISIBLE);
@@ -304,6 +405,26 @@ public class SearchFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (User.getUserInfor(this.mContext).location != null) {
+            this.user_location = new Location(
+                    User.getUserInfor(this.mContext).location.getLongitude(),
+                    User.getUserInfor(this.mContext).location.getLatitude()
+            );
+        }
+        this.mFusedLocationClient = LocationServices.getFusedLocationProviderClient(mContext);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mContext = context;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mContext = null;
     }
 
     @Override
