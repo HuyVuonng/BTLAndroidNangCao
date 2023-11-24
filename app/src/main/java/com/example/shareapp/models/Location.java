@@ -2,6 +2,9 @@ package com.example.shareapp.models;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import static com.example.shareapp.controllers.constant.LocationConstant.LATITUDE;
+import static com.example.shareapp.controllers.constant.LocationConstant.LONGITUDE;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -60,8 +63,8 @@ public class Location implements Serializable {
     public static void setUserLocaleShared(Location location, Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("userInfor", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("longitude", String.valueOf(location.getLongitude()) );
-        editor.putString("latitude", String.valueOf(location.getLatitude()));
+        editor.putString(LONGITUDE, String.valueOf(location.getLongitude()) );
+        editor.putString(LATITUDE, String.valueOf(location.getLatitude()));
         editor.apply();
     }
 

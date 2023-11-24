@@ -1,5 +1,7 @@
 package com.example.shareapp.controllers.activities;
 
+import static com.example.shareapp.controllers.constant.LocationConstant.LATITUDE;
+import static com.example.shareapp.controllers.constant.LocationConstant.LONGITUDE;
 import static com.example.shareapp.controllers.constant.ReportTypeConstant.TYPE_POST;
 import static com.example.shareapp.controllers.constant.ReportTypeConstant.TYPE_USER;
 import static com.example.shareapp.models.User.blockUser;
@@ -122,8 +124,8 @@ public class MainActivity extends AppCompatActivity {
                     if (data != null) {
                         User.updateUserLocale(User.getUserInfor(this),
                             new Location(
-                                 data.getDoubleExtra("longitude", 0),
-                                 data.getDoubleExtra("latitude", 0)
+                                 data.getDoubleExtra(LONGITUDE, 0),
+                                 data.getDoubleExtra(LATITUDE, 0)
                             ), this);
                     }
                 }
@@ -206,8 +208,8 @@ public class MainActivity extends AppCompatActivity {
             }
             else if (id == R.id.nav_location) {
                 Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
-                intent.putExtra(LocationConstant.LONGITUDE, getUserInfor(getApplicationContext()).getLocation().getLongitude());
-                intent.putExtra(LocationConstant.LATITUDE, getUserInfor(getApplicationContext()).getLocation().getLatitude());
+                intent.putExtra(LONGITUDE, getUserInfor(getApplicationContext()).getLocation().getLongitude());
+                intent.putExtra(LATITUDE, getUserInfor(getApplicationContext()).getLocation().getLatitude());
                 activityResultLauncher.launch(intent);
             }
             else if(id == R.id.nav_request) {
