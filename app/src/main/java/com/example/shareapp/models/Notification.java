@@ -118,7 +118,7 @@ public class Notification {
         });
     }
 
-    public static void isReaded(String notifiId) {
+    public static void readNotification(String notifiId) {
         getFirebaseReference().child(notifiId).child("status").setValue(true);
     }
 }

@@ -151,7 +151,7 @@ public class PostDetailActivity extends AppCompatActivity implements OnMapReadyC
                             @Override
                             public void onRequestDataReceived(Request request) {
                                 boolean isCreate = false;
-                                int minuteRequest = 10;
+                                int minuteRequest = 2;
                                 if(request == null) {
                                     isCreate = true;
                                 } else {
