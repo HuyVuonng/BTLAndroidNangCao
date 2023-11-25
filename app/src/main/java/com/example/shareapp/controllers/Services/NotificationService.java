@@ -28,6 +28,7 @@ import java.util.Date;
 
 public class NotificationService extends Service {
 
+    private ChildEventListener notificationListener;
 
     @Nullable
     @Override
@@ -64,7 +65,7 @@ public class NotificationService extends Service {
 //
 //            }
 //        });
-       com.example.shareapp.models.Notification.getFirebaseReference().addChildEventListener(new ChildEventListener() {
+        notificationListener = com.example.shareapp.models.Notification.getFirebaseReference().addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 com.example.shareapp.models.Notification notifi = snapshot.getValue(com.example.shareapp.models.Notification.class);
@@ -74,7 +75,7 @@ public class NotificationService extends Service {
 
                 if (!notifi.isStatus() && notifi.getTargetId().equals(User.getUserInfor(getApplicationContext()).getUid())) {
                     sendNotification(notifi);
-                    com.example.shareapp.models.Notification.getFirebaseReference().removeEventListener(this);
+                    com.example.shareapp.models.Notification.getFirebaseReference().removeEventListener(notificationListener);
                     com.example.shareapp.models.Notification.readNotification(notifi.getNotifiId());
                 }
             }
