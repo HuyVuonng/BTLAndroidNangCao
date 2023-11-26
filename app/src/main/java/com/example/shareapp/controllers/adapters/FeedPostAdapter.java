@@ -60,7 +60,7 @@ public class FeedPostAdapter extends RecyclerView.Adapter<FeedPostAdapter.FeedPo
                     holder.tvTitle.setText(post.getTitle());
                     holder.tvFullNamePoster.setText(user.fullName);
                     // convert gio
-                    String timeDiff = DateTimeMethod.timeDifference(post.getCreatedAt());
+                    String timeDiff = DateTimeMethod.timeDifference(post.getUpdatedAt());
                     holder.tvUploadedAt.setText("Từ " + timeDiff);
                 }
                 return null;

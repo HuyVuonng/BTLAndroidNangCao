@@ -4,10 +4,8 @@ import static com.example.shareapp.controllers.application.MyApplication.CHANNEL
 
 import android.Manifest;
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.IBinder;
@@ -19,9 +17,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.example.shareapp.R;
-import com.example.shareapp.controllers.activities.MainActivity;
-import com.example.shareapp.models.Post;
-import com.example.shareapp.models.Request;
+import com.example.shareapp.controllers.activities.NotificationActivity;
 import com.example.shareapp.models.User;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -31,6 +27,9 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.Date;
 
 public class NotificationService extends Service {
+
+    private ChildEventListener notificationListener;
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -45,17 +44,18 @@ public class NotificationService extends Service {
     }
 
     private void checkNotifiRequest() {
-        com.example.shareapp.models.Notification.getFirebaseReference().addChildEventListener(new ChildEventListener() {
+        notificationListener = com.example.shareapp.models.Notification.getFirebaseReference().addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 com.example.shareapp.models.Notification notifi = snapshot.getValue(com.example.shareapp.models.Notification.class);
-                if(notifi == null) {
+                if (notifi == null) {
                     return;
                 }
 
-                if(!notifi.isStatus() && notifi.getTargetId().equals(User.getUserInfor(getApplicationContext()).getUid())) {
+                if (!notifi.isStatus() && notifi.getTargetId().equals(User.getUserInfor(getApplicationContext()).getUid())) {
                     sendNotification(notifi);
-                    com.example.shareapp.models.Notification.isReaded(notifi.getNotifiId());
+                    com.example.shareapp.models.Notification.getFirebaseReference().removeEventListener(notificationListener);
+                    com.example.shareapp.models.Notification.readNotification(notifi.getNotifiId());
                 }
             }
 
@@ -82,33 +82,26 @@ public class NotificationService extends Service {
     }
 
     private void sendNotification(com.example.shareapp.models.Notification notifi) {
-        Intent intent = new Intent(this, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent intent = new Intent(this, NotificationActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle(notifi.getTitle())
                 .setContentText(notifi.getContent())
-                .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
+                .setSmallIcon(R.drawable.baseline_notifications_24)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
                 .addAction(R.mipmap.ic_launcher, "close", pendingIntent)
                 .build();
 
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+//        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         if (notificationManager != null) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
             notificationManager.notify(getNotificationId(), notification);
         }
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        NotificationManagerCompat.from(getApplicationContext()).notify(getNotificationId(), notification);
     }
     private int getNotificationId() {
         return (int) new Date().getTime();
