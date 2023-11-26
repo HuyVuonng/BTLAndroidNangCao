@@ -1,8 +1,10 @@
 package com.example.shareapp.controllers.activities;
 
 import static com.example.shareapp.controllers.constant.AuthenticateConstant.PEMISSION_CALL_CODE;
+import static com.example.shareapp.controllers.constant.ReportTypeConstant.TYPE_POST;
 import static com.example.shareapp.controllers.constant.ReportTypeConstant.TYPE_USER;
 import static com.example.shareapp.models.User.getUserInfor;
+import static com.example.shareapp.models.User.readDataUserFromFireBase;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,6 +19,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -26,10 +29,14 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.shareapp.R;
+import com.example.shareapp.controllers.constant.NotifiTypeConstant;
+import com.example.shareapp.models.Notification;
 import com.example.shareapp.models.Post;
 import com.example.shareapp.models.Report;
+import com.example.shareapp.models.Request;
 import com.example.shareapp.models.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -41,6 +48,8 @@ public class UserInforPublicActivity extends AppCompatActivity {
     TextView name, address, email, phone, introduce, numberOfPost, viewAllPost;
     FloatingActionButton callBtn, sendMail;
     private ImageButton imbBackPage, imbReport;
+    private String idUserTarget = "";
+
 
     int soBaiDang = 0;
     private Boolean isReported = false;
@@ -105,7 +114,7 @@ public class UserInforPublicActivity extends AppCompatActivity {
         Post.getFirebaseReference().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                soBaiDang=0;
+                soBaiDang = 0;
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Post post = dataSnapshot.getValue(Post.class);
                     if (post.getUserId().equals(uid) && !post.isDelete()) {
@@ -158,8 +167,7 @@ public class UserInforPublicActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), ManagerPost.class);
-                String uid = getIntent().getStringExtra("uid");
-                intent.putExtra("uid", uid);
+                intent.putExtra("uid", idUserTarget);
                 startActivity(intent);
             }
         });
@@ -174,8 +182,10 @@ public class UserInforPublicActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (!isReported) {
-                            String idUserTarget = getIntent().getStringExtra("uid");
+
+
                             Report.CreateNewReport(UUID.randomUUID().toString(), getUserInfor(UserInforPublicActivity.this).getUid(), idUserTarget, "", TYPE_USER);
+                            User.checkSendNotifyAlmostBlock(idUserTarget);
                             Toast.makeText(getApplicationContext(), "Báo cáo thành công", Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(getApplicationContext(), "Bạn đã báo cáo người dùng này", Toast.LENGTH_SHORT).show();
@@ -205,13 +215,13 @@ public class UserInforPublicActivity extends AppCompatActivity {
     }
 
     private void checkReportUser() {
-        String idUserTarget = getIntent().getStringExtra("uid");
         Report.getFirebaseReference().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Report report = dataSnapshot.getValue(Report.class);
-                    if (report != null && report.getReporterId().equals(getUserInfor(UserInforPublicActivity.this).getUid()) && report.getTargetId().equals(idUserTarget) && report.getType().equals(TYPE_USER)) {
+                    if (report != null && report.getReporterId().equals(getUserInfor(UserInforPublicActivity.this).getUid())
+                            && report.getTargetId().equals(idUserTarget) && report.getType().equals(TYPE_USER)) {
                         isReported = true;
                     }
                 }
@@ -224,14 +234,15 @@ public class UserInforPublicActivity extends AppCompatActivity {
         });
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_infor_public);
         getViews();
-        String idUser = getIntent().getStringExtra("uid");
-        getUserInforByIDUserPost(idUser);
-        getNumberOfPost(idUser);
+        idUserTarget = getIntent().getStringExtra("uid");
+        getUserInforByIDUserPost(idUserTarget);
+        getNumberOfPost(idUserTarget);
         setEventListener();
         checkReportUser();
     }
