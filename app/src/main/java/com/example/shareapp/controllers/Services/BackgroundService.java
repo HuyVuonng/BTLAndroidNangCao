@@ -37,23 +37,19 @@ public class BackgroundService extends Service {
     }
 
     private void checkBlock() {
-        final int[] countReportUser = {0};
-        final int[] countReportPost = {0};
+        final int[] countReport = {0};
         Report.getFirebaseReference().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                countReportUser[0] = 0;
-                countReportPost[0] = 0;
+                countReport[0] = 0;
+
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Report report = dataSnapshot.getValue(Report.class);
-                    if (report != null && report.getTargetId().equals(getUserInfor(getApplicationContext()).getUid()) && report.getType().equals(TYPE_USER)) {
-                        countReportUser[0]++;
-                    }
-                    if (report != null && report.getTargetId().equals(getUserInfor(getApplicationContext()).getUid()) && report.getType().equals(TYPE_POST)) {
-                        countReportPost[0]++;
+                    if (report != null && report.getTargetId().equals(getUserInfor(getApplicationContext()).getUid())) {
+                        countReport[0]++;
                     }
                 }
-                if (countReportUser[0] >= 1 && countReportPost[0] >= 0) {
+                if (countReport[0] >= 4) {
                     blockUser(getUserInfor(getApplicationContext()).getUid());
                     SharedPreferences editor = getApplicationContext().getSharedPreferences("data", MODE_PRIVATE);
                     editor.edit().clear().apply();
