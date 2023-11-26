@@ -44,27 +44,6 @@ public class NotificationService extends Service {
     }
 
     private void checkNotifiRequest() {
-//        com.example.shareapp.models.Notification.getFirebaseReference().addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                for (DataSnapshot notifiSnap : snapshot.getChildren()) {
-//                    com.example.shareapp.models.Notification notifi = notifiSnap.getValue(com.example.shareapp.models.Notification.class);
-//                    if (notifi == null) {
-//                        return;
-//                    }
-//
-//                    if (!notifi.isStatus() && notifi.getTargetId().equals(User.getUserInfor(getApplicationContext()).getUid())) {
-//                        sendNotification(notifi);
-//                        com.example.shareapp.models.Notification.readNotification(notifi.getNotifiId());
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//
-//            }
-//        });
         notificationListener = com.example.shareapp.models.Notification.getFirebaseReference().addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {

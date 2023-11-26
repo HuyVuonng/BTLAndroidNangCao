@@ -68,10 +68,8 @@ public class FoodFragment extends Fragment {
     }
 
     private void getDataFromFirebase() {
-        DatabaseReference myRef = database.getReference("Posts");
-
         prgbFood.setVisibility(View.VISIBLE);
-        Query myQuery = myRef.orderByChild("updatedAt");
+        Query myQuery = Post.getFirebaseReference().orderByChild("updatedAt");
         myQuery.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
