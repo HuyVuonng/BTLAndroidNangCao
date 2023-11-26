@@ -6,6 +6,8 @@ import static com.example.shareapp.controllers.activities.MainActivity.MY_POST;
 import static com.example.shareapp.controllers.activities.MainActivity.NAME_TYPE;
 import static com.example.shareapp.controllers.activities.MainActivity.TYPE_FOOD;
 import static com.example.shareapp.controllers.activities.MapsActivity.REQUEST_LOCATION_PERMISSION;
+import static com.example.shareapp.controllers.constant.LocationConstant.LATITUDE;
+import static com.example.shareapp.controllers.constant.LocationConstant.LONGITUDE;
 import static com.example.shareapp.models.User.getUserInfor;
 
 import android.Manifest;
@@ -87,8 +89,8 @@ public class CreatePostActivity extends AppCompatActivity implements OnMapReadyC
                 if (result.getResultCode() == LocationConstant.REQUEST_GET_MAP_LOCATION) {
                     Intent data = result.getData();
                     if (data != null) {
-                        Double longitude = data.getDoubleExtra("longitude", 0);
-                        Double latitude = data.getDoubleExtra("latitude", 0);
+                        Double longitude = data.getDoubleExtra(LONGITUDE, 0);
+                        Double latitude = data.getDoubleExtra(LATITUDE, 0);
                         this.setCurrentLocation(longitude, latitude);
 
                     }
@@ -284,8 +286,8 @@ public class CreatePostActivity extends AppCompatActivity implements OnMapReadyC
 
         this.mMap.setOnMapClickListener(latLng -> {
             Intent intent = new Intent(this, MapsActivity.class);
-            intent.putExtra(LocationConstant.LATITUDE, this.latitude);
-            intent.putExtra(LocationConstant.LONGITUDE, this.longitude);
+            intent.putExtra(LATITUDE, this.latitude);
+            intent.putExtra(LONGITUDE, this.longitude);
             this.activityResultLauncher.launch(intent);
         });
     }

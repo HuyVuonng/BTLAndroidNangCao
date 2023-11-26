@@ -2,12 +2,17 @@ package com.example.shareapp.models;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import static com.example.shareapp.controllers.constant.ReportTypeConstant.TYPE_POST;
+import static com.example.shareapp.controllers.constant.ReportTypeConstant.TYPE_USER;
+
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.example.shareapp.controllers.constant.NotifiTypeConstant;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
@@ -15,6 +20,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.UUID;
 
 public class User {
     public String fullName;
@@ -171,8 +178,14 @@ public class User {
         this.uid = uid;
     }
 
-    public void setLocation(Location location) { this.location = location; }
-    public Location getLocation() { return this.location; }
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    public Location getLocation() {
+        return this.location;
+    }
+
     public static void setUserInfor(String fullName, String phoneNumber, String address, String email, String uid, String avata, Boolean block, Boolean showPhoneNumberPublic, String introduce, Context context) {
         SharedPreferences.Editor editor = context.getSharedPreferences("userInfor", MODE_PRIVATE).edit();
         editor.putString("email", email);
@@ -198,8 +211,8 @@ public class User {
         Boolean block = sharedPreferences.getBoolean("block", false);
         String introduce = sharedPreferences.getString("introduce", "");
         Boolean showPhoneNumberPublic = sharedPreferences.getBoolean("showPhoneNumberPublic", false);
-        double longitude = Double.parseDouble(sharedPreferences.getString("longitude", "0")) ;
-        double latitude =  Double.parseDouble(sharedPreferences.getString("latitude", "0"));
+        double longitude = Double.parseDouble(sharedPreferences.getString("longitude", "0"));
+        double latitude = Double.parseDouble(sharedPreferences.getString("latitude", "0"));
         return new User(fullName, phoneNumber, address, email, uid, avata, block, showPhoneNumberPublic, introduce, new Location(longitude, latitude));
     }
 
@@ -244,7 +257,7 @@ public class User {
         });
     }
 
-    public static void updateUserLocale(User user,Location location, Context context) {
+    public static void updateUserLocale(User user, Location location, Context context) {
         mDatabase.child(user.getUid()).child("location").setValue(location);
         Location.setUserLocaleShared(location, context);
     }
@@ -279,5 +292,67 @@ public class User {
 
     public static void blockUser(String userId) {
         getFirebaseReference().child(userId).child("block").setValue(true);
+    }
+
+
+    public static void checkSendNotifyAlmostBlock(String idUserTarget) {
+        final int[] countReport = {0};
+        Report.getFirebaseReference().addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    Report report = dataSnapshot.getValue(Report.class);
+                    if (report != null && report.getTargetId().equals(idUserTarget)) {
+                        countReport[0]++;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+        new Thread(
+                () -> {
+                    try {
+                        Thread.sleep(5000);
+                        final boolean[] sentNotifyAlmostBlock = {false};
+                        if (countReport[0] >= 2) {
+                            Notification.getFirebaseReference().addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                        Notification noti = dataSnapshot.getValue(Notification.class);
+                                        if (noti.getTargetId().equals(idUserTarget) && noti.getType().equals(NotifiTypeConstant.TYPE_BLOCK)) {
+                                            sentNotifyAlmostBlock[0] = true;
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+                            Thread.sleep(5000);
+                            if (!sentNotifyAlmostBlock[0]) {
+                                Notification notification = new Notification();
+                                notification.setNotifiId(UUID.randomUUID().toString());
+                                notification.setTargetId(idUserTarget);
+                                notification.setType(NotifiTypeConstant.TYPE_BLOCK);
+                                notification.setTitle("Thông báo");
+                                notification.setContent("Tài khoản của bạn sắp bị khóa do có quá nhiều lượt tố cáo");
+                                notification.setStatus(false);
+                                notification.setCreatedAt(System.currentTimeMillis());
+                                // add vao db
+                                Notification.createNotification(notification);
+                            }
+                        }
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+        ).start();
     }
 }

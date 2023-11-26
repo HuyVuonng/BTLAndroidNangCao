@@ -1,5 +1,8 @@
 package com.example.shareapp.controllers.activities;
 
+import static com.example.shareapp.controllers.constant.LocationConstant.LATITUDE;
+import static com.example.shareapp.controllers.constant.LocationConstant.LONGITUDE;
+
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -57,11 +60,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
         this.ib_back.setOnClickListener(v -> finish());
         this.btn_apply.setOnClickListener(v -> {
-            Log.e("btn_apply", String.valueOf(this.longitude));
             setResult(LocationConstant.REQUEST_GET_MAP_LOCATION,
                     getIntent()
-                            .putExtra("latitude", this.latitude)
-                            .putExtra("longitude", this.longitude));
+                            .putExtra(LATITUDE, this.latitude)
+                            .putExtra(LONGITUDE, this.longitude));
             finish();
         });
     }
@@ -85,10 +87,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(binding.getRoot());
         this.getView(binding.getRoot());
         Intent getIntent = getIntent();
-        if (getIntent.getDoubleExtra(LocationConstant.LONGITUDE, 0) != 0
-                && getIntent.getDoubleExtra(LocationConstant.LATITUDE, 0) != 0) {
-            this.latitude =getIntent.getDoubleExtra(LocationConstant.LATITUDE, 0);
-            this.longitude =getIntent.getDoubleExtra(LocationConstant.LONGITUDE, 0);
+        if (getIntent.getDoubleExtra(LONGITUDE, 0) != 0
+                && getIntent.getDoubleExtra(LATITUDE, 0) != 0) {
+            this.latitude =getIntent.getDoubleExtra(LATITUDE, 0);
+            this.longitude =getIntent.getDoubleExtra(LONGITUDE, 0);
             this.mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
             this.initService();
         } else {

@@ -4,6 +4,7 @@ import static com.example.shareapp.controllers.constant.ReportTypeConstant.TYPE_
 import static com.example.shareapp.models.User.getUserInfor;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -40,6 +41,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -151,18 +153,18 @@ public class PostDetailActivity extends AppCompatActivity implements OnMapReadyC
                             @Override
                             public void onRequestDataReceived(Request request) {
                                 boolean isCreate = false;
-                                int minuteRequest = 0;
-                                if(request == null) {
+                                int minuteRequest = 10;
+                                if (request == null) {
                                     isCreate = true;
                                 } else {
-                                    if(DateTimeMethod.minutesDifference(request.getCreatedAt()) >= minuteRequest) {
+                                    if (DateTimeMethod.minutesDifference(request.getCreatedAt()) >= minuteRequest) {
                                         isCreate = true;
                                     } else {
                                         isCreate = false;
                                     }
                                 }
 
-                                if(isCreate) {
+                                if (isCreate) {
                                     createRequestNotifi();
                                 } else {
                                     AlertDialog.Builder builder = new AlertDialog.Builder(PostDetailActivity.this);
@@ -207,6 +209,7 @@ public class PostDetailActivity extends AppCompatActivity implements OnMapReadyC
                             Intent intent = getIntent();
                             mPost = (Post) intent.getSerializableExtra("item_post");
                             Report.CreateNewReport(UUID.randomUUID().toString(), getUserInfor(PostDetailActivity.this).getUid(), mPost.getUserId(), mPost.getPostId(), TYPE_POST);
+                            User.checkSendNotifyAlmostBlock(mPost.getUserId());
                             Toast.makeText(getApplicationContext(), "Báo cáo thành công", Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(getApplicationContext(), "Bạn đã báo cáo bài đăng này", Toast.LENGTH_SHORT).show();
