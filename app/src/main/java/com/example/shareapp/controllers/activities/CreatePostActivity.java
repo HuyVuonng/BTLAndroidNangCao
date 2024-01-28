@@ -70,7 +70,7 @@ public class CreatePostActivity extends AppCompatActivity implements OnMapReadyC
     private TextView tvTitlePage;
     private ImageButton imbImagePost;
     private TextView tvErrorImage;
-    private EditText edtTitle, edtDescription, edtQuantity;
+    private EditText edtTitle, edtDescription, edtQuantity, edtPrice;
     private Button btnSubmit;
     private String typePost;
     private ProgressDialog progressDialog;
@@ -214,6 +214,7 @@ public class CreatePostActivity extends AppCompatActivity implements OnMapReadyC
         edtTitle = findViewById(R.id.edt_title_post);
         edtDescription = findViewById(R.id.edt_description);
         edtQuantity = findViewById(R.id.edt_quantity);
+        edtPrice = findViewById(R.id.edt_price);
         btnSubmit = findViewById(R.id.btn_submit);
         progressDialog = new ProgressDialog(this);
         this.mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -245,6 +246,7 @@ public class CreatePostActivity extends AppCompatActivity implements OnMapReadyC
             Glide.with(CreatePostActivity.this).load(mPost.getImage()).into(imbImagePost);
             edtTitle.setText(mPost.getTitle());
             edtQuantity.setText(String.valueOf(mPost.getCount()));
+            edtPrice.setText(String.valueOf(mPost.getPrice()));
             edtDescription.setText(mPost.getDescription());
         }
 
@@ -264,6 +266,7 @@ public class CreatePostActivity extends AppCompatActivity implements OnMapReadyC
                     post.setTitle(edtTitle.getText().toString());
                     post.setType(typePost);
                     post.setCount(Integer.parseInt(edtQuantity.getText().toString()));
+                    post.setPrice(Long.parseLong(edtPrice.getText().toString()));
                     post.setCreatedAt(System.currentTimeMillis());
                     post.setUpdatedAt(System.currentTimeMillis());
                     post.setDelete(false);
@@ -274,6 +277,7 @@ public class CreatePostActivity extends AppCompatActivity implements OnMapReadyC
                 } else {
                     mPost.setTitle(edtTitle.getText().toString());
                     mPost.setCount(Integer.parseInt(edtQuantity.getText().toString()));
+                    mPost.setPrice(Long.parseLong(edtPrice.getText().toString()));
                     mPost.setUpdatedAt(System.currentTimeMillis());
                     mPost.setLocation(new Location(this.longitude, this.latitude));
                     mPost.setDescription(edtDescription.getText().toString());

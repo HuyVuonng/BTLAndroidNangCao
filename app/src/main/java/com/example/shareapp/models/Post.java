@@ -25,6 +25,7 @@ public class Post implements Serializable {
     private String title;
     private String type;
     private int count;
+    private long price;
     private String image;
     private String status;
     private long createdAt;
@@ -39,12 +40,13 @@ public class Post implements Serializable {
     public Post() {
     }
 
-    public Post(String postId, String userId, String title, String type, int count, String image, String status, long createdAt, long updatedAt, boolean isDelete, Location location, String description) {
+    public Post(String postId, String userId, String title, String type, int count, long price, String image, String status, long createdAt, long updatedAt, boolean isDelete, Location location, String description) {
         this.postId = postId;
         this.userId = userId;
         this.title = title;
         this.type = type;
         this.count = count;
+        this.price = price;
         this.image = image;
         this.status = status;
         this.createdAt = createdAt;
@@ -92,6 +94,14 @@ public class Post implements Serializable {
 
     public void setCount(int count) {
         this.count = count;
+    }
+
+    public long getPrice() {
+        return price;
+    }
+
+    public void setPrice(long price) {
+        this.price = price;
     }
 
     public String getImage() {

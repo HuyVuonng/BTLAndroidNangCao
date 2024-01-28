@@ -53,7 +53,7 @@ public class UserInforFragment extends Fragment {
     FloatingActionButton btn_add_post;
 
 
-    TextView fullNameView, emailView, phoneNumberView, addressView, introduceView, numberOfPostView;
+    TextView fullNameView, emailView, phoneNumberView, addressView, introduceView, numberOfPostView, tvTotalPrice;
 
     ProgressBar progressBar;
     ImageView avataView;
@@ -61,6 +61,7 @@ public class UserInforFragment extends Fragment {
     GoogleSignInOptions gso;
     private View mVIew;
     int soBaiDang = 0;
+    private long totalPrice = 0;
 
     private void getViews() {
         fullNameView = mVIew.findViewById(R.id.fullNameView);
@@ -71,6 +72,7 @@ public class UserInforFragment extends Fragment {
         avataView = mVIew.findViewById(R.id.activity_userInfor_imgv_avata);
         introduceView = mVIew.findViewById(R.id.IntroduceView);
         numberOfPostView = mVIew.findViewById(R.id.numberOfPostView);
+        tvTotalPrice = mVIew.findViewById(R.id.tv_total_price);
     }
 
     private void getNumberOfPost(String uid) {
@@ -80,10 +82,12 @@ public class UserInforFragment extends Fragment {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Post post = dataSnapshot.getValue(Post.class);
                     if (post.getUserId().equals(uid)) {
+                        totalPrice += post.getPrice() * post.getCount();
                         soBaiDang++;
                     }
                 }
                 numberOfPostView.setText("Tổng số bài đăng: " + soBaiDang);
+                tvTotalPrice.setText("Số tiền bạn đã cho đi: " + totalPrice);
             }
 
             @Override
