@@ -14,8 +14,8 @@ import androidx.annotation.NonNull;
 import java.io.Serializable;
 
 public class Location implements Serializable {
-    private double longitude;
-    private double latitude;
+    private double longitude; // kinh độ
+    private double latitude; // vĩ độ
 
     public Location() {
     }

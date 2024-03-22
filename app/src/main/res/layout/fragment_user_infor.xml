@@ -130,17 +130,28 @@
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginRight="10dp"
-            android:background="@drawable/textline">
+            android:background="@drawable/textline"
+            android:orientation="vertical"
+            >
 
             <TextView
                 android:id="@+id/numberOfPostView"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="Tổng số bài đăng"
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_total_price"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Số tiền bạn đã cho đi:"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginTop="15dp"/>
         </LinearLayout>
     </LinearLayout>
 </ScrollView>
