@@ -120,7 +120,6 @@ public class CreatePostActivity extends AppCompatActivity implements OnMapReadyC
         } else  {
             this.mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
             this.getLastLocation();
-
         }
         mMap.getUiSettings().setScrollGesturesEnabled(false);
         if(this.latitude != 0 && this.longitude != 0) {
